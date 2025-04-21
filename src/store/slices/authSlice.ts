@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authService, LoginCredentials } from '../../services/auth';
 import { User } from 'firebase/auth';
+import { authService } from '../../services/auth';
+import { SerializedUser } from '../../types/auth';
 
 interface AuthState {
-  user: User | null;
+  user: SerializedUser | null;
   loading: boolean;
   error: string | null;
 }
@@ -14,12 +15,31 @@ const initialState: AuthState = {
   error: null,
 };
 
+// Helper function to serialize Firebase user
+const serializeUser = (user: User): SerializedUser => ({
+  uid: user.uid,
+  email: user.email,
+  displayName: user.displayName,
+  photoURL: user.photoURL,
+  emailVerified: user.emailVerified,
+  phoneNumber: user.phoneNumber,
+  isAnonymous: user.isAnonymous,
+  providerData: user.providerData.map(provider => ({
+    providerId: provider.providerId,
+    uid: provider.uid,
+    displayName: provider.displayName,
+    email: provider.email,
+    phoneNumber: provider.phoneNumber,
+    photoURL: provider.photoURL,
+  })),
+});
+
 export const loginWithGoogle = createAsyncThunk(
   'auth/loginWithGoogle',
   async (_, { rejectWithValue }) => {
     try {
       const result = await authService.loginWithGoogle();
-      return result.user;
+      return serializeUser(result.user);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -31,7 +51,7 @@ export const loginWithFacebook = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const result = await authService.loginWithFacebook();
-      return result.user;
+      return serializeUser(result.user);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -40,10 +60,10 @@ export const loginWithFacebook = createAsyncThunk(
 
 export const loginWithEmail = createAsyncThunk(
   'auth/loginWithEmail',
-  async (credentials: LoginCredentials, { rejectWithValue }) => {
+  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const result = await authService.loginWithEmail(credentials);
-      return result.user;
+      return serializeUser(result.user);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -70,7 +90,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload ? serializeUser(action.payload) : null;
     },
     clearError: (state) => {
       state.error = null;
