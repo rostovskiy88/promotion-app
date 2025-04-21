@@ -1,8 +1,11 @@
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined, FacebookFilled } from '@ant-design/icons';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
+import { AppDispatch, RootState } from '../../store';
 import styles from './Login.module.css';
 import loginImage from '../../assets/login.png';
 
@@ -12,8 +15,48 @@ interface LoginFormData {
 }
 
 const Login = () => {
-  const onFinish = (values: LoginFormData) => {
-    console.log('Success:', values);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  // Get the redirect path from location state, or default to dashboard
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
+
+  const handleEmailLogin = async (values: LoginFormData) => {
+    try {
+      const result = await dispatch(loginWithEmail(values)).unwrap();
+      if (result) {
+        message.success('Successfully logged in!');
+        navigate(from, { replace: true });
+      }
+    } catch (err) {
+      message.error(error || 'Failed to login');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await dispatch(loginWithGoogle()).unwrap();
+      if (result) {
+        message.success('Successfully logged in with Google!');
+        navigate(from, { replace: true });
+      }
+    } catch (err) {
+      message.error(error || 'Failed to login with Google');
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    try {
+      const result = await dispatch(loginWithFacebook()).unwrap();
+      if (result) {
+        message.success('Successfully logged in with Facebook!');
+        navigate(from, { replace: true });
+      }
+    } catch (err) {
+      message.error(error || 'Failed to login with Facebook');
+    }
   };
 
   return (
@@ -26,7 +69,7 @@ const Login = () => {
 
           <Form
             name="login"
-            onFinish={onFinish}
+            onFinish={handleEmailLogin}
             layout="vertical"
             className={styles.form}
           >
@@ -59,7 +102,12 @@ const Login = () => {
               <Link to="/forgot-password">Forgot password?</Link>
             </div>
 
-            <Button type="primary" htmlType="submit" className={styles.submitButton}>
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              className={styles.submitButton}
+              loading={loading}
+            >
               Sign in
             </Button>
 
@@ -68,10 +116,18 @@ const Login = () => {
             </div>
 
             <div className={styles.socialButtons}>
-              <Button className={styles.socialButton}>
+              <Button 
+                className={styles.socialButton} 
+                onClick={handleGoogleLogin}
+                loading={loading}
+              >
                 <FcGoogle size={20} />
               </Button>
-              <Button className={styles.socialButton}>
+              <Button 
+                className={styles.socialButton}
+                onClick={handleFacebookLogin}
+                loading={loading}
+              >
                 <div className={styles.facebookIcon}>
                   <FaFacebookF />
                 </div>
@@ -80,7 +136,7 @@ const Login = () => {
 
             <div className={styles.signUpText}>
               Don't have an account? 
-              <a href="#signup">Sign up</a>
+              <Link to="/register">Sign up</Link>
             </div>
           </Form>
         </div>

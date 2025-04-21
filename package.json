@@ -13,10 +13,12 @@
     "test:e2e:open": "cypress open"
   },
   "dependencies": {
+    "@firebase/auth": "^1.10.0",
     "@reduxjs/toolkit": "^2.7.0",
     "antd": "^5.14.1",
     "axios": "^1.6.7",
     "bootstrap": "^5.3.5",
+    "firebase": "^11.6.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^18.2.0",
