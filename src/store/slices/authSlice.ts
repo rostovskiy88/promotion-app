@@ -55,6 +55,9 @@ export const logout = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await authService.logout();
+      // Clear any persisted auth state
+      localStorage.removeItem('auth');
+      sessionStorage.removeItem('auth');
       return null;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -72,6 +75,10 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    resetLoading: (state) => {
+      state.loading = false;
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -121,5 +128,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, clearError } = authSlice.actions;
+export const { setUser, clearError, resetLoading } = authSlice.actions;
 export default authSlice.reducer; 

@@ -25,37 +25,68 @@ const Login = () => {
 
   const handleEmailLogin = async (values: LoginFormData) => {
     try {
+      console.log('Attempting email login...', values.email);
       const result = await dispatch(loginWithEmail(values)).unwrap();
       if (result) {
+        console.log('Login successful:', result);
         message.success('Successfully logged in!');
         navigate(from, { replace: true });
       }
     } catch (err) {
+      console.error('Login failed:', err);
       message.error(error || 'Failed to login');
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
+      console.log('Starting Google login process...');
       const result = await dispatch(loginWithGoogle()).unwrap();
       if (result) {
+        console.log('Google login successful, user:', result);
         message.success('Successfully logged in with Google!');
         navigate(from, { replace: true });
       }
-    } catch (err) {
-      message.error(error || 'Failed to login with Google');
+    } catch (err: any) {
+      console.error('Google login error:', {
+        message: err.message,
+        code: err.code,
+        fullError: err
+      });
+      // Check if the error is due to popup being closed
+      if (err.code === 'auth/popup-closed-by-user') {
+        message.info('Login cancelled');
+      } else {
+        message.error(err.message || 'Failed to login with Google');
+      }
+      // Reset loading state in Redux
+      dispatch({ type: 'auth/resetLoading' });
     }
   };
 
   const handleFacebookLogin = async () => {
     try {
+      console.log('Starting Facebook login process...');
       const result = await dispatch(loginWithFacebook()).unwrap();
       if (result) {
+        console.log('Facebook login successful, user:', result);
         message.success('Successfully logged in with Facebook!');
         navigate(from, { replace: true });
       }
-    } catch (err) {
-      message.error(error || 'Failed to login with Facebook');
+    } catch (err: any) {
+      console.error('Facebook login error:', {
+        message: err.message,
+        code: err.code,
+        fullError: err
+      });
+      // Check if the error is due to popup being closed
+      if (err.code === 'auth/popup-closed-by-user') {
+        message.info('Login cancelled');
+      } else {
+        message.error(err.message || 'Failed to login with Facebook');
+      }
+      // Reset loading state in Redux
+      dispatch({ type: 'auth/resetLoading' });
     }
   };
 

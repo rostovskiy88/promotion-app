@@ -1,16 +1,18 @@
 import { Provider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
-import { store } from './store';
+import { App as AntApp } from 'antd';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './store';
 import { router } from './router';
-import { ConfigProvider } from 'antd';
-import { theme } from './theme';
 
 function App() {
-  return ( 
+  return (
     <Provider store={store}>
-      <ConfigProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ConfigProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <AntApp>
+          <RouterProvider router={router} />
+        </AntApp>
+      </PersistGate>
     </Provider>
   );
 }
