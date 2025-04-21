@@ -1,0 +1,62 @@
+.layout {
+  min-height: 100vh;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.header {
+  padding: 0 24px;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+  color: #101828;
+}
+
+.trigger:hover {
+  color: var(--color-primary);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.content {
+  margin: 24px;
+  padding: 24px;
+  background: #fff;
+  min-height: 280px;
+}
+
+/* Override ant-design default sider styles */
+:global(.ant-layout-sider) {
+  background: #fff !important;
+}
+
+:global(.ant-menu) {
+  background: #fff !important;
+  border-inline-end: none !important;
+}
+
+:global(.ant-menu-item) {
+  color: #101828 !important;
+}
+
+:global(.ant-menu-item-selected) {
+  background-color: #F9FAFB !important;
+  color: var(--color-primary) !important;
+} 
