@@ -2,6 +2,7 @@ import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined, FacebookFilled } from '@ant-design/icons';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import styles from './Login.module.css';
 import loginImage from '../../assets/login.png';
 
@@ -55,7 +56,7 @@ const Login = () => {
             </Form.Item>
 
             <div className={styles.forgotPassword}>
-              <a href="#forgot-password">Forgot password?</a>
+              <Link to="/forgot-password">Forgot password?</Link>
             </div>
 
             <Button type="primary" htmlType="submit" className={styles.submitButton}>
