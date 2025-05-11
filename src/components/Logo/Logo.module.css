@@ -3,7 +3,6 @@
   align-items: center;
   padding: 16px;
   gap: 12px;
-  border-bottom: 1px solid #E5E7EB;
 }
 
 .icon {
@@ -16,4 +15,12 @@
   font-size: 18px;
   font-weight: 500;
   white-space: nowrap;
+}
+
+.logoLight .icon {
+  color: #fff;
+}
+
+.logoLight .text {
+  color: #fff;
 } 

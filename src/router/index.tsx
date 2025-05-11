@@ -3,6 +3,8 @@ import Login from '../pages/Login/Login';
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
+import Register from '../pages/Register/Register';
+import Terms from '../pages/Terms/Terms';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +18,10 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <div>Home Page</div>,
+  },
+  {
+    path: '/register',
+    element: <Register />,
   },
   {
     path: '/dashboard',
@@ -34,6 +40,10 @@ export const router = createBrowserRouter([
         element: <div>Create Article</div>, // TODO: Replace with CreateArticle component
       },
     ],
+  },
+  {
+    path: '/terms',
+    element: <Terms />,
   },
   // Add more routes here
 ]); 

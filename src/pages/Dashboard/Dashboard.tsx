@@ -4,6 +4,8 @@ import { UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/
 import { useNavigate, Outlet } from 'react-router-dom';
 import Logo from '../../components/Logo/Logo';
 import styles from './Dashboard.module.css';
+import { useAppDispatch } from '../../store';
+import { logout } from '../../store/slices/authSlice';
 
 const { Header, Sider, Content } = Layout;
 
@@ -14,6 +16,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ children }: DashboardProps) => {
   const [collapsed, setCollapsed] = React.useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const userMenuItems = [
     {
@@ -24,8 +27,8 @@ const Dashboard: React.FC<DashboardProps> = ({ children }: DashboardProps) => {
     {
       key: 'logout',
       label: 'Logout',
-      onClick: () => {
-        // TODO: Implement logout logic
+      onClick: async () => {
+        await dispatch(logout());
         navigate('/login');
       },
     },

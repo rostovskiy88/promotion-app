@@ -4,11 +4,13 @@ import styles from './Logo.module.css';
 
 interface LogoProps {
   collapsed?: boolean;
+  variant?: 'default' | 'light';
 }
 
-const Logo: React.FC<LogoProps> = ({ collapsed }) => {
+const Logo: React.FC<LogoProps> = ({ collapsed, variant = 'default' }) => {
+  const logoClass = variant === 'light' ? `${styles.logo} ${styles.logoLight}` : styles.logo;
   return (
-    <div className={styles.logo}>
+    <div className={logoClass}>
       <RocketOutlined className={styles.icon} />
       {!collapsed && <span className={styles.text}>olegpromo</span>}
     </div>
