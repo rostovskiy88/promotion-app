@@ -5,6 +5,7 @@ import Dashboard from '../pages/Dashboard/Dashboard';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
 import Register from '../pages/Register/Register';
 import Terms from '../pages/Terms/Terms';
+import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
 
 export const router = createBrowserRouter([
   {
@@ -27,19 +28,11 @@ export const router = createBrowserRouter([
     path: '/dashboard',
     element: (
       <ProtectedRoute>
-        <Dashboard />
+        <AuthenticatedLayout>
+          <Dashboard />
+        </AuthenticatedLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        path: 'articles',
-        element: <div>Articles List</div>, // TODO: Replace with Articles component
-      },
-      {
-        path: 'articles/create',
-        element: <div>Create Article</div>, // TODO: Replace with CreateArticle component
-      },
-    ],
   },
   {
     path: '/terms',
