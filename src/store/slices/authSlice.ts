@@ -7,12 +7,14 @@ interface AuthState {
   user: SerializedUser | null;
   loading: boolean;
   error: string | null;
+  initialized: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
-  loading: false,
+  loading: true,
   error: null,
+  initialized: false,
 };
 
 // Helper function to serialize Firebase user
@@ -90,7 +92,9 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload ? serializeUser(action.payload) : null;
+      state.user = action.payload;
+      state.loading = false;
+      state.initialized = true;
     },
     clearError: (state) => {
       state.error = null;
@@ -110,6 +114,7 @@ const authSlice = createSlice({
       .addCase(loginWithGoogle.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.initialized = true;
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.loading = false;
@@ -123,6 +128,7 @@ const authSlice = createSlice({
       .addCase(loginWithFacebook.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.initialized = true;
       })
       .addCase(loginWithFacebook.rejected, (state, action) => {
         state.loading = false;
@@ -136,6 +142,7 @@ const authSlice = createSlice({
       .addCase(loginWithEmail.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.initialized = true;
       })
       .addCase(loginWithEmail.rejected, (state, action) => {
         state.loading = false;
@@ -144,6 +151,7 @@ const authSlice = createSlice({
       // Logout
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
+        state.initialized = true;
       });
   },
 });

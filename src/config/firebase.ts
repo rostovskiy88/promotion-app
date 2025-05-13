@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, setPersistence, browserSessionPersistence } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -25,8 +25,8 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication
 const auth = getAuth(app);
 
-// Set auth persistence to session (will clear when browser/tab closes)
-setPersistence(auth, browserSessionPersistence)
+// Set auth persistence to local (will persist across page reloads)
+setPersistence(auth, browserLocalPersistence)
   .catch((error) => {
     console.error("Auth persistence error:", error);
   });
