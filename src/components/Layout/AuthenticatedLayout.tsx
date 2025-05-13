@@ -60,40 +60,39 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   ];
 
   return (
-    <Layout className={styles.layout}>
-      <Sider className={styles.sider} width={200} theme="light">
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider width={200} theme="light">
         <div className={styles.logo}>
           <Logo />
         </div>
         <div className={styles.sectionTitle}>Main Menu</div>
         <Menu
-          className={styles.menu}
           theme="light"
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
           onClick={handleMenuClick}
+          style={{ border: 'none', background: 'transparent', marginTop: 16 }}
         />
-        <Divider className={styles.menuDivider} />
+        <Divider style={{ margin: '24px 0 0 0' }} />
       </Sider>
       <Layout>
-        <Header className={styles.header}>
+        <Header style={{ background: '#fff', display: 'flex', alignItems: 'center', height: 64, padding: '0 24px' }}>
           <Input
             placeholder="Find articles..."
             prefix={<SearchOutlined />}
             className={styles.searchInput}
+            style={{ width: 480, marginRight: 24, marginLeft: 10 }}
           />
           <div style={{ flex: 1 }} />
-          <div className={styles.headerRight}>
-            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-              <div className={styles.userInfo}>
-                <Avatar icon={<UserOutlined />} src={user?.photoURL || undefined} />
-                <span className={styles.userName}>{user?.displayName || user?.email}</span>
-              </div>
-            </Dropdown>
-          </div>
+          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+              <Avatar icon={<UserOutlined />} src={user?.photoURL || undefined} />
+              <span style={{ fontSize: 14, color: 'rgba(0,0,0,0.85)' }}>{user?.displayName || user?.email}</span>
+            </div>
+          </Dropdown>
         </Header>
-        <Content className={styles.content}>
+        <Content style={{ margin: 24, padding: 24, background: '#fff', minHeight: 280, borderRadius: 4 }}>
           {children}
         </Content>
       </Layout>

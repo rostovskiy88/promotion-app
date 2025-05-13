@@ -4,16 +4,17 @@
 
 .sider {
   background: #fff;
-  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   padding-right: 0;
+  border-right: 1.5px solid #e5e6e8;
+  min-height: 100vh;
 }
 
 .logo {
   height: 64px;
   padding: 0 24px;
-  color: #222;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -80,42 +81,13 @@
 }
 
 .searchInput {
-  width: 340px;
-  height: 40px;
+  border-radius: 20px;
   background: #f7f8fa;
   border: none;
-  border-radius: 20px;
   font-size: 16px;
-  margin-left: 8px;
+  height: 40px !important;
   box-shadow: none;
   outline: none;
-  padding-left: 36px !important;
-  padding-right: 16px;
-  transition: box-shadow 0.2s;
-}
-
-:global(.ant-input-affix-wrapper.searchInput) {
-  background: #f7f8fa !important;
-  border: none !important;
-  border-radius: 20px !important;
-  box-shadow: none !important;
-  height: 40px !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-:global(.ant-input.searchInput) {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  font-size: 16px;
-  height: 40px !important;
-  padding-left: 0 !important;
-}
-
-:global(.ant-input-affix-wrapper-focused.searchInput) {
-  box-shadow: none !important;
-  border: none !important;
 }
 
 .userInfo {
@@ -154,4 +126,8 @@
 
 .trigger:hover {
   color: #1890ff;
+}
+
+:global(.ant-input-affix-wrapper.searchInput .anticon) {
+  margin-right: 12px;
 } 

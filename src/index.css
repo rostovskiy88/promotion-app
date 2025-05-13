@@ -37,7 +37,7 @@
   box-sizing: border-box;
 }
 
-body {
+body, html, #root {
   min-height: 100vh;
   font-family: 'Roboto', sans-serif;
   color: var(--text-primary);
