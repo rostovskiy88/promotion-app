@@ -6,6 +6,7 @@ import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
 import Register from '../pages/Register/Register';
 import Terms from '../pages/Terms/Terms';
 import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
+import EditProfile from '../pages/Profile/Profile';
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,16 @@ export const router = createBrowserRouter([
   {
     path: '/terms',
     element: <Terms />,
+  },
+  {
+    path: '/dashboard/profile',
+    element: (
+      <ProtectedRoute>
+        <AuthenticatedLayout>
+          <EditProfile />
+        </AuthenticatedLayout>
+      </ProtectedRoute>
+    ),
   },
   // Add more routes here
 ]); 

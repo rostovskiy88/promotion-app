@@ -3,7 +3,8 @@ import { Layout, Menu, Input, Avatar, Dropdown, Divider } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
-  SearchOutlined
+  SearchOutlined,
+  DownOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,8 +49,8 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 
   const userMenuItems = [
     {
-      key: 'profile',
-      label: 'Profile',
+      key: 'edit-profile',
+      label: 'Edit profile',
       onClick: () => navigate('/dashboard/profile'),
     },
     {
@@ -61,7 +62,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={200} theme="light">
+      <Sider width={200} theme="light" className={styles.sider}>
         <div className={styles.logo}>
           <Logo />
         </div>
@@ -82,13 +83,14 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
             placeholder="Find articles..."
             prefix={<SearchOutlined />}
             className={styles.searchInput}
-            style={{ width: 480, marginRight: 24, marginLeft: 10 }}
+            style={{ width: 340, marginRight: 24 }}
           />
           <div style={{ flex: 1 }} />
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
               <Avatar icon={<UserOutlined />} src={user?.photoURL || undefined} />
-              <span style={{ fontSize: 14, color: 'rgba(0,0,0,0.85)' }}>{user?.displayName || user?.email}</span>
+              <span style={{ color: '#1557ff', fontWeight: 500 }}>{user?.displayName || user?.email}</span>
+              <DownOutlined style={{ fontSize: 12, color: '#b0b4ba' }} />
             </div>
           </Dropdown>
         </Header>
