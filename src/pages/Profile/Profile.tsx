@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Tabs, Form, Input, Button, Row, Col } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const { TabPane } = Tabs;
 
@@ -9,6 +11,11 @@ const EditProfile: React.FC = () => {
   const [passwordForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState('1');
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const isGoogleUser = user?.providerData?.some(
+    (provider) => provider.providerId === 'google.com'
+  );
 
   const handleCancel = () => {
     form.resetFields();
@@ -70,6 +77,11 @@ const EditProfile: React.FC = () => {
           )}
           {activeTab === '3' && (
             <>
+              {isGoogleUser && (
+                <div style={{ color: '#b0b4ba', marginBottom: 16, textAlign: 'center', fontSize: 15 }}>
+                  You signed in with Google. To change your password, visit your Google Account settings.
+                </div>
+              )}
               <div style={{ marginBottom: 24, fontWeight: 500 }}>Change your password</div>
               <Form
                 form={passwordForm}
@@ -78,17 +90,17 @@ const EditProfile: React.FC = () => {
                 requiredMark={false}
               >
                 <Form.Item label="Old Password" name="oldPassword">
-                  <Input.Password placeholder="Enter your current password" size="large" style={{ background: '#f7f8fa' }} />
+                  <Input.Password placeholder="Enter your current password" size="large" style={{ background: '#f7f8fa' }} disabled={isGoogleUser} />
                 </Form.Item>
                 <Form.Item label="New Password" name="newPassword">
-                  <Input.Password placeholder="Enter your new password" size="large" style={{ background: '#f7f8fa' }} />
+                  <Input.Password placeholder="Enter your new password" size="large" style={{ background: '#f7f8fa' }} disabled={isGoogleUser} />
                 </Form.Item>
                 <Form.Item label="Confirm New Password" name="confirmPassword">
-                  <Input.Password placeholder="Enter your new password again" size="large" style={{ background: '#f7f8fa' }} />
+                  <Input.Password placeholder="Enter your new password again" size="large" style={{ background: '#f7f8fa' }} disabled={isGoogleUser} />
                 </Form.Item>
                 <Form.Item style={{ marginBottom: 0, display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
                   <Button onClick={handlePasswordCancel} style={{ marginRight: 8 }}>Cancel</Button>
-                  <Button type="primary" htmlType="submit" style={{ background: '#1557ff', borderColor: '#1557ff' }}>Save</Button>
+                  <Button type="primary" htmlType="submit" style={{ background: '#1557ff', borderColor: '#1557ff' }} disabled={isGoogleUser}>Save</Button>
                 </Form.Item>
               </Form>
             </>
