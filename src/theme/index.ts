@@ -55,7 +55,6 @@ export const theme: ThemeConfig = {
     },
     Typography: {
       titleMarginBottom: 8,
-      titleFontSize: 24,
     }
   },
 }; 
