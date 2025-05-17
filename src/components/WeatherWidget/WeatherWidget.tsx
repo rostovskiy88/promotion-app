@@ -141,10 +141,13 @@ const WeatherWidget: React.FC = () => {
   );
 
   return (
-    <Card className="weather-widget" bordered={false} bodyStyle={{ padding: 24 }}>
+    <Card className="weather-widget" variant="outlined" styles={{ body: { padding: 24 } }}>
       <div className="weather-widget-header">
         <Text className="weather-widget-label">WEATHER WIDGET</Text>
-        <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+        <Dropdown menu={{ items: [
+            { key: 'manual', label: 'Select City Manually' },
+            { key: 'auto', label: 'Auto-detect My Location' }
+          ], onClick: handleMenuClick }} trigger={["click"]} placement="bottomRight">
           <MoreOutlined className="weather-widget-menu" style={{ cursor: 'pointer' }} />
         </Dropdown>
       </div>

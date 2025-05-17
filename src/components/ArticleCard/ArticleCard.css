@@ -1,0 +1,82 @@
+.article-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  background: #fff;
+  margin-bottom: 24px;
+}
+
+.article-card-image {
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.article-card-menu {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 22px;
+  color: #bdbdbd;
+  cursor: pointer;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.article-card-content {
+  padding: 24px;
+}
+
+.article-card-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #bdbdbd;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.article-card-category {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.article-card-date {
+  font-size: 14px;
+}
+
+.article-card-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+}
+
+.article-card-description {
+  color: #475467;
+  font-size: 15px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.article-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.article-card-author {
+  font-weight: 500;
+  color: #1557ff;
+  margin-left: 8px;
+}
+
+.article-card-readmore {
+  margin-left: auto;
+  color: #1557ff;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+} 
