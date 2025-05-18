@@ -12,6 +12,7 @@ import { logout } from '../../store/slices/authSlice';
 import { RootState, AppDispatch } from '../../store';
 import styles from './AuthenticatedLayout.module.css';
 import Logo from '../Logo/Logo';
+import { useFirestoreUser } from '../../hooks/useFirestoreUser';
 
 const { Header, Sider, Content } = Layout;
 
@@ -24,6 +25,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
+  const firestoreUser = useFirestoreUser();
 
   const menuItems = [
     {
@@ -88,8 +90,14 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           <div style={{ flex: 1 }} />
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <Avatar icon={<UserOutlined />} src={user?.photoURL || undefined} />
-              <span style={{ color: '#1557ff', fontWeight: 500 }}>{user?.displayName || user?.email}</span>
+              <Avatar src={firestoreUser?.avatarUrl || undefined}>
+                {!firestoreUser?.avatarUrl && (firestoreUser?.firstName?.[0] || user?.displayName?.[0] || user?.email?.[0] || <UserOutlined />)}
+              </Avatar>
+              <span style={{ color: '#1557ff', fontWeight: 500 }}>
+                {firestoreUser
+                  ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() || user?.displayName || user?.email
+                  : user?.displayName || user?.email}
+              </span>
               <DownOutlined style={{ fontSize: 12, color: '#b0b4ba' }} />
             </div>
           </Dropdown>

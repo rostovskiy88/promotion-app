@@ -1,0 +1,115 @@
+.container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 500px;
+  box-shadow: 0 8px 32px 0 rgba(16,30,54,0.08);
+}
+
+.header {
+  margin-bottom: 24px;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.tabs {
+  margin-bottom: 24px;
+}
+
+.activeTab {
+  font-weight: 500;
+  color: #1557ff !important;
+}
+
+.inactiveTab {
+  color: #b0b4ba !important;
+}
+
+.sectionTitle {
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.coverLabel {
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.uploadDragger {
+  background: #f7f8fa;
+  border: 1.5px dashed #b0b4ba;
+  border-radius: 8px;
+}
+
+.uploadContent {
+  padding: 24px;
+  text-align: center;
+}
+
+.uploadHint {
+  margin-top: 12px;
+  color: #b0b4ba;
+}
+
+.uploadLink {
+  color: #1557ff;
+  cursor: pointer;
+}
+
+.buttonRow {
+  margin-bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.button {
+  height: 40px;
+  min-width: 100px;
+  font-weight: 500;
+  font-size: 16px;
+  box-shadow: none;
+  border-radius: 6px;
+}
+
+.cancelButton {
+  background: #fff;
+  color: #222;
+  border: 1.5px solid #d9d9d9;
+  transition: border-color 0.2s;
+}
+.cancelButton:hover, .cancelButton:focus {
+  border-color: #1557ff;
+  color: #1557ff;
+  background: #fff;
+}
+
+.saveButton {
+  background: #1557ff;
+  color: #fff;
+  border: none;
+  transition: background 0.2s;
+}
+.saveButton:hover, .saveButton:focus {
+  background: #003ecb;
+  color: #fff;
+}
+
+.input {
+  background: #f7f8fa;
+}
+
+.googleInfo {
+  color: #b0b4ba;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 15px;
+} 

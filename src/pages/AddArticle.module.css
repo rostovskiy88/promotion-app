@@ -1,0 +1,48 @@
+.container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 500px;
+  box-shadow: 0 8px 32px 0 rgba(16,30,54,0.08);
+}
+
+.header {
+  margin-bottom: 24px;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.coverLabel {
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.uploadDragger {
+  background: #f7f8fa;
+  border: 1.5px dashed #b0b4ba;
+  border-radius: 8px;
+}
+
+.uploadContent {
+  padding: 24px;
+  text-align: center;
+}
+
+.uploadHint {
+  margin-top: 12px;
+  color: #b0b4ba;
+}
+
+.uploadLink {
+  color: #1557ff;
+  cursor: pointer;
+}
+
+.fileType {
+  font-size: 13px;
+  color: #b0b4ba;
+} 

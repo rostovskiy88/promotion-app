@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Row, Col, Button, Select } from 'antd';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -12,6 +13,7 @@ const Dashboard: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [sortOrder, setSortOrder] = useState('Ascending');
   const articles: any[] = [];
+  const navigate = useNavigate();
 
   return (
     <Row gutter={24}>
@@ -53,7 +55,7 @@ const Dashboard: React.FC = () => {
       </Col>
       {/* Right Sidebar */}
       <Col flex="300px" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-        <Button type="primary" block style={{ marginBottom: 16 }}>
+        <Button type="primary" block style={{ marginBottom: 16 }} onClick={() => navigate('/dashboard/add-article')}>
           + Add Article
         </Button>
         <WeatherWidget />

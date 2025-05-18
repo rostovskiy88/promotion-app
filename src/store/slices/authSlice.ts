@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { User } from 'firebase/auth';
 import { authService } from '../../services/auth';
 import { SerializedUser } from '../../types/auth';
+import { createOrGetUser } from '../../services/userService';
 
 interface AuthState {
   user: SerializedUser | null;
@@ -41,6 +42,12 @@ export const loginWithGoogle = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const result = await authService.loginWithGoogle();
+      await createOrGetUser({
+        uid: result.user.uid,
+        email: result.user.email!,
+        displayName: result.user.displayName || '',
+        photoURL: result.user.photoURL || '',
+      });
       return serializeUser(result.user);
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -53,6 +60,12 @@ export const loginWithFacebook = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const result = await authService.loginWithFacebook();
+      await createOrGetUser({
+        uid: result.user.uid,
+        email: result.user.email!,
+        displayName: result.user.displayName || '',
+        photoURL: result.user.photoURL || '',
+      });
       return serializeUser(result.user);
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -65,6 +78,12 @@ export const loginWithEmail = createAsyncThunk(
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const result = await authService.loginWithEmail(credentials);
+      await createOrGetUser({
+        uid: result.user.uid,
+        email: result.user.email!,
+        displayName: result.user.displayName || '',
+        photoURL: result.user.photoURL || '',
+      });
       return serializeUser(result.user);
     } catch (error: any) {
       return rejectWithValue(error.message);

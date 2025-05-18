@@ -10,6 +10,7 @@ import styles from './Register.module.css';
 import registerImage from '../../assets/sign-up.png';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF } from 'react-icons/fa';
+import { createOrGetUser } from '../../services/userService';
 
 const Register: React.FC = () => {
   const [form] = Form.useForm();
@@ -24,6 +25,13 @@ const Register: React.FC = () => {
       const { name, age, email, password } = values;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
+      // Create user in Firestore
+      await createOrGetUser({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email!,
+        displayName: name,
+        photoURL: userCredential.user.photoURL || '',
+      });
       message.success('Registration successful!');
       navigate('/dashboard');
     } catch (error: any) {
