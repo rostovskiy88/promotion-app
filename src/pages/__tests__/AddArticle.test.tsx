@@ -181,9 +181,9 @@ describe('AddArticle Component', () => {
       (useFirestoreUser as jest.Mock).mockReturnValue(null);
       renderAddArticle();
       
-      // Just verify the component renders without user
-      const form = screen.getByRole('form');
-      expect(form).toBeInTheDocument();
+      // Just verify the component renders without user - use a different selector
+      const titleInput = screen.getByLabelText('Title');
+      expect(titleInput).toBeInTheDocument();
     });
 
     test('addArticle service is mocked correctly', () => {
