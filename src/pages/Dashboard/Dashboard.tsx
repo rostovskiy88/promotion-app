@@ -9,6 +9,7 @@ import { Article } from '../../types/article';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
 import styles from './Dashboard.module.css';
 import { formatArticleDate } from '../../utils/formatArticleDate';
+import { addSampleArticles } from '../../utils/addSampleArticles';
 
 const { Option } = Select;
 
@@ -17,7 +18,7 @@ const sortOptions = ['Ascending', 'Descending'];
 
 const Dashboard: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
-  const [sortOrder, setSortOrder] = useState('Ascending');
+  const [sortOrder, setSortOrder] = useState<'Ascending' | 'Descending'>('Descending');
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -25,12 +26,12 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchArticles();
-  }, [selectedCategory]);
+  }, [selectedCategory, sortOrder]);
 
   const fetchArticles = async () => {
     try {
       setLoading(true);
-      const fetchedArticles = await getArticles(selectedCategory);
+      const fetchedArticles = await getArticles(selectedCategory, sortOrder);
       setArticles(fetchedArticles as Article[]);
     } catch (error) {
       message.error('Failed to fetch articles');
@@ -53,10 +54,20 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleAddSampleArticles = async () => {
+    try {
+      await addSampleArticles();
+      message.success('Sample articles added successfully!');
+      fetchArticles();
+    } catch (error) {
+      message.error('Failed to add sample articles');
+    }
+  };
+
   return (
-    <Row gutter={24}>
-      {/* Main Content: Articles */}
-      <Col flex="auto">
+    <div className={styles.dashboardContainer}>
+      {/* Articles Section */}
+      <div className={styles.articlesSection}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <h2 style={{ margin: 0 }}>Articles Dashboard</h2>
@@ -112,15 +123,21 @@ const Dashboard: React.FC = () => {
             ))}
           </div>
         )}
-      </Col>
-      {/* Right Sidebar */}
-      <Col flex="300px" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-        <Button type="primary" block style={{ marginBottom: 16 }} onClick={() => navigate('/dashboard/add-article')}>
-          + Add Article
-        </Button>
-        <WeatherWidget />
-      </Col>
-    </Row>
+      </div>
+
+      {/* Widget Section */}
+      <div className={styles.widgetSection}>
+        <div className={styles.rightSidebar}>
+          <Button type="primary" block onClick={() => navigate('/dashboard/add-article')}>
+            + Add Article
+          </Button>
+          <Button type="default" block onClick={handleAddSampleArticles}>
+            Add Sample Articles
+          </Button>
+          <WeatherWidget />
+        </div>
+      </div>
+    </div>
   );
 };
 
