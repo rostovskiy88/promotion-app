@@ -30,19 +30,21 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const menu = (
-    <Menu>
-      <Menu.Item key="edit" onClick={onEdit}>Edit</Menu.Item>
-      <Menu.Item key="delete" onClick={onDelete}>Delete</Menu.Item>
-    </Menu>
-  );
+  const menu = {
+    items: [
+      { key: 'edit', label: 'Edit', onClick: onEdit },
+      { key: 'delete', label: 'Delete', onClick: onDelete },
+    ],
+  };
 
   return (
-    <Card className="article-card" bodyStyle={{ padding: 0 }}>
+    <Card className="article-card" styles={{ body: { padding: 0 } }}>
       <div className="article-card-image" style={{ backgroundImage: `url(${imageUrl})` }}>
-        <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-          <MoreOutlined className="article-card-menu" />
-        </Dropdown>
+        <div className="article-dropdown-wrapper">
+          <Dropdown menu={menu} trigger={['click']} placement="bottomRight">
+            <MoreOutlined className="article-card-menu" />
+          </Dropdown>
+        </div>
       </div>
       <div className="article-card-content">
         <div className="article-card-meta">

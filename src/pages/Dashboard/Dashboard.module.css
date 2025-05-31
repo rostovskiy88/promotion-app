@@ -59,4 +59,15 @@
 :global(.ant-menu-item-selected) {
   background-color: #F9FAFB !important;
   color: var(--color-primary) !important;
+}
+
+.articlesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+:global(.article-card) {
+  width: 350px;
+  flex: 0 0 auto;
 } 

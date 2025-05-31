@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { Row, Col, Button, Select } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Button, Select, message } from 'antd';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
+import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import { useNavigate } from 'react-router-dom';
+import { getArticles, deleteArticle } from '../../services/articleService';
+import { Article } from '../../types/article';
+import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import styles from './Dashboard.module.css';
+import { formatArticleDate } from '../../utils/formatArticleDate';
 
 const { Option } = Select;
 
@@ -12,8 +18,40 @@ const sortOptions = ['Ascending', 'Descending'];
 const Dashboard: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [sortOrder, setSortOrder] = useState('Ascending');
-  const articles: any[] = [];
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const firestoreUser = useFirestoreUser();
+
+  useEffect(() => {
+    fetchArticles();
+  }, [selectedCategory]);
+
+  const fetchArticles = async () => {
+    try {
+      setLoading(true);
+      const fetchedArticles = await getArticles(selectedCategory);
+      setArticles(fetchedArticles as Article[]);
+    } catch (error) {
+      message.error('Failed to fetch articles');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (articleId: string) => {
+    navigate(`/dashboard/edit-article/${articleId}`);
+  };
+
+  const handleDelete = async (articleId: string) => {
+    try {
+      await deleteArticle(articleId);
+      message.success('Article deleted successfully');
+      fetchArticles();
+    } catch (error) {
+      message.error('Failed to delete article');
+    }
+  };
 
   return (
     <Row gutter={24}>
@@ -36,7 +74,7 @@ const Dashboard: React.FC = () => {
               </Select>
             </span>
           </div>
-          <span style={{ background: '#fff', borderRadius: 6, padding: '8px 16px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ color: '#b0b4ba', fontWeight: 500 }}>Sort by:</span>
             <Select
               value={sortOrder}
@@ -51,7 +89,29 @@ const Dashboard: React.FC = () => {
             </Select>
           </span>
         </div>
-        {articles.length === 0 && <NoArticles />}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '48px 0' }}>Loading...</div>
+        ) : articles.length === 0 ? (
+          <NoArticles />
+        ) : (
+          <div className={styles.articlesGrid}>
+            {articles.map(article => (
+              <ArticleCard
+                key={article.id}
+                category={article.category ?? ''}
+                date={formatArticleDate(article.createdAt.toDate())}
+                title={article.title}
+                description={article.content ?? ''}
+                authorName={firestoreUser ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() : ''}
+                authorAvatar={firestoreUser ? firestoreUser.avatarUrl || '' : ''}
+                readMoreUrl={`/dashboard/article/${article.id}`}
+                imageUrl={typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'}
+                onEdit={() => handleEdit(article.id)}
+                onDelete={() => handleDelete(article.id)}
+              />
+            ))}
+          </div>
+        )}
       </Col>
       {/* Right Sidebar */}
       <Col flex="300px" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>

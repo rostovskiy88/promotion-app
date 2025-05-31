@@ -103,3 +103,20 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* AntD Dropdown Menu Customization (Global) */
+.ant-dropdown-menu-root {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  min-width: 120px;
+}
+.ant-dropdown-menu-root .ant-dropdown-menu-item {
+  border-radius: 0 !important;
+  padding: 10px 16px !important;
+  transition: background 0.2s, color 0.2s;
+}
+.ant-dropdown-menu-root .ant-dropdown-menu-item:hover,
+.ant-dropdown-menu-root .ant-dropdown-menu-item-active {
+  color: #1557ff !important;
+  background: #f5f8ff !important;
+}

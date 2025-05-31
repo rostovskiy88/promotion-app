@@ -45,4 +45,24 @@
 .fileType {
   font-size: 13px;
   color: #b0b4ba;
+}
+
+.padding32 {
+  padding: 32px;
+}
+
+.uploadIcon {
+  font-size: 32px;
+  color: #b0b4ba;
+}
+
+.formFooter {
+  margin-bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelButton {
+  margin-right: 8px;
 } 

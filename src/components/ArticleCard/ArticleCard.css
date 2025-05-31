@@ -79,4 +79,20 @@
   font-weight: 500;
   font-size: 15px;
   text-decoration: none;
+}
+
+.article-dropdown-wrapper .ant-dropdown .ant-dropdown-menu {
+  border-radius: 30px !important;
+  box-shadow: none !important;
+  min-width: 120px;
+}
+.article-dropdown-wrapper .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+  border-radius: 0 !important;
+  padding: 10px 16px !important;
+  transition: background 0.2s, color 0.2s;
+}
+.article-dropdown-wrapper .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover,
+.article-dropdown-wrapper .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-active {
+  color: #1557ff !important;
+  background: #f5f8ff !important;
 } 
