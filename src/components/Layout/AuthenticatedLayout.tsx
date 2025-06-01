@@ -14,6 +14,7 @@ import {
 import { logout } from '../../services/authService';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
 import { useUI, useAuth, useArticles } from '../../hooks/useRedux';
+import Logo from '../Logo/Logo';
 import styles from './AuthenticatedLayout.module.css';
 
 const { Header, Content, Sider } = Layout;
@@ -173,7 +174,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
         className={styles.sider}
       >
         <div className={styles.logo}>
-          <span>RP</span>
+          <Logo collapsed={collapsed} />
         </div>
         <Menu
           theme="dark"
