@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Divider, message, InputNumber } from 'antd';
-import { GoogleOutlined, FacebookFilled } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, Divider, message } from 'antd';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebookF } from 'react-icons/fa';
+import { useAppDispatch } from '../../store';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store';
 import { loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import styles from './Register.module.css';
 import registerImage from '../../assets/sign-up.png';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebookF } from 'react-icons/fa';
 import { createOrGetUser } from '../../services/userService';
 
 const Register: React.FC = () => {
@@ -22,7 +21,7 @@ const Register: React.FC = () => {
   const handleFinish = async (values: any) => {
     setLoading(true);
     try {
-      const { name, age, email, password } = values;
+      const { name, email, password } = values;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       // Create user in Firestore
@@ -84,37 +83,6 @@ const Register: React.FC = () => {
                 className={styles.inputHalf}
               >
                 <Input placeholder="Name" />
-              </Form.Item>
-              <Form.Item
-                name="age"
-                label="Age"
-                className={styles.inputHalf}
-                rules={[
-                  { required: true, message: 'Enter your age' },
-                  {
-                    validator: (_, value) => {
-                      if (value === undefined || value === null || value === '') {
-                        return Promise.resolve(); // Let required rule handle empty
-                      }
-                      if (value < 1) {
-                        return Promise.reject('Age must be at least 1');
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Enter your age"
-                  type="number"
-                  min={1}
-                  step={1}
-                  onKeyDown={e => {
-                    if (e.key === '-' || e.key === 'e') {
-                      e.preventDefault();
-                    }
-                  }}
-                />
               </Form.Item>
             </div>
             <Form.Item

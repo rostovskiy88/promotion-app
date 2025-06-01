@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Dropdown, Menu, Avatar, Typography } from 'antd';
+import { Card, Dropdown, Avatar, Typography } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
 import './ArticleCard.css';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Typography, Spin, Dropdown, Menu, Modal, AutoComplete, message } from 'antd';
+import { Card, Typography, Spin, Dropdown, Modal, AutoComplete, message } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import './WeatherWidget.css';
@@ -89,7 +89,9 @@ const WeatherWidget: React.FC = () => {
     setSearching(true);
     try {
       const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+      
       const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(value)}&limit=5&appid=${apiKey}`;
+      
       const res = await axios.get(url);
       const options: CityOption[] = res.data.map((item: any) => ({
         value: `${item.name}${item.state ? ', ' + item.state : ''}, ${item.country}`,
@@ -132,13 +134,6 @@ const WeatherWidget: React.FC = () => {
   const today = new Date();
   const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
   const dateStr = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-
-  const menu = (
-    <Menu onClick={handleMenuClick}>
-      <Menu.Item key="manual">Select City Manually</Menu.Item>
-      <Menu.Item key="auto">Auto-detect My Location</Menu.Item>
-    </Menu>
-  );
 
   return (
     <Card className="weather-widget" variant="outlined" styles={{ body: { padding: 24 } }}>

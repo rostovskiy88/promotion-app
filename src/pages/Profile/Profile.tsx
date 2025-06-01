@@ -43,6 +43,11 @@ const EditProfile: React.FC = () => {
   };
 
   const handleSave = async (values: any) => {
+    if (!user?.uid) {
+      message.error('User not authenticated');
+      return;
+    }
+
     setLoading(true);
     try {
       await updateUser(user.uid, {
@@ -69,6 +74,10 @@ const EditProfile: React.FC = () => {
       const file = values.avatar[0].originFileObj;
       const url = URL.createObjectURL(file);
       setAvatarPreview(url);
+      if (!user?.uid) {
+        message.error('User not authenticated');
+        return;
+      }
       await updateUser(user.uid, { avatarUrl: url });
       console.log('Updated user avatar in Firestore:', url);
       message.success('Avatar updated!');

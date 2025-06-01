@@ -1,6 +1,4 @@
 import { 
-  GoogleAuthProvider, 
-  FacebookAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -14,9 +12,10 @@ export interface LoginCredentials {
   password: string;
 }
 
-class AuthService {
-  private googleProvider = new GoogleAuthProvider();
-  private facebookProvider = new FacebookAuthProvider();
+export class AuthService {
+  constructor() {
+    // Initialize any necessary configurations
+  }
 
   async loginWithGoogle(): Promise<UserCredential> {
     // Force Google to show account selection

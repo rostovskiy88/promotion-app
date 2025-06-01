@@ -1,5 +1,4 @@
 import { Form, Input, Button, message } from 'antd';
-import { UserOutlined, LockOutlined, FacebookFilled } from '@ant-design/icons';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -7,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
 import { AppDispatch, RootState } from '../../store';
 import styles from './Login.module.css';
-import loginImage from '../../assets/login.png';
 
 interface LoginFormData {
   email: string;

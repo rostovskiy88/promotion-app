@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Select, message } from 'antd';
+import { Button, Select, message } from 'antd';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
 import ArticleCard from '../../components/ArticleCard/ArticleCard';
@@ -113,12 +113,12 @@ const Dashboard: React.FC = () => {
                 date={formatArticleDate(article.createdAt.toDate())}
                 title={article.title}
                 description={article.content ?? ''}
-                authorName={firestoreUser ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() : ''}
-                authorAvatar={firestoreUser ? firestoreUser.avatarUrl || '' : ''}
+                authorName={firestoreUser ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() || 'Anonymous' : 'Anonymous'}
+                authorAvatar={firestoreUser?.avatarUrl || ''}
                 readMoreUrl={`/dashboard/article/${article.id}`}
                 imageUrl={typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'}
-                onEdit={() => handleEdit(article.id)}
-                onDelete={() => handleDelete(article.id)}
+                onEdit={() => article.id && handleEdit(article.id)}
+                onDelete={() => article.id && handleDelete(article.id)}
               />
             ))}
           </div>
