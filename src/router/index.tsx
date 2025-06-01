@@ -8,6 +8,7 @@ import Terms from '../pages/Terms/Terms';
 import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
 import EditProfile from '../pages/Profile/Profile';
 import AddArticle from '../pages/AddArticle';
+import ArticleDetails from '../components/ArticleDetails/ArticleDetails';
 
 export const router = createBrowserRouter([
   {
@@ -56,6 +57,16 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <AuthenticatedLayout>
           <AddArticle onCancel={() => window.history.back()} />
+        </AuthenticatedLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/article/:id',
+    element: (
+      <ProtectedRoute>
+        <AuthenticatedLayout>
+          <ArticleDetails />
         </AuthenticatedLayout>
       </ProtectedRoute>
     ),

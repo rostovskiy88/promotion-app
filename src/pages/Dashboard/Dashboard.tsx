@@ -4,12 +4,13 @@ import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
 import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import { useNavigate } from 'react-router-dom';
-import { getArticles, deleteArticle } from '../../services/articleService';
+import { getArticles, deleteArticle, searchArticles } from '../../services/articleService';
 import { Article } from '../../types/article';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
 import styles from './Dashboard.module.css';
 import { formatArticleDate } from '../../utils/formatArticleDate';
 import { addSampleArticles } from '../../utils/addSampleArticles';
+import { useSearch } from '../../contexts/SearchContext';
 
 const { Option } = Select;
 
@@ -23,20 +24,30 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const firestoreUser = useFirestoreUser();
+  const { searchTerm, isSearching, setIsSearching } = useSearch();
 
   useEffect(() => {
     fetchArticles();
-  }, [selectedCategory, sortOrder]);
+  }, [selectedCategory, sortOrder, searchTerm]);
 
   const fetchArticles = async () => {
     try {
       setLoading(true);
-      const fetchedArticles = await getArticles(selectedCategory, sortOrder);
+      setIsSearching(true);
+      
+      let fetchedArticles;
+      if (searchTerm.trim()) {
+        fetchedArticles = await searchArticles(searchTerm, selectedCategory, sortOrder);
+      } else {
+        fetchedArticles = await getArticles(selectedCategory, sortOrder);
+      }
+      
       setArticles(fetchedArticles as Article[]);
     } catch (error) {
       message.error('Failed to fetch articles');
     } finally {
       setLoading(false);
+      setIsSearching(false);
     }
   };
 
@@ -64,13 +75,34 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const getDisplayTitle = () => {
+    if (searchTerm.trim()) {
+      return `Search Results for "${searchTerm}"`;
+    }
+    return 'Articles Dashboard';
+  };
+
+  const getResultsCount = () => {
+    if (searchTerm.trim()) {
+      return (
+        <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
+          {articles.length} article{articles.length !== 1 ? 's' : ''} found
+        </span>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className={styles.dashboardContainer}>
       {/* Articles Section */}
       <div className={styles.articlesSection}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <h2 style={{ margin: 0 }}>Articles Dashboard</h2>
+            <div>
+              <h2 style={{ margin: 0 }}>{getDisplayTitle()}</h2>
+              {getResultsCount()}
+            </div>
             <span style={{ color: '#b0b4ba', fontWeight: 500 }}>
               Show: <Select
                 value={selectedCategory}
@@ -103,7 +135,14 @@ const Dashboard: React.FC = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '48px 0' }}>Loading...</div>
         ) : articles.length === 0 ? (
-          <NoArticles />
+          searchTerm.trim() ? (
+            <div style={{ textAlign: 'center', padding: '48px 0' }}>
+              <h3>No articles found for "{searchTerm}"</h3>
+              <p style={{ color: '#666' }}>Try adjusting your search terms or browse all articles.</p>
+            </div>
+          ) : (
+            <NoArticles />
+          )
         ) : (
           <div className={styles.articlesGrid}>
             {articles.map(article => (

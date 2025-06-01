@@ -1,11 +1,13 @@
-import { Provider } from 'react-redux';
+import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { App as AntApp, ConfigProvider } from 'antd';
+import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ConfigProvider, App as AntApp } from 'antd';
 import { store, persistor } from './store';
 import { router } from './router';
 import AuthStateListener from './components/AuthStateListener/AuthStateListener';
 import { theme } from './theme';
+import { SearchProvider } from './contexts/SearchContext';
 
 function App() {
   return (
@@ -13,8 +15,10 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <ConfigProvider theme={theme}>
           <AntApp>
-            <AuthStateListener />
-            <RouterProvider router={router} />
+            <SearchProvider>
+              <AuthStateListener />
+              <RouterProvider router={router} />
+            </SearchProvider>
           </AntApp>
         </ConfigProvider>
       </PersistGate>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Typography, Spin, Dropdown, Modal, AutoComplete, message } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
-import axios from 'axios';
+import httpClient from '../../services/httpClient';
 import './WeatherWidget.css';
 
 const { Title, Text } = Typography;
@@ -32,7 +32,7 @@ const WeatherWidget: React.FC = () => {
     try {
       const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
-      const res = await axios.get(url);
+      const res = await httpClient.get(url);
       setWeather(res.data);
     } catch (e: any) {
       setError('Unable to load weather data.');
@@ -92,7 +92,7 @@ const WeatherWidget: React.FC = () => {
       
       const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(value)}&limit=5&appid=${apiKey}`;
       
-      const res = await axios.get(url);
+      const res = await httpClient.get(url);
       const options: CityOption[] = res.data.map((item: any) => ({
         value: `${item.name}${item.state ? ', ' + item.state : ''}, ${item.country}`,
         label: `${item.name}${item.state ? ', ' + item.state : ''}, ${item.country}`,

@@ -12,11 +12,15 @@ Object.defineProperty(globalThis, 'import', {
         VITE_FIREBASE_MESSAGING_SENDER_ID: '123456789',
         VITE_FIREBASE_APP_ID: 'test-app-id',
         VITE_FIREBASE_MEASUREMENT_ID: 'test-measurement-id',
+        VITE_OPENWEATHER_API_KEY: 'test-api-key-for-jest'
       },
     },
   },
   writable: true,
 });
+
+// Mock environment for Node.js compatibility
+process.env.VITE_OPENWEATHER_API_KEY = 'test-api-key-for-jest';
 
 // Patch window.matchMedia for antd/Row in tests
 Object.defineProperty(window, 'matchMedia', {

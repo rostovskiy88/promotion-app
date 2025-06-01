@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Input, Avatar, Dropdown, Divider } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
   SearchOutlined,
-  DownOutlined
+  DownOutlined,
+  CloseOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +14,7 @@ import { RootState, AppDispatch } from '../../store';
 import styles from './AuthenticatedLayout.module.css';
 import Logo from '../Logo/Logo';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import { useSearch } from '../../contexts/SearchContext';
 
 const { Header, Sider, Content } = Layout;
 
@@ -26,6 +28,24 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
   const firestoreUser = useFirestoreUser();
+  const { searchTerm, setSearchTerm, clearSearch } = useSearch();
+  const [inputValue, setInputValue] = useState('');
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(inputValue);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [inputValue, setSearchTerm]);
+
+  // Sync input value with search term when search is cleared
+  useEffect(() => {
+    if (searchTerm === '') {
+      setInputValue('');
+    }
+  }, [searchTerm]);
 
   const menuItems = [
     {
@@ -47,6 +67,15 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     } catch (error) {
       console.error('Logout failed:', error);
     }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSearchClear = () => {
+    setInputValue('');
+    clearSearch();
   };
 
   const userMenuItems = [
@@ -84,8 +113,11 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           <Input
             placeholder="Find articles..."
             prefix={<SearchOutlined />}
+            suffix={inputValue ? <CloseOutlined onClick={handleSearchClear} style={{ cursor: 'pointer' }} /> : null}
             className={styles.searchInput}
             style={{ width: 340, marginRight: 24 }}
+            value={inputValue}
+            onChange={handleSearchChange}
           />
           <div style={{ flex: 1 }} />
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">

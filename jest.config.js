@@ -7,14 +7,21 @@ export default {
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      useESM: true,
+    }],
   },
   testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
-  },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$))'
+  ],
+  globals: {
+    'import.meta': {
+      env: {
+        VITE_OPENWEATHER_API_KEY: 'test-api-key'
+      }
+    }
+  }
 }; 
