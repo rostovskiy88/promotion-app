@@ -74,7 +74,11 @@ const ArticleDetails: React.FC = () => {
           <strong>Author:</strong> {article.authorName}
         </Paragraph>
         <Paragraph>
-          <strong>Created:</strong> {new Date(article.createdAt.toDate()).toLocaleDateString()}
+          <strong>Created:</strong> {new Date(
+            typeof article.createdAt === 'string' 
+              ? article.createdAt 
+              : article.createdAt.toDate()
+          ).toLocaleDateString()}
         </Paragraph>
         <div style={{ marginTop: '20px' }}>
           <Paragraph>{article.content}</Paragraph>

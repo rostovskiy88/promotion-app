@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Select, message } from 'antd';
+import React, { useEffect } from 'react';
+import { Button, Select } from 'antd';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
 import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import { useNavigate } from 'react-router-dom';
-import { getArticles, deleteArticle, searchArticles } from '../../services/articleService';
-import { Article } from '../../types/article';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
 import styles from './Dashboard.module.css';
 import { formatArticleDate } from '../../utils/formatArticleDate';
 import { addSampleArticles } from '../../utils/addSampleArticles';
-import { useSearch } from '../../contexts/SearchContext';
+import { useArticles, useUI } from '../../hooks/useRedux';
 
 const { Option } = Select;
 
@@ -18,36 +16,66 @@ const categories = ['All Categories', 'Productivity', 'Media', 'Business'];
 const sortOptions = ['Ascending', 'Descending'];
 
 const Dashboard: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
-  const [sortOrder, setSortOrder] = useState<'Ascending' | 'Descending'>('Descending');
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const firestoreUser = useFirestoreUser();
-  const { searchTerm, isSearching, setIsSearching } = useSearch();
+  
+  // 🔥 NOW USING REDUX INSTEAD OF LOCAL STATE!
+  const {
+    articles: allArticles,
+    filteredArticles,
+    loading,
+    error,
+    selectedCategory,
+    sortOrder,
+    searchTerm, // 🎯 Using Redux search term instead of context
+    isSearching: reduxIsSearching,
+    fetchArticles,
+    searchArticles,
+    deleteArticle,
+    setCategory,
+    setSortOrder,
+    clearError
+  } = useArticles();
+  
+  const { showNotification, setGlobalLoading } = useUI();
 
   useEffect(() => {
+    // Initial fetch using Redux
     fetchArticles();
-  }, [selectedCategory, sortOrder, searchTerm]);
+  }, []);
 
-  const fetchArticles = async () => {
-    try {
-      setLoading(true);
-      setIsSearching(true);
-      
-      let fetchedArticles;
-      if (searchTerm.trim()) {
-        fetchedArticles = await searchArticles(searchTerm, selectedCategory, sortOrder);
-      } else {
-        fetchedArticles = await getArticles(selectedCategory, sortOrder);
-      }
-      
-      setArticles(fetchedArticles as Article[]);
-    } catch (error) {
-      message.error('Failed to fetch articles');
-    } finally {
-      setLoading(false);
-      setIsSearching(false);
+  useEffect(() => {
+    // Watch Redux search term changes and search accordingly
+    if (searchTerm.trim()) {
+      searchArticles(searchTerm, selectedCategory, sortOrder);
+    } else {
+      fetchArticles(selectedCategory, sortOrder);
+    }
+  }, [searchTerm, selectedCategory, sortOrder]);
+
+  useEffect(() => {
+    // Handle errors with Redux UI notifications
+    if (error) {
+      showNotification('error', 'Error', error);
+      clearError();
+    }
+  }, [error]);
+
+  const handleCategoryChange = (category: string) => {
+    setCategory(category); // Redux action
+    if (searchTerm.trim()) {
+      searchArticles(searchTerm, category, sortOrder);
+    } else {
+      fetchArticles(category, sortOrder);
+    }
+  };
+
+  const handleSortChange = (sort: 'Ascending' | 'Descending') => {
+    setSortOrder(sort); // Redux action
+    if (searchTerm.trim()) {
+      searchArticles(searchTerm, selectedCategory, sort);
+    } else {
+      fetchArticles(selectedCategory, sort);
     }
   };
 
@@ -57,21 +85,26 @@ const Dashboard: React.FC = () => {
 
   const handleDelete = async (articleId: string) => {
     try {
-      await deleteArticle(articleId);
-      message.success('Article deleted successfully');
-      fetchArticles();
+      setGlobalLoading(true); // Redux UI loading
+      await deleteArticle(articleId); // Redux async thunk
+      showNotification('success', 'Success', 'Article deleted successfully'); // Redux notification
     } catch (error) {
-      message.error('Failed to delete article');
+      showNotification('error', 'Error', 'Failed to delete article');
+    } finally {
+      setGlobalLoading(false);
     }
   };
 
   const handleAddSampleArticles = async () => {
     try {
+      setGlobalLoading(true);
       await addSampleArticles();
-      message.success('Sample articles added successfully!');
-      fetchArticles();
+      showNotification('success', 'Success', 'Sample articles added successfully!');
+      fetchArticles(); // Refresh via Redux
     } catch (error) {
-      message.error('Failed to add sample articles');
+      showNotification('error', 'Error', 'Failed to add sample articles');
+    } finally {
+      setGlobalLoading(false);
     }
   };
 
@@ -86,12 +119,15 @@ const Dashboard: React.FC = () => {
     if (searchTerm.trim()) {
       return (
         <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
-          {articles.length} article{articles.length !== 1 ? 's' : ''} found
+          {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''} found
         </span>
       );
     }
     return null;
   };
+
+  // Use Redux state for rendering
+  const articlesToShow = searchTerm.trim() ? filteredArticles : allArticles;
 
   return (
     <div className={styles.dashboardContainer}>
@@ -106,7 +142,7 @@ const Dashboard: React.FC = () => {
             <span style={{ color: '#b0b4ba', fontWeight: 500 }}>
               Show: <Select
                 value={selectedCategory}
-                onChange={setSelectedCategory}
+                onChange={handleCategoryChange}
                 variant="borderless"
                 style={{ fontWeight: 600, color: '#222', minWidth: 140 }}
                 dropdownStyle={{ minWidth: 180 }}
@@ -121,7 +157,7 @@ const Dashboard: React.FC = () => {
             <span style={{ color: '#b0b4ba', fontWeight: 500 }}>Sort by:</span>
             <Select
               value={sortOrder}
-              onChange={setSortOrder}
+              onChange={handleSortChange}
               variant="borderless"
               style={{ fontWeight: 700, color: '#222', minWidth: 100, marginLeft: 4 }}
               dropdownStyle={{ minWidth: 140 }}
@@ -132,9 +168,10 @@ const Dashboard: React.FC = () => {
             </Select>
           </span>
         </div>
-        {loading ? (
+        
+        {loading || reduxIsSearching ? (
           <div style={{ textAlign: 'center', padding: '48px 0' }}>Loading...</div>
-        ) : articles.length === 0 ? (
+        ) : articlesToShow.length === 0 ? (
           searchTerm.trim() ? (
             <div style={{ textAlign: 'center', padding: '48px 0' }}>
               <h3>No articles found for "{searchTerm}"</h3>
@@ -145,11 +182,15 @@ const Dashboard: React.FC = () => {
           )
         ) : (
           <div className={styles.articlesGrid}>
-            {articles.map(article => (
+            {articlesToShow.map(article => (
               <ArticleCard
                 key={article.id}
                 category={article.category ?? ''}
-                date={formatArticleDate(article.createdAt.toDate())}
+                date={formatArticleDate(
+                  typeof article.createdAt === 'string' 
+                    ? new Date(article.createdAt) 
+                    : article.createdAt.toDate()
+                )}
                 title={article.title}
                 description={article.content ?? ''}
                 authorName={firestoreUser ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() || 'Anonymous' : 'Anonymous'}

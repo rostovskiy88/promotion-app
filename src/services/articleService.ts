@@ -1,7 +1,6 @@
-import { collection, addDoc, Timestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, or } from 'firebase/firestore';
+import { collection, addDoc, Timestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Article } from '../types/article';
-import { getDoc } from 'firebase/firestore';
 
 export async function addArticle(article: Omit<Article, 'createdAt'>) {
   return await addDoc(collection(db, 'articles'), {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Typography, Spin, Dropdown, Modal, AutoComplete, message } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
-import httpClient from '../../services/httpClient';
+import axios from 'axios';
 import './WeatherWidget.css';
 
 const { Title, Text } = Typography;
@@ -31,11 +31,26 @@ const WeatherWidget: React.FC = () => {
     setError(null);
     try {
       const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+      if (!apiKey) {
+        console.warn('OpenWeather API key not configured');
+        setError('Weather service not configured');
+        setLoading(false);
+        return;
+      }
+      
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
-      const res = await httpClient.get(url);
-      setWeather(res.data);
+      
+      // Use direct axios call to avoid HTTP client interceptors
+      const response = await axios.get(url);
+      setWeather(response.data);
     } catch (e: any) {
-      setError('Unable to load weather data.');
+      console.warn('Weather API error:', e.message);
+      // Handle different error types gracefully
+      if (e.message?.includes('CORS') || e.message?.includes('Network Error')) {
+        setError('Weather temporarily unavailable');
+      } else {
+        setError('Unable to load weather data');
+      }
       setWeather(null);
     } finally {
       setLoading(false);
@@ -92,8 +107,9 @@ const WeatherWidget: React.FC = () => {
       
       const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(value)}&limit=5&appid=${apiKey}`;
       
-      const res = await httpClient.get(url);
-      const options: CityOption[] = res.data.map((item: any) => ({
+      // Use direct axios call to avoid HTTP client interceptors
+      const response = await axios.get(url);
+      const options: CityOption[] = response.data.map((item: any) => ({
         value: `${item.name}${item.state ? ', ' + item.state : ''}, ${item.country}`,
         label: `${item.name}${item.state ? ', ' + item.state : ''}, ${item.country}`,
         lat: item.lat,

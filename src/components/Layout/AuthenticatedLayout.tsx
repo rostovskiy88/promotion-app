@@ -1,145 +1,289 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Input, Avatar, Dropdown, Divider } from 'antd';
-import {
-  DashboardOutlined,
-  UserOutlined,
+import React, { useState, useEffect, useCallback } from 'react';
+import { Layout, Menu, Input, Button, Avatar, Dropdown, Switch, Badge } from 'antd';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { 
+  DashboardOutlined, 
+  FileTextOutlined, 
+  UserOutlined, 
+  LogoutOutlined, 
   SearchOutlined,
-  DownOutlined,
-  CloseOutlined
+  CloseOutlined,
+  BulbOutlined,
+  BellOutlined
 } from '@ant-design/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../store/slices/authSlice';
-import { RootState, AppDispatch } from '../../store';
-import styles from './AuthenticatedLayout.module.css';
-import Logo from '../Logo/Logo';
+import { logout } from '../../services/authService';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
-import { useSearch } from '../../contexts/SearchContext';
+import { useUI, useAuth, useArticles } from '../../hooks/useRedux';
+import styles from './AuthenticatedLayout.module.css';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Content, Sider } = Layout;
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector((state: RootState) => state.auth.user);
   const firestoreUser = useFirestoreUser();
-  const { searchTerm, setSearchTerm, clearSearch } = useSearch();
-  const [inputValue, setInputValue] = useState('');
+  
+  // Redux hooks
+  const auth = useAuth();
+  const { 
+    theme, 
+    notifications, 
+    globalLoading,
+    sidebarCollapsed,
+    toggleTheme,
+    setSidebarCollapsed,
+    clearNotifications
+  } = useUI();
+  
+  const { setSearchTerm: setReduxSearchTerm, clearSearch: clearReduxSearch } = useArticles();
 
-  // Debounce search term
+  // Sync Redux sidebar state with local state
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearchTerm(inputValue);
-    }, 300); // 300ms delay
+    setCollapsed(sidebarCollapsed);
+  }, [sidebarCollapsed]);
 
-    return () => clearTimeout(timer);
-  }, [inputValue, setSearchTerm]);
+  const handleSidebarToggle = (collapsed: boolean) => {
+    setCollapsed(collapsed);
+    setSidebarCollapsed(collapsed);
+  };
 
-  // Sync input value with search term when search is cleared
+  // Debounced search - updates Redux
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setReduxSearchTerm(value);
+    }, 300),
+    [setReduxSearchTerm]
+  );
+
   useEffect(() => {
-    if (searchTerm === '') {
+    debouncedSearch(inputValue);
+    
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [inputValue, debouncedSearch]);
+
+  // Clear search when navigating away from dashboard
+  useEffect(() => {
+    if (!location.pathname.includes('/dashboard')) {
+      clearReduxSearch();
       setInputValue('');
     }
-  }, [searchTerm]);
+  }, [location.pathname, clearReduxSearch]);
 
-  const menuItems = [
-    {
-      key: '/dashboard',
-      icon: <DashboardOutlined />,
-      label: 'Dashboard',
-    },
-    // Add more menu items here if needed
-  ];
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
 
-  const handleMenuClick = ({ key }: { key: string }) => {
-    navigate(key);
+  const handleClearSearch = () => {
+    setInputValue('');
+    clearReduxSearch();
   };
 
   const handleLogout = async () => {
     try {
-      await dispatch(logout()).unwrap();
+      await logout();
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+  const userMenu = {
+    items: [
+      {
+        key: 'theme',
+        label: (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <BulbOutlined />
+            <span>Dark Mode</span>
+            <Switch 
+              size="small"
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+            />
+          </div>
+        ),
+      },
+      {
+        key: 'notifications',
+        label: (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Badge count={notifications.length} size="small">
+              <BellOutlined />
+            </Badge>
+            <span>Notifications</span>
+            {notifications.length > 0 && (
+              <Button 
+                size="small" 
+                type="link" 
+                onClick={clearNotifications}
+                style={{ padding: 0, height: 'auto' }}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        ),
+      },
+      {
+        type: 'divider' as const,
+      },
+      {
+        key: 'profile',
+        icon: <UserOutlined />,
+        label: <Link to="/dashboard/profile">Profile</Link>,
+      },
+      {
+        key: 'logout',
+        icon: <LogoutOutlined />,
+        label: 'Logout',
+        onClick: handleLogout,
+      },
+    ],
   };
 
-  const handleSearchClear = () => {
-    setInputValue('');
-    clearSearch();
-  };
-
-  const userMenuItems = [
+  const menuItems = [
     {
-      key: 'edit-profile',
-      label: 'Edit profile',
-      onClick: () => navigate('/dashboard/profile'),
+      key: '/dashboard',
+      icon: <DashboardOutlined />,
+      label: <Link to="/dashboard">Dashboard</Link>,
     },
     {
-      key: 'logout',
-      label: 'Logout',
-      onClick: handleLogout,
+      key: '/dashboard/add-article',
+      icon: <FileTextOutlined />,
+      label: <Link to="/dashboard/add-article">Add Article</Link>,
     },
   ];
 
+  const selectedKeys = [location.pathname];
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={200} theme="light" className={styles.sider}>
+      <Sider 
+        collapsible 
+        collapsed={collapsed} 
+        onCollapse={handleSidebarToggle}
+        className={styles.sider}
+      >
         <div className={styles.logo}>
-          <Logo />
+          <span>RP</span>
         </div>
-        <div className={styles.sectionTitle}>Main Menu</div>
         <Menu
-          theme="light"
+          theme="dark"
           mode="inline"
-          selectedKeys={[location.pathname]}
+          selectedKeys={selectedKeys}
           items={menuItems}
-          onClick={handleMenuClick}
-          style={{ border: 'none', background: 'transparent', marginTop: 16 }}
         />
-        <Divider style={{ margin: '24px 0 0 0' }} />
       </Sider>
+      
       <Layout>
-        <Header style={{ background: '#fff', display: 'flex', alignItems: 'center', height: 64, padding: '0 24px' }}>
-          <Input
-            placeholder="Find articles..."
-            prefix={<SearchOutlined />}
-            suffix={inputValue ? <CloseOutlined onClick={handleSearchClear} style={{ cursor: 'pointer' }} /> : null}
-            className={styles.searchInput}
-            style={{ width: 340, marginRight: 24 }}
-            value={inputValue}
-            onChange={handleSearchChange}
-          />
-          <div style={{ flex: 1 }} />
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <Avatar src={firestoreUser?.avatarUrl || undefined}>
-                {!firestoreUser?.avatarUrl && (firestoreUser?.firstName?.[0] || user?.displayName?.[0] || user?.email?.[0] || <UserOutlined />)}
-              </Avatar>
-              <span style={{ color: '#1557ff', fontWeight: 500 }}>
-                {firestoreUser
-                  ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() || user?.displayName || user?.email
-                  : user?.displayName || user?.email}
-              </span>
-              <DownOutlined style={{ fontSize: 12, color: '#b0b4ba' }} />
-            </div>
-          </Dropdown>
+        <Header className={styles.header}>
+          <div className={styles.headerLeft}>
+            {location.pathname === '/dashboard' && (
+              <div className={styles.searchContainer}>
+                <Input
+                  placeholder="Find articles..."
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  style={{ 
+                    width: 340, 
+                    marginRight: 24,
+                    borderRadius: '20px',
+                    background: '#f7f8fa',
+                    border: 'none',
+                    fontSize: '16px',
+                    height: '40px'
+                  }}
+                  prefix={<SearchOutlined />}
+                  suffix={
+                    inputValue ? (
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<CloseOutlined />}
+                        onClick={handleClearSearch}
+                        style={{ 
+                          border: 'none', 
+                          background: 'transparent',
+                          height: '32px',
+                          width: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 0,
+                          margin: 0
+                        }}
+                      />
+                    ) : null
+                  }
+                />
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.headerRight}>
+            {/* Global Loading Indicator */}
+            {globalLoading && (
+              <div style={{ marginRight: '16px', color: '#1890ff' }}>
+                Loading...
+              </div>
+            )}
+            
+            {/* Notifications Badge */}
+            <Badge count={notifications.length} style={{ marginRight: '16px' }}>
+              <BellOutlined style={{ fontSize: '16px', color: '#666' }} />
+            </Badge>
+            
+            <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']}>
+              <div className={styles.userSection}>
+                <Avatar 
+                  src={firestoreUser?.avatarUrl} 
+                  icon={<UserOutlined />}
+                  className={styles.avatar}
+                />
+                <span className={styles.username}>
+                  {auth.userDisplayName}
+                </span>
+              </div>
+            </Dropdown>
+          </div>
         </Header>
-        <Content style={{ margin: 24, padding: 24, background: '#fff', minHeight: 280, borderRadius: 4 }}>
+        
+        <Content className={styles.content}>
           {children}
         </Content>
       </Layout>
     </Layout>
   );
 };
+
+// Debounce utility function
+function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  wait: number
+): T & { cancel: () => void } {
+  let timeout: NodeJS.Timeout | null = null;
+
+  const debounced = (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+
+  debounced.cancel = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
+
+  return debounced as T & { cancel: () => void };
+}
 
 export default AuthenticatedLayout; 

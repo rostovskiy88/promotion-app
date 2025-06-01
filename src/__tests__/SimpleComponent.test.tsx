@@ -56,7 +56,7 @@ describe('Simple Jest Tests', () => {
 
   it('should demonstrate middleware pattern testing', () => {
     // Mock middleware function
-    const middleware = (req: any, res: any, next: any) => {
+    const middleware = (req: any, _res: any, next: any) => {
       req.processed = true;
       next();
     };
