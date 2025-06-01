@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Card, Form, Input, Button, Upload, Col, Select, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useFirestoreUser } from '../hooks/useFirestoreUser';
-import { addArticle } from '../services/articleService';
+import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import { addArticle } from '../../services/articleService';
 import styles from './AddArticle.module.css';
 
 const categories = ['Productivity', 'Media', 'Business'];
@@ -52,7 +52,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   return (
     <div className={styles.container}>
       <Col>
-        <Card className={styles.card} styles={undefined} bodyStyle={undefined}>
+        <Card className={styles.card}>
           <div className={styles.header}>Add new article</div>
           <Form
             form={form}

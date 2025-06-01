@@ -7,7 +7,7 @@ import Register from '../pages/Register/Register';
 import Terms from '../pages/Terms/Terms';
 import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
 import EditProfile from '../pages/Profile/Profile';
-import AddArticle from '../pages/AddArticle';
+import AddArticle from '../pages/AddArticle/AddArticle';
 import ArticleDetails from '../components/ArticleDetails/ArticleDetails';
 
 export const router = createBrowserRouter([
