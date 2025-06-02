@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, Button, Row, Col, Upload, message, Avatar } from 'antd';
+import { Card, Tabs, Form, Input, Button, Row, Col, message, Avatar } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { UploadOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import { updateUser } from '../../services/userService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import AvatarUpload from '../../components/AvatarUpload/AvatarUpload';
 
 const EditProfile: React.FC = () => {
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
-  const [avatarForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState('1');
-  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const [avatarUploadVisible, setAvatarUploadVisible] = useState(false);
+  const [avatarUploadMode, setAvatarUploadMode] = useState<'upload' | 'edit'>('upload');
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const userDisplayInfo = useUserDisplayInfo();
@@ -27,7 +28,6 @@ const EditProfile: React.FC = () => {
         lastName: userDisplayInfo.lastName,
         age: userDisplayInfo.age || '',
       });
-      setAvatarPreview(userDisplayInfo.avatarUrl);
     }
   }, [userDisplayInfo.firestoreUser, form]);
 
@@ -66,28 +66,34 @@ const EditProfile: React.FC = () => {
     }
   };
 
-  const handleAvatarCancel = () => {
-    avatarForm.resetFields();
-    navigate('/dashboard');
-  };
+  const handleAvatarSuccess = async (avatarUrl: string) => {
+    if (!user?.uid) {
+      message.error('User not authenticated');
+      return;
+    }
 
-  const handleAvatarSave = async (values: any) => {
-    if (values.avatar && values.avatar[0]) {
-      const file = values.avatar[0].originFileObj;
-      const url = URL.createObjectURL(file);
-      setAvatarPreview(url);
-      if (!user?.uid) {
-        message.error('User not authenticated');
-        return;
-      }
-      await updateUser(user.uid, { avatarUrl: url });
-      console.log('Updated user avatar in Firestore:', url);
+    try {
+      await updateUser(user.uid, { avatarUrl });
+      console.log('Updated user avatar in Firestore:', avatarUrl);
       
       // Refresh user data to update the header immediately
       await userDisplayInfo.refresh();
       
       message.success('Avatar updated!');
+    } catch (error) {
+      console.error('Failed to update avatar in database:', error);
+      message.error('Failed to save avatar');
     }
+  };
+
+  const handleEditAvatar = () => {
+    setAvatarUploadMode('edit');
+    setAvatarUploadVisible(true);
+  };
+
+  const handleChangeAvatar = () => {
+    setAvatarUploadMode('upload');
+    setAvatarUploadVisible(true);
   };
 
   const handlePasswordCancel = () => {
@@ -157,46 +163,66 @@ const EditProfile: React.FC = () => {
                 label: <span className={activeTab === '2' ? styles.activeTab : styles.inactiveTab}>User Avatar</span>,
                 children: <>
                   <div className={styles.sectionTitle}>Change your photo</div>
-                  <div className={styles.coverLabel}>Drag and drop file below</div>
-                  {avatarPreview && (
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-                      <Avatar src={avatarPreview} size={80} style={{ border: '2px solid #e5e6e8' }} />
-                    </div>
-                  )}
-                  <Form
-                    form={avatarForm}
-                    layout="vertical"
-                    onFinish={handleAvatarSave}
-                    requiredMark={false}
-                  >
-                    <Form.Item
-                      name="avatar"
-                      valuePropName="fileList"
-                      getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}
-                    >
-                      <Upload.Dragger
-                        name="avatar"
-                        accept=".jpg,.png"
-                        showUploadList={false}
-                        beforeUpload={() => false}
-                        className={styles.uploadDragger}
-                      >
-                        <div className={styles.uploadContent}>
-                          <UploadOutlined style={{ fontSize: 32, color: '#b0b4ba' }} />
-                          <div className={styles.uploadHint}>
-                            .JPG .PNG<br />
-                            <span className={styles.uploadLink}>You can also upload files by <span>clicking here</span></span>
-                          </div>
-                        </div>
-                      </Upload.Dragger>
-                    </Form.Item>
-                    <Form.Item className={styles.buttonRow}>
-                      <div className={styles.buttonGroup}>
-                        <Button onClick={handleAvatarCancel} className={`${styles.button} ${styles.cancelButton}`}>Cancel</Button>
-                        <Button type="primary" htmlType="submit" className={`${styles.button} ${styles.saveButton}`}>Save</Button>
+                  <div className={styles.coverLabel}>Upload and crop your avatar</div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+                    {/* Current Avatar Display */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ position: 'relative' }}>
+                        <Avatar 
+                          src={userDisplayInfo.avatarUrl} 
+                          size={120} 
+                          style={{ 
+                            border: '3px solid #e5e6e8',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                          }} 
+                        >
+                          {userDisplayInfo.displayName.charAt(0)}
+                        </Avatar>
+                        <Button
+                          type="primary"
+                          shape="circle"
+                          icon={<EditOutlined />}
+                          size="small"
+                          style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            right: 0,
+                            border: '2px solid white',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                          }}
+                          onClick={handleEditAvatar}
+                        />
                       </div>
-                    </Form.Item>
-                  </Form>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#333' }}>
+                          {userDisplayInfo.displayName || 'User'}
+                        </div>
+                        <div style={{ fontSize: '14px', color: '#666' }}>
+                          Click the edit button to change your avatar
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Upload Button */}
+                    <Button 
+                      type="primary" 
+                      size="large"
+                      icon={<EditOutlined />}
+                      onClick={handleChangeAvatar}
+                      className={`${styles.button} ${styles.saveButton}`}
+                    >
+                      Change Avatar
+                    </Button>
+                  </div>
+
+                  <Form.Item className={styles.buttonRow} style={{ marginTop: '32px' }}>
+                    <div className={styles.buttonGroup}>
+                      <Button onClick={() => navigate('/dashboard')} className={`${styles.button} ${styles.cancelButton}`}>
+                        Back to Dashboard
+                      </Button>
+                    </div>
+                  </Form.Item>
                 </>,
               },
               {
@@ -236,6 +262,16 @@ const EditProfile: React.FC = () => {
             ]}
           />
         </Card>
+
+        {/* Avatar Upload Modal */}
+        <AvatarUpload
+          visible={avatarUploadVisible}
+          onCancel={() => setAvatarUploadVisible(false)}
+          onSuccess={handleAvatarSuccess}
+          userId={user?.uid || ''}
+          mode={avatarUploadMode}
+          currentAvatarUrl={userDisplayInfo.avatarUrl}
+        />
       </Col>
     </Row>
   );
