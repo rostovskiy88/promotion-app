@@ -46,10 +46,14 @@ const serializeArticle = (article: any): Article => ({
 // Async thunks
 export const fetchArticles = createAsyncThunk(
   'articles/fetchArticles',
-  async ({ category, sortOrder }: { category?: string; sortOrder?: 'Ascending' | 'Descending' }) => {
+  async ({ category, sortOrder, preservePage = false }: { 
+    category?: string; 
+    sortOrder?: 'Ascending' | 'Descending';
+    preservePage?: boolean;
+  }) => {
     const articles = await getArticles(category, sortOrder);
     // Convert Firebase Timestamps to serializable format
-    return articles.map(serializeArticle);
+    return { articles: articles.map(serializeArticle), preservePage };
   }
 );
 
@@ -118,11 +122,13 @@ const articlesSlice = createSlice({
       })
       .addCase(fetchArticles.fulfilled, (state, action) => {
         state.loading = false;
-        state.articles = action.payload as Article[];
-        state.filteredArticles = action.payload as Article[];
-        state.totalArticles = action.payload.length;
-        // Reset to first page when new data is loaded
-        state.currentPage = 1;
+        state.articles = action.payload.articles as Article[];
+        state.filteredArticles = action.payload.articles as Article[];
+        state.totalArticles = action.payload.articles.length;
+        // Only reset to first page when it's a new data load (not preserving page)
+        if (!action.payload.preservePage) {
+          state.currentPage = 1;
+        }
       })
       .addCase(fetchArticles.rejected, (state, action) => {
         state.loading = false;

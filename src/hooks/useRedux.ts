@@ -1,5 +1,6 @@
 // Custom hooks for easier Redux usage across the app
 
+import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { 
   fetchArticles, 
@@ -61,20 +62,20 @@ export const useArticles = () => {
     paginationInfo,
     
     // Actions
-    fetchArticles: (category?: string, sortOrder?: 'Ascending' | 'Descending') => 
-      dispatch(fetchArticles({ category, sortOrder })),
+    fetchArticles: useCallback((category?: string, sortOrder?: 'Ascending' | 'Descending', preservePage?: boolean) => 
+      dispatch(fetchArticles({ category, sortOrder, preservePage })), [dispatch]),
     
-    searchArticles: (searchTerm: string, category?: string, sortOrder?: 'Ascending' | 'Descending') =>
-      dispatch(searchArticlesThunk({ searchTerm, category, sortOrder })),
+    searchArticles: useCallback((searchTerm: string, category?: string, sortOrder?: 'Ascending' | 'Descending') =>
+      dispatch(searchArticlesThunk({ searchTerm, category, sortOrder })), [dispatch]),
     
-    deleteArticle: (id: string) => dispatch(deleteArticleThunk(id)),
+    deleteArticle: useCallback((id: string) => dispatch(deleteArticleThunk(id)), [dispatch]),
     
-    setCategory: (category: string) => dispatch(setCategory(category)),
-    setSortOrder: (order: 'Ascending' | 'Descending') => dispatch(setSortOrder(order)),
-    setSearchTerm: (term: string) => dispatch(setSearchTerm(term)),
-    clearSearch: () => dispatch(clearSearch()),
-    setPage: (page: number) => dispatch(setPage(page)),
-    clearError: () => dispatch(clearArticleError()),
+    setCategory: useCallback((category: string) => dispatch(setCategory(category)), [dispatch]),
+    setSortOrder: useCallback((order: 'Ascending' | 'Descending') => dispatch(setSortOrder(order)), [dispatch]),
+    setSearchTerm: useCallback((term: string) => dispatch(setSearchTerm(term)), [dispatch]),
+    clearSearch: useCallback(() => dispatch(clearSearch()), [dispatch]),
+    setPage: useCallback((page: number) => dispatch(setPage(page)), [dispatch]),
+    clearError: useCallback(() => dispatch(clearArticleError()), [dispatch]),
   };
 };
 

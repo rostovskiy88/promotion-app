@@ -47,26 +47,18 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     // Initial fetch using Redux
     fetchArticles();
-  }, []);
-
-  useEffect(() => {
-    // Watch Redux search term changes and search accordingly
-    if (searchTerm.trim()) {
-      searchArticles(searchTerm, selectedCategory, sortOrder);
-    } else {
-      fetchArticles(selectedCategory, sortOrder);
-    }
-  }, [searchTerm, selectedCategory, sortOrder]);
+  }, [fetchArticles]);
 
   useEffect(() => {
     // Handle errors with Redux UI (just clear them for now)
     if (error) {
       clearError();
     }
-  }, [error]);
+  }, [error, clearError]);
 
   const handleCategoryChange = (category: string) => {
-    setCategory(category); // Redux action
+    setCategory(category); // Redux action - this will reset page and trigger refetch
+    // Manually trigger the appropriate fetch after category change
     if (searchTerm.trim()) {
       searchArticles(searchTerm, category, sortOrder);
     } else {
@@ -76,6 +68,7 @@ const Dashboard: React.FC = () => {
 
   const handleSortChange = (sort: 'Ascending' | 'Descending') => {
     setSortOrder(sort); // Redux action
+    // Manually trigger the appropriate fetch after sort change
     if (searchTerm.trim()) {
       searchArticles(searchTerm, selectedCategory, sort);
     } else {
