@@ -33,10 +33,32 @@ import {
 export const useArticles = () => {
   const dispatch = useAppDispatch();
   const articlesState = useAppSelector(state => state.articles);
+  
+  // Computed selectors for pagination
+  const articlesToShow = articlesState.searchTerm.trim() 
+    ? articlesState.filteredArticles 
+    : articlesState.articles;
+    
+  const totalCount = articlesToShow.length;
+  const startIndex = (articlesState.currentPage - 1) * articlesState.articlesPerPage;
+  const endIndex = startIndex + articlesState.articlesPerPage;
+  const currentPageArticles = articlesToShow.slice(startIndex, endIndex);
+  
+  const paginationInfo = {
+    startItem: (articlesState.currentPage - 1) * articlesState.articlesPerPage + 1,
+    endItem: Math.min(articlesState.currentPage * articlesState.articlesPerPage, totalCount),
+    totalCount,
+    hasMultiplePages: totalCount > articlesState.articlesPerPage,
+  };
 
   return {
     // State
     ...articlesState,
+    
+    // Computed pagination data
+    articlesToShow,
+    currentPageArticles,
+    paginationInfo,
     
     // Actions
     fetchArticles: (category?: string, sortOrder?: 'Ascending' | 'Descending') => 

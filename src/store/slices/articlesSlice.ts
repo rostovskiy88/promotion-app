@@ -96,6 +96,7 @@ const articlesSlice = createSlice({
     clearSearch: (state) => {
       state.searchTerm = '';
       state.filteredArticles = state.articles;
+      state.totalArticles = state.articles.length;
       state.currentPage = 1;
     },
     
@@ -120,6 +121,8 @@ const articlesSlice = createSlice({
         state.articles = action.payload as Article[];
         state.filteredArticles = action.payload as Article[];
         state.totalArticles = action.payload.length;
+        // Reset to first page when new data is loaded
+        state.currentPage = 1;
       })
       .addCase(fetchArticles.rejected, (state, action) => {
         state.loading = false;
@@ -136,6 +139,8 @@ const articlesSlice = createSlice({
         state.filteredArticles = action.payload.articles as Article[];
         state.searchTerm = action.payload.searchTerm;
         state.totalArticles = action.payload.articles.length;
+        // Reset to first page when search results change
+        state.currentPage = 1;
       })
       .addCase(searchArticlesThunk.rejected, (state, action) => {
         state.isSearching = false;
@@ -148,6 +153,14 @@ const articlesSlice = createSlice({
         state.articles = state.articles.filter(article => article.id !== articleId);
         state.filteredArticles = state.filteredArticles.filter(article => article.id !== articleId);
         state.totalArticles = state.filteredArticles.length;
+        
+        // Adjust current page if necessary after deletion
+        const maxPage = Math.ceil(state.totalArticles / state.articlesPerPage);
+        if (state.currentPage > maxPage && maxPage > 0) {
+          state.currentPage = maxPage;
+        } else if (state.totalArticles === 0) {
+          state.currentPage = 1;
+        }
       });
   },
 });

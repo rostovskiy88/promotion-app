@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Select } from 'antd';
+import { Button, Select, Pagination } from 'antd';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
 import ArticleCard from '../../components/ArticleCard/ArticleCard';
@@ -29,11 +29,16 @@ const Dashboard: React.FC = () => {
     sortOrder,
     searchTerm, // 🎯 Using Redux search term instead of context
     isSearching: reduxIsSearching,
+    currentPage,
+    articlesPerPage,
+    currentPageArticles,
+    paginationInfo,
     fetchArticles,
     searchArticles,
     deleteArticle,
     setCategory,
     setSortOrder,
+    setPage,
     clearError
   } = useArticles();
   
@@ -113,18 +118,36 @@ const Dashboard: React.FC = () => {
   };
 
   const getResultsCount = () => {
+    const { totalCount, startItem, endItem } = paginationInfo;
+    
     if (searchTerm.trim()) {
       return (
         <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
-          {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''} found
+          {totalCount} article{totalCount !== 1 ? 's' : ''} found
+          {totalCount > 0 && ` • Showing ${startItem}-${endItem}`}
         </span>
       );
     }
+    
+    if (totalCount > 0) {
+      return (
+        <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
+          Showing {startItem}-{endItem} of {totalCount} articles
+        </span>
+      );
+    }
+    
     return null;
   };
 
-  // Use Redux state for rendering
-  const articlesToShow = searchTerm.trim() ? filteredArticles : allArticles;
+  const handlePageChange = (page: number) => {
+    setPage(page);
+    // Scroll to top of articles section when page changes
+    document.querySelector(`.${styles.articlesSection}`)?.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    });
+  };
 
   return (
     <div className={styles.dashboardContainer}>
@@ -168,7 +191,7 @@ const Dashboard: React.FC = () => {
         
         {loading || reduxIsSearching ? (
           <div style={{ textAlign: 'center', padding: '48px 0' }}>Loading...</div>
-        ) : articlesToShow.length === 0 ? (
+        ) : paginationInfo.totalCount === 0 ? (
           searchTerm.trim() ? (
             <div style={{ textAlign: 'center', padding: '48px 0' }}>
               <h3>No articles found for "{searchTerm}"</h3>
@@ -179,7 +202,7 @@ const Dashboard: React.FC = () => {
           )
         ) : (
           <div className={styles.articlesGrid}>
-            {articlesToShow.map(article => (
+            {currentPageArticles.map(article => (
               <ArticleCard
                 key={article.id}
                 category={article.category ?? ''}
@@ -198,6 +221,31 @@ const Dashboard: React.FC = () => {
                 onDelete={() => article.id && handleDelete(article.id)}
               />
             ))}
+          </div>
+        )}
+        
+        {/* Pagination */}
+        {paginationInfo.hasMultiplePages && (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            marginTop: '32px',
+            paddingTop: '24px',
+            borderTop: '1px solid #f0f0f0'
+          }}>
+            <Pagination
+              current={currentPage}
+              total={paginationInfo.totalCount}
+              pageSize={articlesPerPage}
+              onChange={handlePageChange}
+              showSizeChanger={false}
+              showQuickJumper={paginationInfo.totalCount > 50}
+              showTotal={(total, range) => 
+                `${range[0]}-${range[1]} of ${total} articles`
+              }
+              size="default"
+              style={{ userSelect: 'none' }}
+            />
           </div>
         )}
       </div>
