@@ -3,13 +3,16 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import EditProfile from './Profile';
-import { getUserById, updateUser } from '../../services/userService';
+import { updateUser } from '../../services/userService';
+import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 
 // Mock the userService
 jest.mock('../../services/userService', () => ({
-  getUserById: jest.fn(),
   updateUser: jest.fn(),
 }));
+
+// Mock the useUserDisplayInfo hook
+jest.mock('../../hooks/useUserDisplayInfo');
 
 // Mock the Redux store
 const mockStore = configureStore({
@@ -30,15 +33,34 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
+const mockUserDisplayInfo = {
+  displayName: 'John Doe',
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@example.com',
+  avatarUrl: 'test-avatar-url',
+  age: 25,
+  firestoreUser: {
+    uid: 'test-uid',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    avatarUrl: 'test-avatar-url',
+    age: 25,
+  },
+  authUser: {
+    uid: 'test-uid',
+    email: 'john.doe@example.com',
+  },
+  isAuthenticated: true,
+  refresh: jest.fn(),
+};
+
 describe('EditProfile Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (getUserById as jest.Mock).mockResolvedValue({
-      firstName: 'John',
-      lastName: 'Doe',
-      age: 25,
-      avatarUrl: 'test-avatar-url',
-    });
+    (useUserDisplayInfo as jest.Mock).mockReturnValue(mockUserDisplayInfo);
+    (updateUser as jest.Mock).mockResolvedValue({});
   });
 
   const renderComponent = () => {
@@ -54,23 +76,20 @@ describe('EditProfile Component', () => {
   it('renders the component with initial user data', async () => {
     renderComponent();
 
-    // Wait for the user data to be loaded
+    // Wait for the component to render with user data
     await waitFor(() => {
-      expect(getUserById).toHaveBeenCalledWith('test-uid');
+      expect(screen.getByDisplayValue('John')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Doe')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('25')).toBeInTheDocument();
     });
-
-    // Check if the form fields are populated with user data
-    expect(screen.getByDisplayValue('John')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Doe')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('25')).toBeInTheDocument();
   });
 
   it('handles form submission correctly', async () => {
     renderComponent();
 
-    // Wait for the user data to be loaded
+    // Wait for the component to render
     await waitFor(() => {
-      expect(getUserById).toHaveBeenCalledWith('test-uid');
+      expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
     // Update form fields
@@ -100,9 +119,9 @@ describe('EditProfile Component', () => {
   it('handles cancel button click', async () => {
     renderComponent();
 
-    // Wait for the user data to be loaded
+    // Wait for the component to render
     await waitFor(() => {
-      expect(getUserById).toHaveBeenCalledWith('test-uid');
+      expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
     // Click cancel button
@@ -115,9 +134,9 @@ describe('EditProfile Component', () => {
   it('validates age input', async () => {
     renderComponent();
 
-    // Wait for the user data to be loaded
+    // Wait for the component to render
     await waitFor(() => {
-      expect(getUserById).toHaveBeenCalledWith('test-uid');
+      expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
     // Try to enter invalid age

@@ -9,8 +9,8 @@ export const useUserDisplayInfo = () => {
   const auth = useAuth();
   const firestoreUserData = useFirestoreUser();
   
-  // Extract the user data and refresh function
-  const { refresh, ...firestoreUser } = firestoreUserData;
+  // Handle null case safely
+  const { refresh, ...firestoreUser } = firestoreUserData || { refresh: () => Promise.resolve() };
 
   // Prioritize Firestore data, fallback to Firebase Auth data
   const displayName = (() => {

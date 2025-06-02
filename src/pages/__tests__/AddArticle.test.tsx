@@ -6,11 +6,11 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import AddArticle from '../AddArticle/AddArticle';
 import { addArticle } from '../../services/articleService';
-import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 
 // Mock dependencies
 jest.mock('../../services/articleService');
-jest.mock('../../hooks/useFirestoreUser');
+jest.mock('../../hooks/useUserDisplayInfo');
 jest.mock('antd', () => ({
   ...jest.requireActual('antd'),
   message: {
@@ -35,11 +35,24 @@ const createMockStore = () => configureStore({
 
 // Mock user data
 const mockUser = {
-  uid: 'test-uid',
+  displayName: 'John Doe',
   firstName: 'John',
   lastName: 'Doe',
   email: 'john.doe@example.com',
   avatarUrl: 'https://example.com/avatar.jpg',
+  firestoreUser: {
+    uid: 'test-uid',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    avatarUrl: 'https://example.com/avatar.jpg',
+  },
+  authUser: {
+    uid: 'test-uid',
+    email: 'john.doe@example.com',
+  },
+  isAuthenticated: true,
+  refresh: jest.fn(),
 };
 
 // Test wrapper component
@@ -56,7 +69,7 @@ describe('AddArticle Component', () => {
   
   beforeEach(() => {
     jest.clearAllMocks();
-    (useFirestoreUser as jest.Mock).mockReturnValue(mockUser);
+    (useUserDisplayInfo as jest.Mock).mockReturnValue(mockUser);
     (addArticle as jest.Mock).mockResolvedValue({ id: 'test-article-id' });
   });
 
@@ -76,7 +89,7 @@ describe('AddArticle Component', () => {
       expect(screen.getByLabelText('Category')).toBeInTheDocument();
       expect(screen.getByLabelText('Title')).toBeInTheDocument();
       expect(screen.getByLabelText('Text')).toBeInTheDocument();
-      expect(screen.getByText('Add cover photo')).toBeInTheDocument();
+      expect(screen.getByText('Add cover photo (optional)')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /publish/i })).toBeInTheDocument();
     });
@@ -155,7 +168,7 @@ describe('AddArticle Component', () => {
       
       const fileInput = document.querySelector('input[type="file"]');
       expect(fileInput).toBeInTheDocument();
-      expect(fileInput).toHaveAttribute('accept', '.jpg,.png');
+      expect(fileInput).toHaveAttribute('accept', '.jpg,.jpeg,.png');
     });
   });
 
@@ -177,7 +190,19 @@ describe('AddArticle Component', () => {
     });
 
     test('shows user information is needed message when user is null', async () => {
-      (useFirestoreUser as jest.Mock).mockReturnValue(null);
+      // Mock a null user state
+      (useUserDisplayInfo as jest.Mock).mockReturnValue({
+        displayName: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        avatarUrl: '',
+        firestoreUser: null,
+        authUser: null,
+        isAuthenticated: false,
+        refresh: jest.fn(),
+      });
+      
       renderAddArticle();
       
       // Just verify the component renders without user - use a different selector
