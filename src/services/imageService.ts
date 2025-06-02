@@ -118,7 +118,6 @@ export const generateImagePath = (
   folder: string = 'articles'
 ): string => {
   const timestamp = Date.now();
-  const extension = originalFileName.split('.').pop();
   const cleanFileName = originalFileName.replace(/[^a-zA-Z0-9.]/g, '_');
   const path = `${folder}/${userId}/${timestamp}_${cleanFileName}`;
   console.log('Generated image path:', path);

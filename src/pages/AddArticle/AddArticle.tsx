@@ -19,20 +19,26 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   const userDisplayInfo = useUserDisplayInfo();
 
   const handleFinish = async (values: any) => {
-    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser) {
+    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser?.uid) {
       message.error('User information not found');
+      return;
+    }
+
+    // Validate required form values
+    if (!values.title || !values.text || !values.category) {
+      message.error('Please fill in all required fields');
       return;
     }
 
     setLoading(true);
     try {
       const articleData = {
-        title: values.title,
-        content: values.text,
-        category: values.category,
+        title: values.title as string,
+        content: values.text as string,
+        category: values.category as string,
         authorId: userDisplayInfo.firestoreUser.uid,
-        authorName: userDisplayInfo.displayName,
-        authorAvatar: userDisplayInfo.avatarUrl,
+        authorName: userDisplayInfo.displayName || 'Unknown Author',
+        authorAvatar: userDisplayInfo.avatarUrl || '',
         imageUrl: '/default-article-cover.png', // Default image
       };
 

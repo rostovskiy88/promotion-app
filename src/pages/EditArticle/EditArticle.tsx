@@ -62,17 +62,23 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   }, [id, navigate, form]);
 
   const handleFinish = async (values: any) => {
-    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser || !article?.id) {
+    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser?.uid || !article?.id) {
       message.error('Unable to update article');
+      return;
+    }
+
+    // Validate required form values
+    if (!values.title || !values.text || !values.category) {
+      message.error('Please fill in all required fields');
       return;
     }
 
     setLoading(true);
     try {
       const updateData: Partial<Article> = {
-        title: values.title,
-        content: values.text,
-        category: values.category,
+        title: values.title as string,
+        content: values.text as string,
+        category: values.category as string,
       };
 
       // Upload new image if one was selected
