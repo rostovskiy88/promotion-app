@@ -4,7 +4,7 @@ import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
 import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import { useNavigate } from 'react-router-dom';
-import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 import styles from './Dashboard.module.css';
 import { formatArticleDate } from '../../utils/formatArticleDate';
 import { addSampleArticles } from '../../utils/addSampleArticles';
@@ -17,7 +17,7 @@ const sortOptions = ['Ascending', 'Descending'];
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const firestoreUser = useFirestoreUser();
+  const userDisplayInfo = useUserDisplayInfo();
   
   // 🔥 NOW USING REDUX INSTEAD OF LOCAL STATE!
   const {
@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
     clearError
   } = useArticles();
   
-  const { showNotification, setGlobalLoading } = useUI();
+  const { setGlobalLoading } = useUI();
 
   useEffect(() => {
     // Initial fetch using Redux
@@ -54,9 +54,8 @@ const Dashboard: React.FC = () => {
   }, [searchTerm, selectedCategory, sortOrder]);
 
   useEffect(() => {
-    // Handle errors with Redux UI notifications
+    // Handle errors with Redux UI (just clear them for now)
     if (error) {
-      showNotification('error', 'Error', error);
       clearError();
     }
   }, [error]);
@@ -87,9 +86,8 @@ const Dashboard: React.FC = () => {
     try {
       setGlobalLoading(true); // Redux UI loading
       await deleteArticle(articleId); // Redux async thunk
-      showNotification('success', 'Success', 'Article deleted successfully'); // Redux notification
     } catch (error) {
-      showNotification('error', 'Error', 'Failed to delete article');
+      console.error('Failed to delete article:', error);
     } finally {
       setGlobalLoading(false);
     }
@@ -99,10 +97,9 @@ const Dashboard: React.FC = () => {
     try {
       setGlobalLoading(true);
       await addSampleArticles();
-      showNotification('success', 'Success', 'Sample articles added successfully!');
       fetchArticles(); // Refresh via Redux
     } catch (error) {
-      showNotification('error', 'Error', 'Failed to add sample articles');
+      console.error('Failed to add sample articles:', error);
     } finally {
       setGlobalLoading(false);
     }
@@ -193,8 +190,8 @@ const Dashboard: React.FC = () => {
                 )}
                 title={article.title}
                 description={article.content ?? ''}
-                authorName={firestoreUser ? `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim() || 'Anonymous' : 'Anonymous'}
-                authorAvatar={firestoreUser?.avatarUrl || ''}
+                authorName={userDisplayInfo.displayName || 'Anonymous'}
+                authorAvatar={userDisplayInfo.avatarUrl}
                 readMoreUrl={`/dashboard/article/${article.id}`}
                 imageUrl={typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'}
                 onEdit={() => article.id && handleEdit(article.id)}

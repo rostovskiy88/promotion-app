@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Card, Button, Switch, Select, Tag, Space, Divider } from 'antd';
-import { BellOutlined, CloudOutlined, DatabaseOutlined, SettingOutlined } from '@ant-design/icons';
+import { CloudOutlined, DatabaseOutlined, SettingOutlined } from '@ant-design/icons';
 import { useArticles, useUI, useCache, useAuth, useAppState } from '../../hooks/useRedux';
 
 const { Option } = Select;
@@ -27,11 +27,6 @@ const ReduxUsageExample: React.FC = () => {
   // Example: Theme switching
   const handleThemeChange = (checked: boolean) => {
     ui.setTheme(checked ? 'dark' : 'light');
-  };
-
-  // Example: Show notification
-  const showExampleNotification = () => {
-    ui.showNotification('success', 'Redux is working!', 'All slices are properly configured');
   };
 
   // Example: Cache some data
@@ -132,9 +127,6 @@ const ReduxUsageExample: React.FC = () => {
           </div>
           
           <Space>
-            <Button icon={<BellOutlined />} onClick={showExampleNotification}>
-              Show Notification
-            </Button>
             <Button icon={<SettingOutlined />} onClick={openExampleModal}>
               Open Modal
             </Button>
@@ -209,8 +201,8 @@ const MyComponent = () => {
   // Fetch articles
   articles.fetchArticles('Technology', 'Descending');
   
-  // Show notification
-  ui.showNotification('success', 'Hello World!');
+  // Toggle theme
+  ui.toggleTheme();
   
   // Check auth status
   if (auth.isAuthenticated) {

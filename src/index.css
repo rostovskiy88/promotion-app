@@ -15,9 +15,7 @@
   --color-border: #E5E7EB;
   --color-disabled: #F2F4F7;
 
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -29,6 +27,118 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  
+  /* Light theme variables */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f8fa;
+  --bg-tertiary: #f5f5f5;
+  --text-tertiary: #bdbdbd;
+  --shadow: 0 4px 24px rgba(0,0,0,0.06);
+  --sidebar-bg: #ffffff;
+  --header-bg: #ffffff;
+  --card-bg: #ffffff;
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-tertiary: #9ca3af;
+  --border-color: #374151;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --sidebar-bg: #1f1f1f;
+  --header-bg: #1f1f1f;
+  --card-bg: #2a2a2a;
+}
+
+/* Apply theme variables globally */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Global Ant Design overrides for dark theme */
+[data-theme="dark"] .ant-layout {
+  background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ant-layout-header {
+  background: var(--header-bg) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-layout-sider {
+  background: var(--sidebar-bg) !important;
+  border-right: 1.5px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-menu {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-menu-item {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-menu-item-selected {
+  background: #1557ff20 !important;
+  color: #1557ff !important;
+}
+
+[data-theme="dark"] .ant-card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-input {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+[data-theme="dark"] .ant-select-selector {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-dropdown {
+  background: var(--card-bg) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu-item {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu-item:hover {
+  background: #1557ff20 !important;
+}
+
+[data-theme="dark"] .ant-btn {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-btn-primary {
+  background: #1557ff !important;
+  border: 1px solid #1557ff !important;
 }
 
 * {
@@ -107,18 +217,35 @@ button:focus-visible {
 }
 
 /* AntD Dropdown Menu Customization (Global) */
-.ant-dropdown-menu-root {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  min-width: 120px;
+.ant-dropdown {
+  border-radius: 8px !important;
 }
-.ant-dropdown-menu-root .ant-dropdown-menu-item {
-  border-radius: 0 !important;
-  padding: 10px 16px !important;
+
+.ant-dropdown-menu {
+  border-radius: 8px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--card-bg) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+.ant-dropdown-menu-item {
+  border-radius: 4px !important;
+  margin: 4px 8px !important;
+  padding: 8px 12px !important;
   transition: background 0.2s, color 0.2s;
 }
-.ant-dropdown-menu-root .ant-dropdown-menu-item:hover,
-.ant-dropdown-menu-root .ant-dropdown-menu-item-active {
+
+.ant-dropdown-menu-item:hover,
+.ant-dropdown-menu-item-active {
   color: #1557ff !important;
-  background: #f5f8ff !important;
+  background: #1557ff15 !important;
+}
+
+.ant-dropdown-menu-divider {
+  margin: 8px 0 !important;
+  border-color: var(--border-color) !important;
 }

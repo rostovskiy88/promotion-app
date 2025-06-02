@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { UploadOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
-import { getUserById, updateUser } from '../../services/userService';
+import { updateUser } from '../../services/userService';
+import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 
 const EditProfile: React.FC = () => {
   const [form] = Form.useForm();
@@ -16,22 +17,19 @@ const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
+  const userDisplayInfo = useUserDisplayInfo();
 
   useEffect(() => {
-    if (user?.uid) {
-      getUserById(user.uid).then((userData) => {
-        console.log('Fetched user data from Firestore:', userData);
-        if (userData) {
-          form.setFieldsValue({
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            age: userData.age || '',
-          });
-          setAvatarPreview(userData.avatarUrl);
-        }
+    if (userDisplayInfo.firestoreUser) {
+      console.log('Fetched user data from Firestore:', userDisplayInfo.firestoreUser);
+      form.setFieldsValue({
+        firstName: userDisplayInfo.firstName,
+        lastName: userDisplayInfo.lastName,
+        age: userDisplayInfo.age || '',
       });
+      setAvatarPreview(userDisplayInfo.avatarUrl);
     }
-  }, [user, form]);
+  }, [userDisplayInfo.firestoreUser, form]);
 
   const isGoogleUser = user?.providerData?.some(
     (provider) => provider.providerId === 'google.com'
@@ -56,6 +54,10 @@ const EditProfile: React.FC = () => {
         age: values.age,
       });
       console.log('Updated user profile in Firestore:', values);
+      
+      // Refresh user data to update the header immediately
+      await userDisplayInfo.refresh();
+      
       message.success('Profile updated!');
     } catch (e) {
       message.error('Failed to update profile');
@@ -80,6 +82,10 @@ const EditProfile: React.FC = () => {
       }
       await updateUser(user.uid, { avatarUrl: url });
       console.log('Updated user avatar in Firestore:', url);
+      
+      // Refresh user data to update the header immediately
+      await userDisplayInfo.refresh();
+      
       message.success('Avatar updated!');
     }
   };

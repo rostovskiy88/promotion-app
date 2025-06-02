@@ -3,12 +3,12 @@
 }
 
 .sider {
-  background: #fff;
+  background: var(--sidebar-bg);
   box-shadow: none;
   display: flex;
   flex-direction: column;
   padding-right: 0;
-  border-right: 1.5px solid #e5e6e8;
+  border-right: 1.5px solid var(--border-color);
   min-height: 100vh;
 }
 
@@ -18,12 +18,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--border-color);
   box-sizing: border-box;
 }
 
 .sectionTitle {
-  color: #b0b4ba;
+  color: var(--text-tertiary);
   font-size: 20px;
   font-weight: 500;
   margin: 24px 0 8px 24px;
@@ -52,18 +52,19 @@
 .menuDivider {
   margin: 24px 0 0 0;
   border: none;
-  border-top: 1px solid #ececec;
+  border-top: 1px solid var(--border-color);
 }
 
 .header {
   height: 64px;
   padding: 0 24px;
-  background: white;
+  background: var(--header-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  box-shadow: var(--shadow);
   box-sizing: border-box;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .headerLeft {
@@ -84,12 +85,13 @@
 
 .searchInput {
   border-radius: 20px;
-  background: #f7f8fa;
+  background: var(--bg-secondary);
   border: none;
   font-size: 16px;
   height: 40px !important;
   box-shadow: none;
   outline: none;
+  color: var(--text-primary);
 }
 
 .userSection {
@@ -103,12 +105,12 @@
 }
 
 .userSection:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-secondary);
 }
 
 .username {
   font-size: 14px;
-  color: rgba(0, 0, 0, 0.85);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -120,7 +122,7 @@
 .content {
   margin: 24px;
   padding: 24px;
-  background: white;
+  background: var(--bg-primary);
   min-height: 280px;
   border-radius: 4px;
 }

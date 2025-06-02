@@ -1,13 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Notification {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  message: string;
-  description?: string;
-  duration?: number;
-}
-
 interface Modal {
   id: string;
   isOpen: boolean;
@@ -17,6 +9,21 @@ interface Modal {
   onCancel?: () => void;
 }
 
+// Function to get initial theme from localStorage
+const getInitialTheme = (): 'light' | 'dark' => {
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      return savedTheme;
+    }
+    // Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+  }
+  return 'light';
+};
+
 interface UIState {
   // Theme
   theme: 'light' | 'dark';
@@ -24,9 +31,6 @@ interface UIState {
   // Loading states
   globalLoading: boolean;
   loadingStates: Record<string, boolean>;
-  
-  // Notifications
-  notifications: Notification[];
   
   // Modals
   modals: Record<string, Modal>;
@@ -48,10 +52,9 @@ interface UIState {
 }
 
 const initialState: UIState = {
-  theme: 'light',
+  theme: getInitialTheme(),
   globalLoading: false,
   loadingStates: {},
-  notifications: [],
   modals: {},
   sidebarCollapsed: false,
   breadcrumbs: [{ title: 'Dashboard' }],
@@ -71,10 +74,18 @@ const uiSlice = createSlice({
     // Theme
     setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
       state.theme = action.payload;
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', action.payload);
+      }
     },
     
     toggleTheme: (state) => {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', state.theme);
+      }
     },
     
     // Loading states
@@ -88,24 +99,6 @@ const uiSlice = createSlice({
     
     clearLoadingState: (state, action: PayloadAction<string>) => {
       delete state.loadingStates[action.payload];
-    },
-    
-    // Notifications
-    addNotification: (state, action: PayloadAction<Omit<Notification, 'id'>>) => {
-      const notification: Notification = {
-        id: Date.now().toString(),
-        duration: 4.5,
-        ...action.payload,
-      };
-      state.notifications.push(notification);
-    },
-    
-    removeNotification: (state, action: PayloadAction<string>) => {
-      state.notifications = state.notifications.filter(n => n.id !== action.payload);
-    },
-    
-    clearNotifications: (state) => {
-      state.notifications = [];
     },
     
     // Modals
@@ -158,9 +151,6 @@ export const {
   setGlobalLoading,
   setLoadingState,
   clearLoadingState,
-  addNotification,
-  removeNotification,
-  clearNotifications,
   openModal,
   closeModal,
   removeModal,

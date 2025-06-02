@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,6 +18,7 @@ console.log('Firebase Config:', {
   usingEnvVars: true,
   authDomain: firebaseConfig.authDomain,
   projectId: firebaseConfig.projectId,
+  storageBucket: firebaseConfig.storageBucket,
   hasApiKey: !!firebaseConfig.apiKey
 });
 
@@ -48,6 +50,15 @@ facebookProvider.setCustomParameters({
 
 console.log('Firebase Auth initialized:', !!auth);
 
+// Initialize Firestore
+const db = getFirestore(app);
+console.log('Firestore initialized:', !!db);
+
+// Initialize Storage
+const storage = getStorage(app);
+console.log('Firebase Storage initialized:', !!storage);
+console.log('Storage bucket:', storage.app.options.storageBucket);
+
 export { auth, googleProvider, facebookProvider };
-export const db = getFirestore(app);
+export { db, storage };
 export default app; 

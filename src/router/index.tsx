@@ -8,7 +8,9 @@ import Terms from '../pages/Terms/Terms';
 import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
 import EditProfile from '../pages/Profile/Profile';
 import AddArticle from '../pages/AddArticle/AddArticle';
+import EditArticle from '../pages/EditArticle/EditArticle';
 import ArticleDetails from '../components/ArticleDetails/ArticleDetails';
+import NotFound from '../pages/NotFound/NotFound';
 
 export const router = createBrowserRouter([
   {
@@ -62,6 +64,26 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/dashboard/edit-article/:id',
+    element: (
+      <ProtectedRoute>
+        <AuthenticatedLayout>
+          <EditArticle onCancel={() => window.history.back()} />
+        </AuthenticatedLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/dashboard/article/:id',
+    element: (
+      <ProtectedRoute>
+        <AuthenticatedLayout>
+          <ArticleDetails />
+        </AuthenticatedLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/article/:id',
     element: (
       <ProtectedRoute>
@@ -70,6 +92,11 @@ export const router = createBrowserRouter([
         </AuthenticatedLayout>
       </ProtectedRoute>
     ),
+  },
+  // Catch-all route for 404 errors
+  {
+    path: '*',
+    element: <NotFound />,
   },
   // Add more routes here
 ]); 

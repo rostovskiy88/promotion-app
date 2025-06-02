@@ -1,66 +1,105 @@
-import React, { useState } from 'react';
-import { Card, Form, Input, Button, Upload, Col, Select, message, Progress } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Form, Input, Button, Upload, Col, Select, message, Spin, Progress } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
-import { addArticle } from '../../services/articleService';
+import { getArticleById, updateArticle } from '../../services/articleService';
 import { uploadImage, validateImageFile, generateImagePath } from '../../services/imageService';
-import styles from './AddArticle.module.css';
+import { Article } from '../../types/article';
+import styles from '../AddArticle/AddArticle.module.css';
 
 const categories = ['Productivity', 'Media', 'Business'];
 
-const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
+const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [article, setArticle] = useState<Article | null>(null);
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const userDisplayInfo = useUserDisplayInfo();
 
+  useEffect(() => {
+    const fetchArticle = async () => {
+      if (!id) {
+        message.error('Article ID not provided');
+        navigate('/dashboard');
+        return;
+      }
+
+      try {
+        setInitialLoading(true);
+        const articleData = await getArticleById(id);
+        if (articleData) {
+          setArticle(articleData);
+          // Prefill the form with existing data
+          form.setFieldsValue({
+            title: articleData.title,
+            text: articleData.content,
+            category: articleData.category,
+          });
+          // Set current image preview
+          if (articleData.imageUrl && typeof articleData.imageUrl === 'string') {
+            setImagePreview(articleData.imageUrl);
+          }
+        } else {
+          message.error('Article not found');
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error('Error fetching article:', error);
+        message.error('Failed to load article');
+        navigate('/dashboard');
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    fetchArticle();
+  }, [id, navigate, form]);
+
   const handleFinish = async (values: any) => {
-    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser) {
-      message.error('User information not found');
+    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser || !article?.id) {
+      message.error('Unable to update article');
       return;
     }
 
     setLoading(true);
     try {
-      const articleData = {
+      const updateData: Partial<Article> = {
         title: values.title,
         content: values.text,
         category: values.category,
-        authorId: userDisplayInfo.firestoreUser.uid,
-        authorName: userDisplayInfo.displayName,
-        authorAvatar: userDisplayInfo.avatarUrl,
-        imageUrl: '/default-article-cover.png', // Default image
       };
 
-      // Upload image if one was selected
+      // Upload new image if one was selected
       if (imageFile) {
         setIsUploading(true);
         try {
           console.log('Starting image upload process...');
           const imagePath = generateImagePath(userDisplayInfo.firestoreUser.uid, imageFile.name);
           const imageUrl = await uploadImage(imageFile, imagePath);
-          articleData.imageUrl = imageUrl;
+          updateData.imageUrl = imageUrl;
           message.success('Image uploaded successfully!');
         } catch (error: any) {
           console.error('Image upload failed:', error);
           message.error(`Failed to upload image: ${error.message}`);
-          return; // Don't proceed with article creation if image upload fails
+          return; // Don't proceed with article update if image upload fails
         } finally {
           setIsUploading(false);
         }
       }
 
-      console.log('Creating article with data:', articleData);
-      await addArticle(articleData);
-      message.success('Article created successfully!');
+      console.log('Updating article with data:', updateData);
+      await updateArticle(article.id, updateData);
+      message.success('Article updated successfully!');
       navigate('/dashboard');
     } catch (error: any) {
-      console.error('Article creation failed:', error);
-      message.error(`Failed to create article: ${error.message || 'Unknown error'}`);
+      console.error('Article update failed:', error);
+      message.error(`Failed to update article: ${error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
       setIsUploading(false); // Ensure uploading state is reset
@@ -87,7 +126,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
   const handleRemoveImage = () => {
     setImageFile(null);
-    setImagePreview(null);
+    setImagePreview(article?.imageUrl && typeof article.imageUrl === 'string' ? article.imageUrl : null);
     message.info('Image removed');
   };
 
@@ -99,11 +138,23 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     }
   };
 
+  if (initialLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!article) {
+    return null; // Will be redirected
+  }
+
   return (
     <div className={styles.container}>
       <Col>
         <Card className={styles.card}>
-          <div className={styles.header}>Add new article</div>
+          <div className={styles.header}>Edit article</div>
 
           <Form
             form={form}
@@ -126,7 +177,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
             </Form.Item>
             
             <div className={styles.coverLabel}>
-              Add cover photo (optional)
+              {imageFile ? 'Update cover photo' : 'Cover photo'} (optional)
               {imageFile && (
                 <Button 
                   type="link" 
@@ -156,7 +207,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
                     }} 
                   />
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                    Selected: {imageFile?.name}
+                    {imageFile ? `New image: ${imageFile.name}` : 'Current image'}
                   </div>
                 </div>
               )}
@@ -199,7 +250,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
                 loading={loading || isUploading}
                 disabled={isUploading}
               >
-                {isUploading ? 'Publishing...' : 'Publish'}
+                {isUploading ? 'Updating...' : 'Update Article'}
               </Button>
             </Form.Item>
           </Form>
@@ -209,4 +260,4 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   );
 };
 
-export default AddArticle; 
+export default EditArticle; 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Layout, Menu, Input, Button, Avatar, Dropdown, Switch, Badge } from 'antd';
+import { Layout, Menu, Input, Button, Avatar, Dropdown, Switch } from 'antd';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   DashboardOutlined, 
@@ -8,12 +8,11 @@ import {
   LogoutOutlined, 
   SearchOutlined,
   CloseOutlined,
-  BulbOutlined,
-  BellOutlined
+  BulbOutlined
 } from '@ant-design/icons';
 import { logout } from '../../services/authService';
-import { useFirestoreUser } from '../../hooks/useFirestoreUser';
-import { useUI, useAuth, useArticles } from '../../hooks/useRedux';
+import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import { useUI, useArticles } from '../../hooks/useRedux';
 import Logo from '../Logo/Logo';
 import styles from './AuthenticatedLayout.module.css';
 
@@ -28,21 +27,25 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const firestoreUser = useFirestoreUser();
+  
+  // Use the new hook that prioritizes Firestore data over Firebase Auth data
+  const userDisplayInfo = useUserDisplayInfo();
   
   // Redux hooks
-  const auth = useAuth();
   const { 
     theme, 
-    notifications, 
     globalLoading,
     sidebarCollapsed,
     toggleTheme,
-    setSidebarCollapsed,
-    clearNotifications
+    setSidebarCollapsed
   } = useUI();
   
   const { setSearchTerm: setReduxSearchTerm, clearSearch: clearReduxSearch } = useArticles();
+
+  // Apply theme to document body
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
 
   // Sync Redux sidebar state with local state
   useEffect(() => {
@@ -101,7 +104,10 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
       {
         key: 'theme',
         label: (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div 
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <BulbOutlined />
             <span>Dark Mode</span>
             <Switch 
@@ -109,27 +115,6 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
               checked={theme === 'dark'}
               onChange={toggleTheme}
             />
-          </div>
-        ),
-      },
-      {
-        key: 'notifications',
-        label: (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Badge count={notifications.length} size="small">
-              <BellOutlined />
-            </Badge>
-            <span>Notifications</span>
-            {notifications.length > 0 && (
-              <Button 
-                size="small" 
-                type="link" 
-                onClick={clearNotifications}
-                style={{ padding: 0, height: 'auto' }}
-              >
-                Clear
-              </Button>
-            )}
           </div>
         ),
       },
@@ -237,20 +222,15 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
               </div>
             )}
             
-            {/* Notifications Badge */}
-            <Badge count={notifications.length} style={{ marginRight: '16px' }}>
-              <BellOutlined style={{ fontSize: '16px', color: '#666' }} />
-            </Badge>
-            
             <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']}>
               <div className={styles.userSection}>
                 <Avatar 
-                  src={firestoreUser?.avatarUrl} 
+                  src={userDisplayInfo.avatarUrl} 
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
                 <span className={styles.username}>
-                  {auth.userDisplayName}
+                  {userDisplayInfo.displayName}
                 </span>
               </div>
             </Dropdown>

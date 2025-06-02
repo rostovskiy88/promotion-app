@@ -16,9 +16,6 @@ import {
   setTheme,
   toggleTheme,
   setGlobalLoading,
-  addNotification,
-  removeNotification,
-  clearNotifications,
   openModal,
   closeModal,
   setBreadcrumbs,
@@ -73,9 +70,6 @@ export const useUI = () => {
     toggleTheme: () => dispatch(toggleTheme()),
     setGlobalLoading: (loading: boolean) => dispatch(setGlobalLoading(loading)),
     
-    showNotification: (type: 'success' | 'error' | 'warning' | 'info', message: string, description?: string) =>
-      dispatch(addNotification({ type, message, description })),
-    
     openModal: (id: string, title?: string, content?: any) =>
       dispatch(openModal({ id, isOpen: true, title, content })),
     
@@ -87,8 +81,6 @@ export const useUI = () => {
     updatePreferences: (preferences: any) => dispatch(updatePreferences(preferences)),
     
     setSidebarCollapsed: (collapsed: boolean) => dispatch(setSidebarCollapsed(collapsed)),
-    removeNotification: (id: string) => dispatch(removeNotification(id)),
-    clearNotifications: () => dispatch(clearNotifications()),
   };
 };
 
