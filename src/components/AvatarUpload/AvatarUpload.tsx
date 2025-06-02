@@ -73,6 +73,11 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       // Get the cropped image as canvas
       const canvas = editorRef.current.getImageScaledToCanvas();
       
+      // Add some debugging
+      console.log('Canvas created successfully, size:', canvas.width, 'x', canvas.height);
+      console.log('Current hostname:', window.location.hostname);
+      console.log('Image source:', typeof image === 'string' ? image.substring(0, 50) + '...' : 'File object');
+      
       // Upload the avatar
       const avatarUrl = await uploadAvatar(canvas, userId);
       
@@ -81,31 +86,62 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       handleClose();
     } catch (error: any) {
       console.error('Avatar upload failed:', error);
+      console.error('Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack?.substring(0, 200)
+      });
       
-      // Handle the tainted canvas error specifically
+      // Check if we're actually in development (localhost) or production
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      console.log('Is localhost?', isLocalhost);
+      
+      // Handle the tainted canvas error
       if (error.message?.includes('tainted') || error.message?.includes('CORS') || error.message?.includes('toBlob')) {
         if (mode === 'edit') {
-          // Show a friendly message and switch to upload mode
-          message.warning({
-            content: (
-              <div>
-                <div style={{ fontWeight: 'bold' }}>Can't save edits in development mode</div>
-                <div style={{ marginTop: '4px', fontSize: '12px' }}>
-                  Browser security prevents editing cloud images locally. Switching to upload mode...
+          if (isLocalhost) {
+            // Only show development message for actual localhost
+            message.warning({
+              content: (
+                <div>
+                  <div style={{ fontWeight: 'bold' }}>Can't save edits in development mode</div>
+                  <div style={{ marginTop: '4px', fontSize: '12px' }}>
+                    Browser security prevents editing cloud images locally. Switching to upload mode...
+                  </div>
                 </div>
-              </div>
-            ),
-            duration: 4,
-          });
-          
-          // Automatically switch to upload mode after a short delay
-          setTimeout(() => {
-            setImage(null);
-            setLoadingImage(false);
-            message.info('You can now upload a new avatar image to replace the current one.');
-          }, 1500);
+              ),
+              duration: 4,
+            });
+            
+            // Automatically switch to upload mode after a short delay
+            setTimeout(() => {
+              setImage(null);
+              setLoadingImage(false);
+              message.info('You can now upload a new avatar image to replace the current one.');
+            }, 1500);
+          } else {
+            // For production, show a different error and try to work around it
+            message.error({
+              content: (
+                <div>
+                  <div style={{ fontWeight: 'bold' }}>Unable to save avatar changes</div>
+                  <div style={{ marginTop: '4px', fontSize: '12px' }}>
+                    There may be a temporary issue. Please try uploading a new image instead.
+                  </div>
+                </div>
+              ),
+              duration: 5,
+            });
+            
+            // For production, switch to upload mode to let user upload new image
+            setTimeout(() => {
+              setImage(null);
+              setLoadingImage(false);
+              message.info('Please upload a new avatar image.');
+            }, 2000);
+          }
         } else {
-          message.error('Unable to process image due to browser security restrictions. Please try a different image.');
+          message.error('Unable to process image. Please try a different image.');
         }
       } else if (error.message?.includes('storage')) {
         message.error('Failed to save avatar to storage. Please check your connection and try again.');
