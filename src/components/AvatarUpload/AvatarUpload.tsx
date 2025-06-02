@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, message, Slider, Space } from 'antd';
 import { UploadOutlined, RotateLeftOutlined, RotateRightOutlined } from '@ant-design/icons';
 import AvatarEditor from 'react-avatar-editor';
-import { validateAvatarFile, uploadAvatar, fetchImageAsBlob } from '../../services/avatarService';
+import { validateAvatarFile, uploadAvatar } from '../../services/avatarService';
 import './AvatarUpload.css';
 
 interface AvatarUploadProps {

@@ -1,6 +1,4 @@
 import { uploadImage, generateImagePath } from './imageService';
-import { storage } from '../config/firebase';
-import { ref, getBlob } from 'firebase/storage';
 
 /**
  * Converts a canvas to a File object
@@ -87,41 +85,4 @@ export const validateAvatarFile = (file: File): { isValid: boolean; error?: stri
   }
 
   return { isValid: true };
-};
-
-/**
- * Fetches an image from Firebase Storage as a blob URL to bypass CORS issues
- */
-export const fetchImageAsBlob = async (imageUrl: string): Promise<string> => {
-  try {
-    console.log('Fetching image as blob from URL:', imageUrl);
-    
-    // Use fetch with proper headers to get the image as blob
-    const response = await fetch(imageUrl, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-      headers: {
-        'Accept': 'image/*',
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    // Get the blob from the response
-    const blob = await response.blob();
-    console.log('Successfully downloaded blob, size:', blob.size, 'bytes');
-    
-    // Create a blob URL that can be used by the image editor
-    const blobUrl = URL.createObjectURL(blob);
-    console.log('Created blob URL:', blobUrl);
-    
-    return blobUrl;
-  } catch (error) {
-    console.error('Error fetching image as blob:', error);
-    console.error('Original URL:', imageUrl);
-    throw error;
-  }
 }; 
