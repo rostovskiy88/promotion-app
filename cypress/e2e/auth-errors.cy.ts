@@ -55,7 +55,7 @@ describe('Authentication Error Handling', () => {
       
       // Should show form validation error first (Ant Design validation)
       cy.get('.ant-form-item-explain-error').should('be.visible');
-      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email');
+      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email address');
       
       // Should NOT reach Firebase because form validation prevents submission
       cy.get('.ant-message').should('not.exist');
@@ -87,7 +87,7 @@ describe('Authentication Error Handling', () => {
       cy.get('button[type="submit"]').click();
       
       // Should show email validation error
-      cy.get('.ant-form-item-explain-error').should('contain', 'Please input your email');
+      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter your email address');
     });
 
     it('should handle empty password field', () => {
@@ -98,7 +98,7 @@ describe('Authentication Error Handling', () => {
       cy.get('button[type="submit"]').click();
       
       // Should show password validation error
-      cy.get('.ant-form-item-explain-error').should('contain', 'Please input your password');
+      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter your password');
     });
 
     it('should show loading state during authentication', () => {
@@ -132,7 +132,7 @@ describe('Authentication Error Handling', () => {
       
       // Should show form validation error
       cy.get('.ant-form-item-explain-error').should('be.visible');
-      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email');
+      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email address');
     });
 
     it('should handle password reset for non-existent email', () => {
@@ -153,7 +153,7 @@ describe('Authentication Error Handling', () => {
       cy.get('button').contains('Reset').click();
       
       // Should show validation error
-      cy.get('.ant-form-item-explain-error').should('contain', 'Please input your email');
+      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter your email address');
     });
   });
 

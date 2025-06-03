@@ -38,14 +38,16 @@ const ForgotPassword = () => {
             onFinish={handleSubmit}
             layout="vertical"
             className={styles.form}
+            validateTrigger="onBlur"
           >
             <Form.Item
               name="email"
               label="Email"
               rules={[
-                { required: true, message: 'Please input your email!' },
-                { type: 'email', message: 'Please enter a valid email!' }
+                { required: true, message: 'Please enter your email address' },
+                { type: 'email', message: 'Please enter a valid email address' }
               ]}
+              validateTrigger="onBlur"
             >
               <Input size="large" placeholder="Enter your email" />
             </Form.Item>

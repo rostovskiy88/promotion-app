@@ -84,6 +84,7 @@ const Register: React.FC = () => {
             onFinish={handleFinish}
             requiredMark={false}
             className={styles.form}
+            validateTrigger="onBlur"
           >
             <div className={styles.row}>
               <Form.Item
@@ -91,6 +92,7 @@ const Register: React.FC = () => {
                 label="Name"
                 rules={[{ required: true, message: 'Please enter your name' }]}
                 className={styles.inputHalf}
+                validateTrigger="onBlur"
               >
                 <Input placeholder="Name" />
               </Form.Item>
@@ -98,7 +100,11 @@ const Register: React.FC = () => {
             <Form.Item
               name="email"
               label="Email Address"
-              rules={[{ required: true, type: 'email', message: 'Enter your email' }]}
+              rules={[
+                { required: true, message: 'Please enter your email address' },
+                { type: 'email', message: 'Please enter a valid email address' }
+              ]}
+              validateTrigger="onBlur"
             >
               <Input placeholder="Enter your email" />
             </Form.Item>
@@ -106,10 +112,11 @@ const Register: React.FC = () => {
               name="password"
               label="Password"
               rules={[
-                { required: true, message: 'Enter your password' },
-                { min: 8, message: 'Must be 8 characters long at least' },
+                { required: true, message: 'Please enter your password' },
+                { min: 8, message: 'Password must be at least 8 characters long' },
               ]}
               hasFeedback
+              validateTrigger="onBlur"
             >
               <Input.Password placeholder="Enter your password" />
             </Form.Item>
@@ -119,16 +126,17 @@ const Register: React.FC = () => {
               dependencies={["password"]}
               hasFeedback
               rules={[
-                { required: true, message: 'Enter your new password again' },
+                { required: true, message: 'Please confirm your password' },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('Passwords do not match!'));
+                    return Promise.reject(new Error('Passwords do not match'));
                   },
                 }),
               ]}
+              validateTrigger="onBlur"
             >
               <Input.Password placeholder="Enter your new password again" />
             </Form.Item>

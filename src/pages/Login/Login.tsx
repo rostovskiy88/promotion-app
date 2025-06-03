@@ -101,15 +101,17 @@ const Login = () => {
             onFinish={handleEmailLogin}
             layout="vertical"
             className={styles.form}
+            validateTrigger="onBlur"
           >
             <Form.Item
               name="email"
               label="Email"
               required
               rules={[
-                { required: true, message: 'Please input your email!' },
-                { type: 'email', message: 'Please enter a valid email!' }
+                { required: true, message: 'Please enter your email address' },
+                { type: 'email', message: 'Please enter a valid email address' }
               ]}
+              validateTrigger="onBlur"
             >
               <Input 
                 placeholder="Enter your email" 
@@ -120,7 +122,8 @@ const Login = () => {
               name="password"
               label="Password"
               required
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[{ required: true, message: 'Please enter your password' }]}
+              validateTrigger="onBlur"
             >
               <Input.Password
                 placeholder="Enter your password"

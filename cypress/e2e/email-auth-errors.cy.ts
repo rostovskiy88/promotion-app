@@ -55,7 +55,7 @@ describe('Email Authentication - Error Messages', () => {
     
     // Should show form validation error, not reach Firebase
     cy.get('.ant-form-item-explain-error', { timeout: 5000 }).should('be.visible');
-    cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email');
+    cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email address');
     
     // Should NOT show Firebase error messages (because form validation prevents submission)
     cy.get('.ant-message').should('not.exist');
