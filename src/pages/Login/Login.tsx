@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
 import { AppDispatch, RootState } from '../../store';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 import styles from './Login.module.css';
 
 interface LoginFormData {
@@ -30,9 +31,10 @@ const Login = () => {
         message.success('Successfully logged in!');
         navigate(from, { replace: true });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Login failed:', err);
-      message.error(error || 'Failed to login');
+      // The error from the thunk is already processed by getAuthErrorMessage
+      message.error(err || 'Failed to login');
     }
   };
 
@@ -47,15 +49,14 @@ const Login = () => {
       }
     } catch (err: any) {
       console.error('Google login error:', {
-        message: err.message,
-        code: err.code,
+        message: err,
         fullError: err
       });
-      // Check if the error is due to popup being closed
-      if (err.code === 'auth/popup-closed-by-user') {
+      // The error is already processed by getAuthErrorMessage, but handle specific cases
+      if (err.includes('cancelled')) {
         message.info('Login cancelled');
       } else {
-        message.error(err.message || 'Failed to login with Google');
+        message.error(err || 'Failed to login with Google');
       }
       // Reset loading state in Redux
       dispatch({ type: 'auth/resetLoading' });
@@ -73,15 +74,14 @@ const Login = () => {
       }
     } catch (err: any) {
       console.error('Facebook login error:', {
-        message: err.message,
-        code: err.code,
+        message: err,
         fullError: err
       });
-      // Check if the error is due to popup being closed
-      if (err.code === 'auth/popup-closed-by-user') {
+      // The error is already processed by getAuthErrorMessage, but handle specific cases
+      if (err.includes('cancelled')) {
         message.info('Login cancelled');
       } else {
-        message.error(err.message || 'Failed to login with Facebook');
+        message.error(err || 'Failed to login with Facebook');
       }
       // Reset loading state in Redux
       dispatch({ type: 'auth/resetLoading' });

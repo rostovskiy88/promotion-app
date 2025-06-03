@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 import styles from './Register.module.css';
 import registerImage from '../../assets/sign-up.png';
 import { createOrGetUser } from '../../services/userService';
@@ -34,7 +35,7 @@ const Register: React.FC = () => {
       message.success('Registration successful!');
       navigate('/dashboard');
     } catch (error: any) {
-      message.error(error.message);
+      message.error(getAuthErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -45,18 +46,27 @@ const Register: React.FC = () => {
       await dispatch(loginWithGoogle()).unwrap();
       navigate('/dashboard');
     } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user') {
+      if (err.includes('cancelled')) {
         message.info('Login cancelled');
       } else {
-        message.error(err.message || 'Failed to login with Google');
+        message.error(err || 'Failed to login with Google');
       }
       dispatch({ type: 'auth/resetLoading' });
     }
   };
 
   const handleFacebook = async () => {
-    await dispatch(loginWithFacebook());
-    navigate('/dashboard');
+    try {
+      await dispatch(loginWithFacebook()).unwrap();
+      navigate('/dashboard');
+    } catch (err: any) {
+      if (err.includes('cancelled')) {
+        message.info('Login cancelled');
+      } else {
+        message.error(err || 'Failed to login with Facebook');
+      }
+      dispatch({ type: 'auth/resetLoading' });
+    }
   };
 
   return (

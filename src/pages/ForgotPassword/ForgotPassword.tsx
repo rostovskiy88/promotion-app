@@ -2,6 +2,7 @@ import { Form, Input, Button, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 import styles from './ForgotPassword.module.css';
 
 interface ForgotPasswordFormData {
@@ -17,7 +18,7 @@ const ForgotPassword = () => {
       message.success('Password reset email sent! Please check your inbox.');
       form.resetFields();
     } catch (error: any) {
-      message.error(error.message || 'Failed to send reset email');
+      message.error(getAuthErrorMessage(error));
     }
   };
 

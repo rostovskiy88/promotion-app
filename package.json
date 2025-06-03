@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "jest",
     "test:e2e": "cypress run",
-    "test:e2e:open": "cypress open"
+    "test:e2e:open": "cypress open",
+    "test:auth-errors": "cypress run --spec 'cypress/e2e/*auth*.cy.ts'",
+    "test:auth-errors:open": "cypress open --spec 'cypress/e2e/*auth*.cy.ts'"
   },
   "dependencies": {
     "@firebase/auth": "^1.10.0",

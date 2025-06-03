@@ -3,6 +3,7 @@ import { User } from 'firebase/auth';
 import { authService } from '../../services/auth';
 import { SerializedUser } from '../../types/auth';
 import { createOrGetUser } from '../../services/userService';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 
 interface AuthState {
   user: SerializedUser | null;
@@ -50,7 +51,7 @@ export const loginWithGoogle = createAsyncThunk(
       });
       return serializeUser(result.user);
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
@@ -68,7 +69,7 @@ export const loginWithFacebook = createAsyncThunk(
       });
       return serializeUser(result.user);
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
@@ -86,7 +87,7 @@ export const loginWithEmail = createAsyncThunk(
       });
       return serializeUser(result.user);
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
@@ -101,7 +102,7 @@ export const logout = createAsyncThunk(
       sessionStorage.removeItem('auth');
       return null;
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
