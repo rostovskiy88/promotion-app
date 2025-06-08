@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { 
   fetchArticles, 
+  loadMoreArticles,
   searchArticlesThunk, 
   deleteArticleThunk,
   setCategory, 
@@ -11,7 +12,8 @@ import {
   setSearchTerm, 
   clearSearch, 
   setPage, 
-  clearError as clearArticleError 
+  clearError as clearArticleError,
+  resetArticles
 } from '../store/slices/articlesSlice';
 import {
   setTheme,
@@ -35,35 +37,35 @@ export const useArticles = () => {
   const dispatch = useAppDispatch();
   const articlesState = useAppSelector(state => state.articles);
   
-  // Computed selectors for pagination
-  const articlesToShow = articlesState.searchTerm.trim() 
-    ? articlesState.filteredArticles 
-    : articlesState.articles;
-    
-  const totalCount = articlesToShow.length;
-  const startIndex = (articlesState.currentPage - 1) * articlesState.articlesPerPage;
-  const endIndex = startIndex + articlesState.articlesPerPage;
-  const currentPageArticles = articlesToShow.slice(startIndex, endIndex);
+  // For search results, we still use pagination
+  const searchArticlesToShow = articlesState.filteredArticles;
+  const searchTotalCount = searchArticlesToShow.length;
+  const searchStartIndex = (articlesState.currentPage - 1) * articlesState.articlesPerPage;
+  const searchEndIndex = searchStartIndex + articlesState.articlesPerPage;
+  const currentPageSearchArticles = searchArticlesToShow.slice(searchStartIndex, searchEndIndex);
   
-  const paginationInfo = {
+  const searchPaginationInfo = {
     startItem: (articlesState.currentPage - 1) * articlesState.articlesPerPage + 1,
-    endItem: Math.min(articlesState.currentPage * articlesState.articlesPerPage, totalCount),
-    totalCount,
-    hasMultiplePages: totalCount > articlesState.articlesPerPage,
+    endItem: Math.min(articlesState.currentPage * articlesState.articlesPerPage, searchTotalCount),
+    totalCount: searchTotalCount,
+    hasMultiplePages: searchTotalCount > articlesState.articlesPerPage,
   };
 
   return {
     // State
     ...articlesState,
     
-    // Computed pagination data
-    articlesToShow,
-    currentPageArticles,
-    paginationInfo,
+    // For search results (paginated)
+    searchArticlesToShow,
+    currentPageSearchArticles,
+    searchPaginationInfo,
     
     // Actions
-    fetchArticles: useCallback((category?: string, sortOrder?: 'Ascending' | 'Descending', preservePage?: boolean) => 
-      dispatch(fetchArticles({ category, sortOrder, preservePage })), [dispatch]),
+    fetchArticles: useCallback((category?: string, sortOrder?: 'Ascending' | 'Descending', reset?: boolean) => 
+      dispatch(fetchArticles({ category, sortOrder, reset })), [dispatch]),
+    
+    loadMoreArticles: useCallback((category?: string, sortOrder?: 'Ascending' | 'Descending') => 
+      dispatch(loadMoreArticles({ category, sortOrder })), [dispatch]),
     
     searchArticles: useCallback((searchTerm: string, category?: string, sortOrder?: 'Ascending' | 'Descending') =>
       dispatch(searchArticlesThunk({ searchTerm, category, sortOrder })), [dispatch]),
@@ -76,6 +78,7 @@ export const useArticles = () => {
     clearSearch: useCallback(() => dispatch(clearSearch()), [dispatch]),
     setPage: useCallback((page: number) => dispatch(setPage(page)), [dispatch]),
     clearError: useCallback(() => dispatch(clearArticleError()), [dispatch]),
+    resetArticles: useCallback(() => dispatch(resetArticles()), [dispatch]),
   };
 };
 

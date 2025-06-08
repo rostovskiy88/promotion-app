@@ -1,4 +1,4 @@
-import { collection, addDoc, Timestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, getDoc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, getDoc, limit, startAfter, QueryDocumentSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Article } from '../types/article';
 
@@ -9,15 +9,107 @@ export async function addArticle(article: Omit<Article, 'createdAt'>) {
   });
 }
 
-export async function getArticles(category?: string, sortOrder: 'Ascending' | 'Descending' = 'Descending') {
+export async function getArticles(
+  category?: string, 
+  sortOrder: 'Ascending' | 'Descending' = 'Descending',
+  pageSize: number = 6,
+  lastDocId?: string
+) {
   try {
-    console.log('[getArticles] category:', category, 'sortOrder:', sortOrder);
+    console.log('[getArticles] 📥 Request:', { 
+      category, 
+      sortOrder, 
+      pageSize, 
+      hasLastDocId: !!lastDocId 
+    });
+    
+    let q;
+    const orderDirection = sortOrder === 'Ascending' ? 'asc' : 'desc';
+    
+    // If we have a lastDocId, we need to find that document first
+    let lastDoc: QueryDocumentSnapshot | undefined;
+    if (lastDocId) {
+      try {
+        const lastDocRef = doc(db, 'articles', lastDocId);
+        const lastDocSnapshot = await getDoc(lastDocRef);
+        if (lastDocSnapshot.exists()) {
+          lastDoc = lastDocSnapshot as QueryDocumentSnapshot;
+        }
+      } catch (error) {
+        console.warn('Could not find last document, starting from beginning:', error);
+      }
+    }
+    
+    if (category && category !== 'All Categories') {
+      console.log('[getArticles] Filtering by category:', category);
+      if (lastDoc) {
+        q = query(
+          collection(db, 'articles'), 
+          where('category', '==', category), 
+          orderBy('createdAt', orderDirection),
+          startAfter(lastDoc),
+          limit(pageSize)
+        );
+      } else {
+        q = query(
+          collection(db, 'articles'), 
+          where('category', '==', category), 
+          orderBy('createdAt', orderDirection),
+          limit(pageSize)
+        );
+      }
+    } else {
+      if (lastDoc) {
+        q = query(
+          collection(db, 'articles'), 
+          orderBy('createdAt', orderDirection),
+          startAfter(lastDoc),
+          limit(pageSize)
+        );
+      } else {
+        q = query(
+          collection(db, 'articles'), 
+          orderBy('createdAt', orderDirection),
+          limit(pageSize)
+        );
+      }
+    }
+    
+    const querySnapshot = await getDocs(q);
+    const articles = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    const result = {
+      articles,
+      lastDocId: querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length - 1].id : null,
+      hasMore: querySnapshot.docs.length === pageSize
+    };
+    
+    console.log('[getArticles] 📤 Response:', {
+      articlesCount: articles.length,
+      hasMore: result.hasMore,
+      hasLastDocId: !!result.lastDocId,
+      requestedPageSize: pageSize
+    });
+    
+    return result;
+  } catch (error) {
+    console.error('[getArticles] Error fetching articles:', error);
+    throw error;
+  }
+}
+
+export async function getAllArticles(category?: string, sortOrder: 'Ascending' | 'Descending' = 'Descending') {
+  try {
+    console.log('[getAllArticles] category:', category, 'sortOrder:', sortOrder);
     let q;
     
     const orderDirection = sortOrder === 'Ascending' ? 'asc' : 'desc';
     
     if (category && category !== 'All Categories') {
-      console.log('[getArticles] Filtering by category:', category);
+      console.log('[getAllArticles] Filtering by category:', category);
       q = query(
         collection(db, 'articles'), 
         where('category', '==', category), 
@@ -32,10 +124,10 @@ export async function getArticles(category?: string, sortOrder: 'Ascending' | 'D
       id: doc.id,
       ...doc.data()
     }));
-    console.log('[getArticles] Fetched articles:', articles);
+    console.log('[getAllArticles] Fetched articles:', articles);
     return articles;
   } catch (error) {
-    console.error('[getArticles] Error fetching articles:', error);
+    console.error('[getAllArticles] Error fetching articles:', error);
     throw error;
   }
 }
@@ -46,7 +138,7 @@ export async function searchArticles(searchTerm: string, category?: string, sort
     
     if (!searchTerm.trim()) {
       // If no search term, return regular articles
-      return getArticles(category, sortOrder);
+      return getAllArticles(category, sortOrder);
     }
 
     const orderDirection = sortOrder === 'Ascending' ? 'asc' : 'desc';

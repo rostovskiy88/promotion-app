@@ -7,7 +7,12 @@ interface ArticlesState {
   articles: Article[];
   filteredArticles: Article[];
   loading: boolean;
+  loadingMore: boolean;
   error: string | null;
+  
+  // Lazy loading
+  hasMore: boolean;
+  lastDocId: string | null; // Store just the ID instead of the full document
   
   // Filters and search
   selectedCategory: string;
@@ -15,7 +20,7 @@ interface ArticlesState {
   searchTerm: string;
   isSearching: boolean;
   
-  // Pagination
+  // Legacy pagination (for search results)
   currentPage: number;
   articlesPerPage: number;
   totalArticles: number;
@@ -25,7 +30,11 @@ const initialState: ArticlesState = {
   articles: [],
   filteredArticles: [],
   loading: false,
+  loadingMore: false,
   error: null,
+  
+  hasMore: true,
+  lastDocId: null,
   
   selectedCategory: 'All Categories',
   sortOrder: 'Descending',
@@ -46,14 +55,47 @@ const serializeArticle = (article: any): Article => ({
 // Async thunks
 export const fetchArticles = createAsyncThunk(
   'articles/fetchArticles',
-  async ({ category, sortOrder, preservePage = false }: { 
+  async ({ category, sortOrder, reset = true }: { 
     category?: string; 
     sortOrder?: 'Ascending' | 'Descending';
-    preservePage?: boolean;
-  }) => {
-    const articles = await getArticles(category, sortOrder);
-    // Convert Firebase Timestamps to serializable format
-    return { articles: articles.map(serializeArticle), preservePage };
+    reset?: boolean;
+  }, { getState }) => {
+    const state = getState() as { articles: ArticlesState };
+    
+    // For pagination, we'll pass the lastDocId and let the service handle finding the document
+    const lastDocId = reset ? undefined : (state.articles.lastDocId || undefined);
+    
+    const result = await getArticles(category, sortOrder, 6, lastDocId);
+    
+    return { 
+      articles: result.articles.map(serializeArticle),
+      hasMore: result.hasMore,
+      lastDocId: result.lastDocId,
+      reset 
+    };
+  }
+);
+
+export const loadMoreArticles = createAsyncThunk(
+  'articles/loadMoreArticles',
+  async ({ category, sortOrder }: { 
+    category?: string; 
+    sortOrder?: 'Ascending' | 'Descending';
+  }, { getState }) => {
+    const state = getState() as { articles: ArticlesState };
+    const { lastDocId } = state.articles;
+    
+    if (!lastDocId) {
+      throw new Error('No more articles to load');
+    }
+    
+    const result = await getArticles(category, sortOrder, 6, lastDocId);
+    
+    return { 
+      articles: result.articles.map(serializeArticle),
+      hasMore: result.hasMore,
+      lastDocId: result.lastDocId
+    };
   }
 );
 
@@ -62,20 +104,19 @@ export const searchArticlesThunk = createAsyncThunk(
   async ({ searchTerm, category, sortOrder }: { 
     searchTerm: string; 
     category?: string; 
-    sortOrder?: 'Ascending' | 'Descending' 
+    sortOrder?: 'Ascending' | 'Descending';
   }) => {
     const articles = await searchArticles(searchTerm, category, sortOrder);
     // Convert Firebase Timestamps to serializable format
-    const serializedArticles = articles.map(serializeArticle);
-    return { articles: serializedArticles, searchTerm };
+    return { articles: articles.map(serializeArticle), searchTerm };
   }
 );
 
 export const deleteArticleThunk = createAsyncThunk(
   'articles/deleteArticle',
-  async (articleId: string) => {
-    await deleteArticleService(articleId);
-    return articleId;
+  async (id: string) => {
+    await deleteArticleService(id);
+    return id;
   }
 );
 
@@ -85,11 +126,19 @@ const articlesSlice = createSlice({
   reducers: {
     setCategory: (state, action: PayloadAction<string>) => {
       state.selectedCategory = action.payload;
-      state.currentPage = 1; // Reset pagination
+      state.currentPage = 1; // Reset pagination for search
+      // Reset lazy loading state
+      state.articles = [];
+      state.hasMore = true;
+      state.lastDocId = null;
     },
     
     setSortOrder: (state, action: PayloadAction<'Ascending' | 'Descending'>) => {
       state.sortOrder = action.payload;
+      // Reset lazy loading state
+      state.articles = [];
+      state.hasMore = true;
+      state.lastDocId = null;
     },
     
     setSearchTerm: (state, action: PayloadAction<string>) => {
@@ -99,9 +148,13 @@ const articlesSlice = createSlice({
     
     clearSearch: (state) => {
       state.searchTerm = '';
-      state.filteredArticles = state.articles;
-      state.totalArticles = state.articles.length;
+      state.filteredArticles = [];
+      state.totalArticles = 0;
       state.currentPage = 1;
+      // Reset lazy loading to show main articles
+      state.articles = [];
+      state.hasMore = true;
+      state.lastDocId = null;
     },
     
     setPage: (state, action: PayloadAction<number>) => {
@@ -111,31 +164,61 @@ const articlesSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    
+    resetArticles: (state) => {
+      state.articles = [];
+      state.hasMore = true;
+      state.lastDocId = null;
+    }
   },
   
   extraReducers: (builder) => {
     builder
-      // Fetch articles
-      .addCase(fetchArticles.pending, (state) => {
-        state.loading = true;
+      // Fetch articles (initial load or reset)
+      .addCase(fetchArticles.pending, (state, action) => {
+        if (action.meta.arg.reset) {
+          state.loading = true;
+        } else {
+          state.loadingMore = true;
+        }
         state.error = null;
       })
       .addCase(fetchArticles.fulfilled, (state, action) => {
         state.loading = false;
-        state.articles = action.payload.articles as Article[];
-        state.filteredArticles = action.payload.articles as Article[];
-        state.totalArticles = action.payload.articles.length;
-        // Only reset to first page when it's a new data load (not preserving page)
-        if (!action.payload.preservePage) {
-          state.currentPage = 1;
+        state.loadingMore = false;
+        
+        if (action.payload.reset) {
+          state.articles = action.payload.articles as Article[];
+        } else {
+          state.articles = [...state.articles, ...action.payload.articles as Article[]];
         }
+        
+        state.hasMore = action.payload.hasMore;
+        state.lastDocId = action.payload.lastDocId;
       })
       .addCase(fetchArticles.rejected, (state, action) => {
         state.loading = false;
+        state.loadingMore = false;
         state.error = action.error.message || 'Failed to fetch articles';
       })
       
-      // Search articles
+      // Load more articles
+      .addCase(loadMoreArticles.pending, (state) => {
+        state.loadingMore = true;
+        state.error = null;
+      })
+      .addCase(loadMoreArticles.fulfilled, (state, action) => {
+        state.loadingMore = false;
+        state.articles = [...state.articles, ...action.payload.articles as Article[]];
+        state.hasMore = action.payload.hasMore;
+        state.lastDocId = action.payload.lastDocId;
+      })
+      .addCase(loadMoreArticles.rejected, (state, action) => {
+        state.loadingMore = false;
+        state.error = action.error.message || 'Failed to load more articles';
+      })
+      
+      // Search articles (still uses pagination for search results)
       .addCase(searchArticlesThunk.pending, (state) => {
         state.isSearching = true;
         state.error = null;
@@ -160,7 +243,7 @@ const articlesSlice = createSlice({
         state.filteredArticles = state.filteredArticles.filter(article => article.id !== articleId);
         state.totalArticles = state.filteredArticles.length;
         
-        // Adjust current page if necessary after deletion
+        // Adjust current page if necessary after deletion (for search results)
         const maxPage = Math.ceil(state.totalArticles / state.articlesPerPage);
         if (state.currentPage > maxPage && maxPage > 0) {
           state.currentPage = maxPage;
@@ -177,7 +260,8 @@ export const {
   setSearchTerm, 
   clearSearch, 
   setPage, 
-  clearError 
+  clearError,
+  resetArticles
 } = articlesSlice.actions;
 
 export default articlesSlice.reducer; 

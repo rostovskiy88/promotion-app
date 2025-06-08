@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { Button, Select, Pagination } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Select, Pagination, Spin } from 'antd';
+import { UpOutlined } from '@ant-design/icons';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import NoArticles from '../../components/NoArticles/NoArticles';
 import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import { useNavigate } from 'react-router-dom';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import styles from './Dashboard.module.css';
 import { formatArticleDate } from '../../utils/formatArticleDate';
 import { addSampleArticles } from '../../utils/addSampleArticles';
@@ -18,22 +20,28 @@ const sortOptions = ['Ascending', 'Descending'];
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const userDisplayInfo = useUserDisplayInfo();
+  const [isAtTop, setIsAtTop] = useState(true);
   
-  // 🔥 NOW USING REDUX INSTEAD OF LOCAL STATE!
+  // 🔥 NOW USING REDUX WITH LAZY LOADING!
   const {
-    articles: allArticles,
-    filteredArticles,
+    articles, // Main articles for infinite scroll
     loading,
+    loadingMore,
+    hasMore,
     error,
     selectedCategory,
     sortOrder,
-    searchTerm, // 🎯 Using Redux search term instead of context
+    searchTerm,
     isSearching: reduxIsSearching,
+    
+    // Search pagination (for search results only)
     currentPage,
-    articlesPerPage,
-    currentPageArticles,
-    paginationInfo,
+    currentPageSearchArticles,
+    searchPaginationInfo,
+    
+    // Actions
     fetchArticles,
+    loadMoreArticles,
     searchArticles,
     deleteArticle,
     setCategory,
@@ -44,10 +52,45 @@ const Dashboard: React.FC = () => {
   
   const { setGlobalLoading } = useUI();
 
+  // Track scroll position to show/hide scroll-to-top button
   useEffect(() => {
-    // Initial fetch using Redux
-    fetchArticles();
-  }, [fetchArticles]);
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setIsAtTop(scrollTop < 100); // Hide button when within 100px of top
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Initialize articles on component mount
+  useEffect(() => {
+    fetchArticles(selectedCategory, sortOrder, true);
+  }, []);
+
+  // Handle category or sort changes
+  useEffect(() => {
+    // When category or sort changes, we need to reset and refetch
+    if (searchTerm.trim()) {
+      // If searching, update search results
+      searchArticles(searchTerm, selectedCategory, sortOrder);
+    } else {
+      // Otherwise, reset and fetch new articles
+      fetchArticles(selectedCategory, sortOrder, true);
+    }
+  }, [selectedCategory, sortOrder]);
+
+  // Set up infinite scrolling for main articles view
+  useInfiniteScroll({
+    hasMore: hasMore && !searchTerm.trim(), // Only for main view, not search
+    loading: loadingMore,
+    onLoadMore: () => {
+      if (!searchTerm.trim()) {
+        loadMoreArticles(selectedCategory, sortOrder);
+      }
+    },
+    threshold: 300
+  });
 
   useEffect(() => {
     // Handle errors with Redux UI (just clear them for now)
@@ -57,23 +100,11 @@ const Dashboard: React.FC = () => {
   }, [error, clearError]);
 
   const handleCategoryChange = (category: string) => {
-    setCategory(category); // Redux action - this will reset page and trigger refetch
-    // Manually trigger the appropriate fetch after category change
-    if (searchTerm.trim()) {
-      searchArticles(searchTerm, category, sortOrder);
-    } else {
-      fetchArticles(category, sortOrder);
-    }
+    setCategory(category); // This will trigger the useEffect above
   };
 
   const handleSortChange = (sort: 'Ascending' | 'Descending') => {
-    setSortOrder(sort); // Redux action
-    // Manually trigger the appropriate fetch after sort change
-    if (searchTerm.trim()) {
-      searchArticles(searchTerm, selectedCategory, sort);
-    } else {
-      fetchArticles(selectedCategory, sort);
-    }
+    setSortOrder(sort); // This will trigger the useEffect above
   };
 
   const handleEdit = (articleId: string) => {
@@ -82,8 +113,8 @@ const Dashboard: React.FC = () => {
 
   const handleDelete = async (articleId: string) => {
     try {
-      setGlobalLoading(true); // Redux UI loading
-      await deleteArticle(articleId); // Redux async thunk
+      setGlobalLoading(true);
+      await deleteArticle(articleId);
     } catch (error) {
       console.error('Failed to delete article:', error);
     } finally {
@@ -95,12 +126,20 @@ const Dashboard: React.FC = () => {
     try {
       setGlobalLoading(true);
       await addSampleArticles();
-      fetchArticles(); // Refresh via Redux
+      // Reset and refetch articles after adding samples
+      fetchArticles(selectedCategory, sortOrder, true);
     } catch (error) {
       console.error('Failed to add sample articles:', error);
     } finally {
       setGlobalLoading(false);
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ 
+      top: 0, 
+      behavior: 'smooth' 
+    });
   };
 
   const getDisplayTitle = () => {
@@ -111,9 +150,8 @@ const Dashboard: React.FC = () => {
   };
 
   const getResultsCount = () => {
-    const { totalCount, startItem, endItem } = paginationInfo;
-    
     if (searchTerm.trim()) {
+      const { totalCount, startItem, endItem } = searchPaginationInfo;
       return (
         <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
           {totalCount} article{totalCount !== 1 ? 's' : ''} found
@@ -122,10 +160,13 @@ const Dashboard: React.FC = () => {
       );
     }
     
-    if (totalCount > 0) {
+    // For main articles view (infinite scroll)
+    const totalLoaded = articles.length;
+    if (totalLoaded > 0) {
       return (
         <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
-          Showing {startItem}-{endItem} of {totalCount} articles
+          {totalLoaded} article{totalLoaded !== 1 ? 's' : ''} loaded
+          {hasMore && ' • Scroll for more'}
         </span>
       );
     }
@@ -135,15 +176,44 @@ const Dashboard: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setPage(page);
-    // Scroll to top of articles section when page changes
+    // Scroll to top of articles section when page changes (search results only)
     document.querySelector(`.${styles.articlesSection}`)?.scrollIntoView({ 
       behavior: 'smooth', 
       block: 'start' 
     });
   };
 
+  // Determine which articles to show
+  const articlesToDisplay = searchTerm.trim() ? currentPageSearchArticles : articles;
+  const isSearchMode = searchTerm.trim();
+  const showPagination = isSearchMode && searchPaginationInfo.hasMultiplePages;
+  const showScrollToTop = !isSearchMode && articles.length > 6 && !isAtTop; // Show when more than one chunk loaded AND not at top
+
   return (
     <div className={styles.dashboardContainer}>
+      {/* Sticky Scroll to top button */}
+      {showScrollToTop && (
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          icon={<UpOutlined />}
+          onClick={scrollToTop}
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            height: '56px',
+            width: '56px',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+            border: 'none',
+            zIndex: 1000
+          }}
+          title="Scroll to top"
+        />
+      )}
+
       {/* Articles Section */}
       <div className={styles.articlesSection}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
@@ -183,8 +253,11 @@ const Dashboard: React.FC = () => {
         </div>
         
         {loading || reduxIsSearching ? (
-          <div style={{ textAlign: 'center', padding: '48px 0' }}>Loading...</div>
-        ) : paginationInfo.totalCount === 0 ? (
+          <div style={{ textAlign: 'center', padding: '48px 0' }}>
+            <Spin size="large" />
+            <div style={{ marginTop: 16 }}>Loading articles...</div>
+          </div>
+        ) : articlesToDisplay.length === 0 ? (
           searchTerm.trim() ? (
             <div style={{ textAlign: 'center', padding: '48px 0' }}>
               <h3>No articles found for "{searchTerm}"</h3>
@@ -194,31 +267,60 @@ const Dashboard: React.FC = () => {
             <NoArticles />
           )
         ) : (
-          <div className={styles.articlesGrid}>
-            {currentPageArticles.map(article => (
-              <ArticleCard
-                key={article.id}
-                category={article.category ?? ''}
-                date={formatArticleDate(
-                  typeof article.createdAt === 'string' 
-                    ? new Date(article.createdAt) 
-                    : article.createdAt.toDate()
-                )}
-                title={article.title}
-                description={article.content ?? ''}
-                authorName={userDisplayInfo.displayName || 'Anonymous'}
-                authorAvatar={userDisplayInfo.avatarUrl}
-                readMoreUrl={`/dashboard/article/${article.id}`}
-                imageUrl={typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'}
-                onEdit={() => article.id && handleEdit(article.id)}
-                onDelete={() => article.id && handleDelete(article.id)}
-              />
-            ))}
-          </div>
+          <>
+            <div className={styles.articlesGrid}>
+              {articlesToDisplay.map(article => (
+                <ArticleCard
+                  key={article.id}
+                  category={article.category ?? ''}
+                  date={formatArticleDate(
+                    typeof article.createdAt === 'string' 
+                      ? new Date(article.createdAt) 
+                      : article.createdAt.toDate()
+                  )}
+                  title={article.title}
+                  description={article.content ?? ''}
+                  authorName={userDisplayInfo.displayName || 'Anonymous'}
+                  authorAvatar={userDisplayInfo.avatarUrl}
+                  readMoreUrl={`/dashboard/article/${article.id}`}
+                  imageUrl={typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'}
+                  onEdit={() => article.id && handleEdit(article.id)}
+                  onDelete={() => article.id && handleDelete(article.id)}
+                />
+              ))}
+            </div>
+            
+            {/* Loading more indicator for infinite scroll */}
+            {!isSearchMode && loadingMore && (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                padding: '24px 0',
+                gap: 12
+              }}>
+                <Spin />
+                <span>Loading more articles...</span>
+              </div>
+            )}
+            
+            {/* End of articles indicator */}
+            {!isSearchMode && !hasMore && articles.length > 0 && (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '24px 0',
+                color: '#666',
+                borderTop: '1px solid #f0f0f0',
+                marginTop: '24px'
+              }}>
+                You've reached the end of the articles!
+              </div>
+            )}
+          </>
         )}
         
-        {/* Pagination */}
-        {paginationInfo.hasMultiplePages && (
+        {/* Pagination - Only for search results */}
+        {showPagination && (
           <div style={{ 
             display: 'flex', 
             justifyContent: 'center', 
@@ -228,13 +330,13 @@ const Dashboard: React.FC = () => {
           }}>
             <Pagination
               current={currentPage}
-              total={paginationInfo.totalCount}
-              pageSize={articlesPerPage}
+              total={searchPaginationInfo.totalCount}
+              pageSize={6}
               onChange={handlePageChange}
               showSizeChanger={false}
-              showQuickJumper={paginationInfo.totalCount > 50}
+              showQuickJumper={searchPaginationInfo.totalCount > 50}
               showTotal={(total, range) => 
-                `${range[0]}-${range[1]} of ${total} articles`
+                `${range[0]}-${range[1]} of ${total} search results`
               }
               size="default"
               style={{ userSelect: 'none' }}

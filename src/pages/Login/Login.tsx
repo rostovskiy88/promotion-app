@@ -1,4 +1,4 @@
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
 import { AppDispatch, RootState } from '../../store';
 import { getAuthErrorMessage } from '../../utils/authErrors';
+import { App } from 'antd';
 import styles from './Login.module.css';
 
 interface LoginFormData {
@@ -14,6 +15,7 @@ interface LoginFormData {
 }
 
 const Login = () => {
+  const { message } = App.useApp();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
