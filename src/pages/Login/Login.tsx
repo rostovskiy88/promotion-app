@@ -5,7 +5,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
 import { AppDispatch, RootState } from '../../store';
-import { getAuthErrorMessage } from '../../utils/authErrors';
 import { App } from 'antd';
 import styles from './Login.module.css';
 
@@ -19,7 +18,7 @@ const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   // Get the redirect path from location state, or default to dashboard
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Divider } from 'antd';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebookF } from 'react-icons/fa';
+import { Form, Input, Button, Checkbox, Divider, App } from 'antd';
+import { GoogleOutlined, FacebookFilled } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
@@ -9,16 +8,9 @@ import { AppDispatch } from '../../store';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { getAuthErrorMessage } from '../../utils/authErrors';
-import { App } from 'antd';
 import styles from './Register.module.css';
 import registerImage from '../../assets/sign-up.png';
 import { createOrGetUser } from '../../services/userService';
-
-interface RegisterFormData {
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 
 const Register: React.FC = () => {
   const { message } = App.useApp();
@@ -174,15 +166,13 @@ const Register: React.FC = () => {
               className={styles.socialButton}
               onClick={handleGoogle}
             >
-              <FcGoogle size={20} />
+              <GoogleOutlined />
             </Button>
             <Button
                 className={styles.socialButton}
                 onClick={handleFacebook}
             >
-              <div className={styles.facebookIcon}>
-                <FaFacebookF />
-              </div>
+              <FacebookFilled />
             </Button>
           </div>
           <div className={styles.loginLink}>

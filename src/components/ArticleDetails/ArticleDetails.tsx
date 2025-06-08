@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Typography, Spin, message, Tag, Avatar } from 'antd';
+import { Button, Typography, Spin, message, Tag, Avatar } from 'antd';
 import { ArrowLeftOutlined, EditOutlined } from '@ant-design/icons';
 import { Article } from '../../types/article';
 import { getArticleById } from '../../services/articleService';

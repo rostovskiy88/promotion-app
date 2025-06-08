@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Layout, Menu, Input, Button, Avatar, Dropdown, Switch } from 'antd';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   DashboardOutlined, 
   FileTextOutlined, 
@@ -25,7 +25,6 @@ interface AuthenticatedLayoutProps {
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const navigate = useNavigate();
   const location = useLocation();
   
   // Use the new hook that prioritizes Firestore data over Firebase Auth data
