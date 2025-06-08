@@ -5,14 +5,14 @@
   background: var(--card-bg);
   margin-bottom: 24px;
   height: 100%;
-  min-height: 320px;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-color);
 }
 
 .article-card-image {
-  height: 180px;
+  height: 240px;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -37,11 +37,11 @@
 }
 
 .article-card-content {
-  padding: 20px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: calc(100% - 120px);
+  height: calc(100% - 240px);
 }
 
 .article-card-meta {
@@ -49,7 +49,7 @@
   justify-content: space-between;
   color: var(--text-tertiary);
   font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .article-card-category {
@@ -65,20 +65,22 @@
 .article-card-title {
   font-size: 20px !important;
   font-weight: 700 !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 12px !important;
   color: var(--text-primary) !important;
 }
 
 .article-card-description {
   color: var(--text-secondary);
   font-size: 15px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
   line-height: 1.5;
+  min-height: 90px;
+  max-height: 90px;
 }
 
 .article-card-footer {

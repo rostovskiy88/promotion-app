@@ -63,7 +63,7 @@
 
 .articlesGrid {
   display: grid;
-  gap: 24px;
+  gap: 32px;
 }
 
 :global(.article-card) {
@@ -71,22 +71,22 @@
   flex: none;
 }
 
-/* 2K+ screens: 4 articles per row */
+/* 2K+ screens: 3 articles per row */
 @media (min-width: 2200px) {
-  .articlesGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Full HD (1920px): 3 articles per row */
-@media (min-width: 1400px) and (max-width: 2199px) {
   .articlesGrid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* Below Full HD: 2 articles per row */
-@media (min-width: 768px) and (max-width: 1399px) {
+/* Full HD (1920px): 2 articles per row */
+@media (min-width: 1200px) and (max-width: 2199px) {
+  .articlesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Below 1200px: 2 articles per row */
+@media (min-width: 768px) and (max-width: 1199px) {
   .articlesGrid {
     grid-template-columns: repeat(2, 1fr);
   }

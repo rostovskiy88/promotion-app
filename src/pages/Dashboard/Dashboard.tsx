@@ -68,6 +68,17 @@ const Dashboard: React.FC = () => {
     fetchArticles(selectedCategory, sortOrder, true);
   }, []);
 
+  // Handle searchTerm changes - THIS WAS MISSING!
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      // If there's a search term, perform search
+      searchArticles(searchTerm, selectedCategory, sortOrder);
+    } else {
+      // If search term is cleared, go back to main articles
+      fetchArticles(selectedCategory, sortOrder, true);
+    }
+  }, [searchTerm]);
+
   // Handle category or sort changes
   useEffect(() => {
     // When category or sort changes, we need to reset and refetch

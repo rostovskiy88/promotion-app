@@ -3,7 +3,7 @@ import { addArticle } from '../services/articleService';
 const sampleArticles = [
   {
     title: "7 Skills of Highly Effective Programmers",
-    content: "Our team was inspired by the seven skills of highly effective programmers created by the TechLead. We wanted to provide our own take on the topic...",
+    content: "Our team was inspired by the seven skills of highly effective programmers created by the TechLead. We wanted to provide our own take on the topic and expand upon these essential skills that separate good developers from great ones. From mastering problem-solving techniques to understanding the importance of clean code architecture, these skills are fundamental for any developer looking to advance their career and create impactful software solutions.",
     category: "Productivity",
     authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
     authorName: "Oleg Rostovskyi",
@@ -12,7 +12,7 @@ const sampleArticles = [
   },
   {
     title: "SMM starter pack, part 2: content promotion",
-    content: "This is the second part of the SMM starter pack series of articles. If you made it this far, you must be willing to learn about promoting business through social media.",
+    content: "This is the second part of the SMM starter pack series of articles. If you made it this far, you must be willing to learn about promoting business through social media. In this comprehensive guide, we'll explore advanced content promotion strategies, audience engagement techniques, and proven methods to increase your brand visibility across all major social media platforms including Instagram, Facebook, Twitter, and LinkedIn.",
     category: "Media",
     authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
     authorName: "Patricia Kemp",
@@ -21,7 +21,7 @@ const sampleArticles = [
   },
   {
     title: "11 Things I Wish I Knew When I Started My Business",
-    content: "Here are 11 things I wish I knew when I started my business. I hope they will save you some time and some anguish because (experience is a good teacher here)...",
+    content: "Here are 11 things I wish I knew when I started my business. I hope they will save you some time and some anguish because experience is a good teacher, but it can also be an expensive one. From understanding cash flow management to building the right team, avoiding common legal pitfalls, and creating sustainable business processes, these lessons learned the hard way will help you navigate the entrepreneurial journey more successfully.",
     category: "Business",
     authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
     authorName: "Lisa Barnes",
@@ -92,8 +92,35 @@ const sampleArticles = [
     imageUrl: "/default-article-cover.png"
   },
   {
+    title: "TikTok Marketing Strategy Guide",
+    content: "Harness the power of TikTok for your brand. Learn how to create viral content, engage with Gen Z audiences, and drive real business results on the platform through authentic storytelling and creative campaigns. Understand TikTok's unique culture, master trending hashtags and challenges, collaborate with creators, and implement advertising strategies that resonate with younger demographics while building brand awareness and driving conversions.",
+    category: "Media",
+    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
+    authorName: "Zoe Miller",
+    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
+    imageUrl: "/default-article-cover.png"
+  },
+  {
+    title: "Building a Million Dollar SaaS",
+    content: "From idea to IPO - learn the journey of building a successful SaaS business. Real strategies from founders who've scaled to millions in recurring revenue through product-market fit, customer acquisition, and strategic partnerships. Discover how to validate your idea, build an MVP, acquire your first customers, optimize pricing strategies, and scale operations while maintaining high customer satisfaction and retention rates.",
+    category: "Business",
+    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
+    authorName: "Lisa Park",
+    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
+    imageUrl: "/default-article-cover.png"
+  },
+  {
+    title: "React Hooks Deep Dive",
+    content: "Master React Hooks with this comprehensive guide. From useState to custom hooks, learn how to write cleaner, more efficient React components that leverage the full power of functional programming. Explore advanced patterns, performance optimization techniques, testing strategies, and real-world examples that demonstrate how hooks can simplify complex state management and improve code reusability across your applications.",
+    category: "Productivity",
+    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
+    authorName: "Tom Anderson",
+    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
+    imageUrl: "/default-article-cover.png"
+  },
+  {
     title: "JavaScript Performance Optimization Tips",
-    content: "Boost your JavaScript application performance with these proven optimization techniques. From memory management to async patterns, improve your code efficiency.",
+    content: "Boost your JavaScript application performance with these proven optimization techniques. From memory management to async patterns, improve your code efficiency and user experience. Learn about bundle optimization, lazy loading strategies, caching mechanisms, debugging performance bottlenecks, implementing efficient algorithms, and leveraging modern JavaScript features to create lightning-fast web applications that scale gracefully.",
     category: "Productivity",
     authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
     authorName: "Sofia Rodriguez",
@@ -101,11 +128,20 @@ const sampleArticles = [
     imageUrl: "/default-article-cover.png"
   },
   {
-    title: "Instagram Marketing for Small Businesses",
-    content: "Transform your small business with Instagram marketing. Discover how to create engaging content, use hashtags effectively, and convert followers into customers.",
+    title: "E-commerce Trends Shaping 2024",
+    content: "Stay ahead of the curve with the latest e-commerce trends. From AI-powered personalization to sustainable shopping, discover what's driving online retail evolution and how to adapt your business strategy. Learn about emerging technologies, changing consumer behaviors, new payment methods, social commerce opportunities, and innovative marketing approaches that successful e-commerce businesses are implementing today.",
+    category: "Business",
+    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
+    authorName: "Anna Lee",
+    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
+    imageUrl: "/default-article-cover.png"
+  },
+  {
+    title: "YouTube Algorithm Mastery",
+    content: "Crack the YouTube algorithm and grow your channel organically. Learn the secrets of successful YouTubers and optimize your content for maximum reach and engagement. Understand how thumbnail design, title optimization, audience retention strategies, and community building contribute to channel growth. Master the art of creating compelling content that keeps viewers watching and subscribing for long-term success.",
     category: "Media",
     authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
-    authorName: "Maria Santos",
+    authorName: "Kevin Zhang",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
     imageUrl: "/default-article-cover.png"
   },
@@ -115,51 +151,6 @@ const sampleArticles = [
     category: "Productivity",
     authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
     authorName: "James Wilson",
-    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
-    imageUrl: "/default-article-cover.png"
-  },
-  {
-    title: "E-commerce Trends Shaping 2024",
-    content: "Stay ahead of the curve with the latest e-commerce trends. From AI-powered personalization to sustainable shopping, discover what's driving online retail.",
-    category: "Business",
-    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
-    authorName: "Anna Lee",
-    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
-    imageUrl: "/default-article-cover.png"
-  },
-  {
-    title: "YouTube Algorithm Mastery",
-    content: "Crack the YouTube algorithm and grow your channel organically. Learn the secrets of successful YouTubers and optimize your content for maximum reach.",
-    category: "Media",
-    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
-    authorName: "Kevin Zhang",
-    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
-    imageUrl: "/default-article-cover.png"
-  },
-  {
-    title: "React Hooks Deep Dive",
-    content: "Master React Hooks with this comprehensive guide. From useState to custom hooks, learn how to write cleaner, more efficient React components.",
-    category: "Productivity",
-    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
-    authorName: "Tom Anderson",
-    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
-    imageUrl: "/default-article-cover.png"
-  },
-  {
-    title: "Building a Million Dollar SaaS",
-    content: "From idea to IPO - learn the journey of building a successful SaaS business. Real strategies from founders who've scaled to millions in recurring revenue.",
-    category: "Business",
-    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
-    authorName: "Lisa Park",
-    authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
-    imageUrl: "/default-article-cover.png"
-  },
-  {
-    title: "TikTok Marketing Strategy Guide",
-    content: "Harness the power of TikTok for your brand. Learn how to create viral content, engage with Gen Z audiences, and drive real business results on the platform.",
-    category: "Media",
-    authorId: "COb1QiaSKjf3IIc2u43tc6mPF8t2",
-    authorName: "Zoe Miller",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocILI1j1rpu7whjfKuspQjhwqxhJWXngRkddIFjSYS94e40oMA=s96-c",
     imageUrl: "/default-article-cover.png"
   }
