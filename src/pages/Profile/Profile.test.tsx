@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
+import { App } from 'antd';
 import EditProfile from './Profile';
 import { updateUser } from '../../services/userService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
@@ -67,7 +68,9 @@ describe('EditProfile Component', () => {
     return render(
       <Provider store={mockStore}>
         <BrowserRouter>
-          <EditProfile />
+          <App>
+            <EditProfile />
+          </App>
         </BrowserRouter>
       </Provider>
     );
