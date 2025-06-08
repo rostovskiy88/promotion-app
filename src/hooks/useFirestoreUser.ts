@@ -15,13 +15,24 @@ export function useFirestoreUser() {
         setFirestoreUser(userData as FirestoreUser | null);
       } catch (error) {
         console.error('Failed to refresh user data:', error);
+        setFirestoreUser(null);
       }
+    } else {
+      // No auth user, clear Firestore user data
+      setFirestoreUser(null);
     }
   }, [authUser?.uid]);
 
   useEffect(() => {
     refreshUser();
   }, [refreshUser]);
+
+  // Clear firestore user when auth user is null
+  useEffect(() => {
+    if (!authUser) {
+      setFirestoreUser(null);
+    }
+  }, [authUser]);
 
   return {
     ...firestoreUser,

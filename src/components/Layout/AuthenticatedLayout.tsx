@@ -93,9 +93,11 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      // Navigation is handled by the logout function
     } catch (error) {
       console.error('Logout failed:', error);
+      // Fallback - force redirect even if logout fails
+      window.location.href = '/login';
     }
   };
 

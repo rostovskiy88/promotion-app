@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import { setUser } from '../../store/slices/authSlice';
+import { setUser, setFirestoreUser } from '../../store/slices/authSlice';
 import { SerializedUser } from '../../types/auth';
 
 // Helper function to serialize Firebase user
@@ -31,7 +31,15 @@ const AuthStateListener = () => {
     // Set up the auth state listener
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log('Auth state changed:', user ? 'User logged in' : 'No user');
-      dispatch(setUser(user ? serializeUser(user) : null));
+      
+      if (user) {
+        // User is logged in
+        dispatch(setUser(serializeUser(user)));
+      } else {
+        // User is logged out - clear all user data
+        dispatch(setUser(null));
+        dispatch(setFirestoreUser(null));
+      }
     });
 
     // Cleanup subscription on unmount

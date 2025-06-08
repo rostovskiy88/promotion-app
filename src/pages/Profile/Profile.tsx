@@ -263,17 +263,17 @@ const EditProfile: React.FC = () => {
             ]}
           />
         </Card>
-
-        {/* Avatar Upload Modal */}
-        <AvatarUpload
-          visible={avatarUploadVisible}
-          onCancel={() => setAvatarUploadVisible(false)}
-          onSuccess={handleAvatarSuccess}
-          userId={user?.uid || ''}
-          mode={avatarUploadMode}
-          currentAvatarUrl={userDisplayInfo.avatarUrl}
-        />
       </Col>
+
+      {/* Avatar Upload Modal */}
+      <AvatarUpload
+        visible={avatarUploadVisible}
+        onCancel={() => setAvatarUploadVisible(false)}
+        onSuccess={handleAvatarSuccess}
+        userId={user?.uid || ''}
+        mode={avatarUploadMode}
+        currentAvatarUrl={userDisplayInfo.avatarUrl}
+      />
     </Row>
   );
 };

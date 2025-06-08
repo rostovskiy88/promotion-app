@@ -18,12 +18,25 @@ const persistConfig = {
 };
 
 // Combine all reducers
-const rootReducer = persistCombineReducers(persistConfig, {
+const appReducer = persistCombineReducers(persistConfig, {
   auth: authReducer,
   articles: articlesReducer,
   ui: uiReducer,
   cache: cacheReducer,
 });
+
+// Root reducer that handles store reset
+const rootReducer = (state: any, action: any) => {
+  // When RESET_STORE is dispatched, clear all state
+  if (action.type === 'RESET_STORE') {
+    // Clear persisted data
+    storage.removeItem('persist:root');
+    // Return initial state
+    state = undefined;
+  }
+  
+  return appReducer(state, action);
+};
 
 export const store = configureStore({
   reducer: rootReducer,

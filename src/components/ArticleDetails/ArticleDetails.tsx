@@ -84,7 +84,7 @@ const ArticleDetails: React.FC = () => {
         )}
       </div>
       
-      <Card style={{ borderRadius: '12px', overflow: 'hidden' }}>
+      <div style={{ padding: '32px', background: 'var(--card-bg)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
         {/* Article Image */}
         {article.imageUrl && typeof article.imageUrl === 'string' && (
           <div style={{ marginBottom: '24px' }}>
@@ -142,7 +142,7 @@ const ArticleDetails: React.FC = () => {
             {article.content}
           </Paragraph>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
