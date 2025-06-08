@@ -1,4 +1,4 @@
-import { useFirestoreUser } from './useFirestoreUser';
+import { useEffect } from 'react';
 import { useAuth } from './useRedux';
 
 /**
@@ -7,16 +7,19 @@ import { useAuth } from './useRedux';
  */
 export const useUserDisplayInfo = () => {
   const auth = useAuth();
-  const firestoreUserData = useFirestoreUser();
   
-  // Handle null case safely
-  const { refresh, ...firestoreUser } = firestoreUserData || { refresh: () => Promise.resolve() };
+  // Auto-fetch Firestore user data when auth user is available
+  useEffect(() => {
+    if (auth.user?.uid && !auth.firestoreUser) {
+      auth.refreshFirestoreUser(auth.user.uid);
+    }
+  }, [auth.user?.uid, auth.firestoreUser, auth.refreshFirestoreUser]);
 
   // Prioritize Firestore data, fallback to Firebase Auth data
   const displayName = (() => {
-    if (firestoreUser?.firstName || firestoreUser?.lastName) {
+    if (auth.firestoreUser?.firstName || auth.firestoreUser?.lastName) {
       // Use Firestore data if available (edited profile)
-      const name = `${firestoreUser.firstName || ''} ${firestoreUser.lastName || ''}`.trim();
+      const name = `${auth.firestoreUser.firstName || ''} ${auth.firestoreUser.lastName || ''}`.trim();
       return name;
     }
     // Fallback to Firebase Auth data (social login initial data)
@@ -24,19 +27,25 @@ export const useUserDisplayInfo = () => {
     return fallbackName;
   })();
 
-  const avatarUrl = firestoreUser?.avatarUrl || auth.user?.photoURL || '';
+  const avatarUrl = auth.firestoreUser?.avatarUrl || auth.user?.photoURL || '';
   
-  const email = firestoreUser?.email || auth.user?.email || '';
+  const email = auth.firestoreUser?.email || auth.user?.email || '';
+
+  const refresh = async () => {
+    if (auth.user?.uid) {
+      await auth.refreshFirestoreUser(auth.user.uid);
+    }
+  };
 
   return {
     displayName,
     avatarUrl,
     email,
-    firstName: firestoreUser?.firstName || '',
-    lastName: firestoreUser?.lastName || '',
-    age: firestoreUser?.age,
+    firstName: auth.firestoreUser?.firstName || '',
+    lastName: auth.firestoreUser?.lastName || '',
+    age: auth.firestoreUser?.age,
     // Include both sources for debugging/advanced use
-    firestoreUser,
+    firestoreUser: auth.firestoreUser,
     authUser: auth.user,
     isAuthenticated: auth.isAuthenticated,
     // Add refresh function to manually update user data

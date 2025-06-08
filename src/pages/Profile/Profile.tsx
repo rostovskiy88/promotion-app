@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, Button, Row, Col, message, Avatar } from 'antd';
+import { Card, Tabs, Form, Input, Button, Row, Col, Avatar, App } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
@@ -10,6 +10,7 @@ import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 import AvatarUpload from '../../components/AvatarUpload/AvatarUpload';
 
 const EditProfile: React.FC = () => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState('1');

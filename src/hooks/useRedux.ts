@@ -31,6 +31,9 @@ import {
   setOnlineStatus,
   setSyncing
 } from '../store/slices/cacheSlice';
+import {
+  refreshFirestoreUser
+} from '../store/slices/authSlice';
 
 // Articles hooks
 export const useArticles = () => {
@@ -133,6 +136,7 @@ export const useCache = () => {
 
 // Auth hooks (enhanced)
 export const useAuth = () => {
+  const dispatch = useAppDispatch();
   const authState = useAppSelector(state => state.auth);
 
   return {
@@ -143,6 +147,9 @@ export const useAuth = () => {
     isAuthenticated: !!authState.user,
     userDisplayName: authState.user?.displayName || authState.user?.email || 'User',
     hasVerifiedEmail: authState.user?.emailVerified || false,
+    
+    // Actions
+    refreshFirestoreUser: useCallback((uid: string) => dispatch(refreshFirestoreUser(uid)), [dispatch]),
   };
 };
 

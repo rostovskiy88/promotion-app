@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Divider, message } from 'antd';
+import { Form, Input, Button, Checkbox, Divider } from 'antd';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF } from 'react-icons/fa';
-import { useAppDispatch } from '../../store';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
+import { AppDispatch } from '../../store';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { getAuthErrorMessage } from '../../utils/authErrors';
+import { App } from 'antd';
 import styles from './Register.module.css';
 import registerImage from '../../assets/sign-up.png';
 import { createOrGetUser } from '../../services/userService';
 
+interface RegisterFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const Register: React.FC = () => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [agree, setAgree] = useState(false);
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleFinish = async (values: any) => {

@@ -2,11 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { User } from 'firebase/auth';
 import { authService } from '../../services/auth';
 import { SerializedUser } from '../../types/auth';
-import { createOrGetUser } from '../../services/userService';
+import { createOrGetUser, getUserById } from '../../services/userService';
 import { getAuthErrorMessage } from '../../utils/authErrors';
+import { FirestoreUser } from '../../types/user';
 
 interface AuthState {
   user: SerializedUser | null;
+  firestoreUser: FirestoreUser | null;
   loading: boolean;
   error: string | null;
   initialized: boolean;
@@ -14,6 +16,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
+  firestoreUser: null,
   loading: true,
   error: null,
   initialized: false,
@@ -37,6 +40,19 @@ const serializeUser = (user: User): SerializedUser => ({
     photoURL: provider.photoURL,
   })),
 });
+
+// Helper function to serialize Firestore user data (convert Timestamps to strings)
+const serializeFirestoreUser = (firestoreUser: any): FirestoreUser | null => {
+  if (!firestoreUser) return null;
+  
+  return {
+    ...firestoreUser,
+    // Convert Firebase Timestamps to ISO strings
+    createdAt: firestoreUser.createdAt?.toDate?.()?.toISOString() || firestoreUser.createdAt,
+    updatedAt: firestoreUser.updatedAt?.toDate?.()?.toISOString() || firestoreUser.updatedAt,
+    // Remove any other non-serializable properties if they exist
+  };
+};
 
 export const loginWithGoogle = createAsyncThunk(
   'auth/loginWithGoogle',
@@ -107,6 +123,19 @@ export const logout = createAsyncThunk(
   }
 );
 
+// Add new async thunk to fetch/refresh Firestore user data
+export const refreshFirestoreUser = createAsyncThunk(
+  'auth/refreshFirestoreUser',
+  async (uid: string, { rejectWithValue }) => {
+    try {
+      const userData = await getUserById(uid);
+      return serializeFirestoreUser(userData);
+    } catch (error: any) {
+      return rejectWithValue('Failed to fetch user data');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -115,6 +144,9 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.loading = false;
       state.initialized = true;
+    },
+    setFirestoreUser: (state, action) => {
+      state.firestoreUser = action.payload;
     },
     clearError: (state) => {
       state.error = null;
@@ -171,10 +203,15 @@ const authSlice = createSlice({
       // Logout
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
+        state.firestoreUser = null;
         state.initialized = true;
+      })
+      // Refresh Firestore user
+      .addCase(refreshFirestoreUser.fulfilled, (state, action) => {
+        state.firestoreUser = action.payload;
       });
   },
 });
 
-export const { setUser, clearError, resetLoading } = authSlice.actions;
+export const { setUser, setFirestoreUser, clearError, resetLoading } = authSlice.actions;
 export default authSlice.reducer; 

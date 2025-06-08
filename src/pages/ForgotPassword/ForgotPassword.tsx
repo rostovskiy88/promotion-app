@@ -1,15 +1,18 @@
-import { Form, Input, Button, message } from 'antd';
+import React from 'react';
+import { Form, Input, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { getAuthErrorMessage } from '../../utils/authErrors';
+import { App } from 'antd';
 import styles from './ForgotPassword.module.css';
 
 interface ForgotPasswordFormData {
   email: string;
 }
 
-const ForgotPassword = () => {
+const ForgotPassword: React.FC = () => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
 
   const handleSubmit = async (values: ForgotPasswordFormData) => {

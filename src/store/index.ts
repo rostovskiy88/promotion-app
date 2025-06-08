@@ -38,6 +38,8 @@ export const store = configureStore({
         // Ignore these paths in the state
         ignoredPaths: [
           'auth.user.metadata',
+          'auth.firestoreUser.createdAt',
+          'auth.firestoreUser.updatedAt',
           'ui.modals',
           'cache.apiCache',
           'articles.articles', // Ignore articles array to prevent timestamp warnings
@@ -48,6 +50,8 @@ export const store = configureStore({
           'payload.articles',
           'payload.0.createdAt',
           'payload.createdAt',
+          'payload.firestoreUser.createdAt',
+          'payload.firestoreUser.updatedAt',
           'meta.arg.articles',
         ]
       }
