@@ -1,4 +1,3 @@
-import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -67,7 +66,7 @@ describe('AuthStateListener Component', () => {
     mockUnsubscribe = jest.fn();
     
     // Mock onAuthStateChanged to return unsubscribe function
-    mockOnAuthStateChanged.mockImplementation((auth, callback) => {
+    mockOnAuthStateChanged.mockImplementation((_auth, callback) => {
       // Store the callback for manual triggering in tests
       (mockOnAuthStateChanged as any).lastCallback = callback;
       return mockUnsubscribe;

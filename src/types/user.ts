@@ -1,3 +1,5 @@
+import { FirebaseTimestamp } from './firebase';
+
 export interface FirestoreUser {
   uid: string;
   email: string;
@@ -5,5 +7,5 @@ export interface FirestoreUser {
   lastName: string;
   avatarUrl?: string;
   age?: number;
-  createdAt?: any; // You can use Firebase Timestamp type if you want
+  createdAt?: FirebaseTimestamp; // Properly typed Firebase Timestamp
 } 

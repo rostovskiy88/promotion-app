@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { OfflineQueueItem } from '../../types/firebase';
 
-interface CacheEntry {
-  data: any;
+interface CacheEntry<T = unknown> {
+  data: T;
   timestamp: number;
   expiresIn: number; // milliseconds
 }
@@ -11,13 +12,7 @@ interface CacheState {
   apiCache: Record<string, CacheEntry>;
   
   // Offline data
-  offlineQueue: Array<{
-    id: string;
-    action: string;
-    data: any;
-    timestamp: number;
-    retries: number;
-  }>;
+  offlineQueue: OfflineQueueItem[];
   
   // Network status
   isOnline: boolean;
@@ -58,7 +53,7 @@ const cacheSlice = createSlice({
   initialState,
   reducers: {
     // API Cache
-    setCacheEntry: (state, action: PayloadAction<{ key: string; data: any; expiresIn?: number }>) => {
+    setCacheEntry: (state, action: PayloadAction<{ key: string; data: unknown; expiresIn?: number }>) => {
       const { key, data, expiresIn = 5 * 60 * 1000 } = action.payload; // Default 5 minutes
       state.apiCache[key] = {
         data,
@@ -75,7 +70,6 @@ const cacheSlice = createSlice({
         const now = Date.now();
         if (now - entry.timestamp < entry.expiresIn) {
           state.metrics.cacheHits++;
-          return entry.data;
         } else {
           // Expired, remove it
           delete state.apiCache[key];
@@ -101,8 +95,8 @@ const cacheSlice = createSlice({
     },
     
     // Offline Queue
-    addToOfflineQueue: (state, action: PayloadAction<{ action: string; data: any }>) => {
-      const queueItem = {
+    addToOfflineQueue: (state, action: PayloadAction<{ action: string; data: Record<string, unknown> }>) => {
+      const queueItem: OfflineQueueItem = {
         id: Date.now().toString(),
         action: action.payload.action,
         data: action.payload.data,

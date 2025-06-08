@@ -7,11 +7,9 @@ import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/
 import { AppDispatch, RootState } from '../../store';
 import { App } from 'antd';
 import styles from './Login.module.css';
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
+import { LoginFormData } from '../../types/forms';
+import { AppError } from '../../types/firebase';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 
 const Login = () => {
   const { message } = App.useApp();
@@ -23,69 +21,36 @@ const Login = () => {
   // Get the redirect path from location state, or default to dashboard
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
 
-  const handleEmailLogin = async (values: LoginFormData) => {
+  const onFinish = async (values: LoginFormData) => {
     try {
-      console.log('Attempting email login...', values.email);
-      const result = await dispatch(loginWithEmail(values)).unwrap();
-      if (result) {
-        console.log('Login successful:', result);
-        message.success('Successfully logged in!');
-        navigate(from, { replace: true });
-      }
-    } catch (err: any) {
-      console.error('Login failed:', err);
-      // The error from the thunk is already processed by getAuthErrorMessage
-      message.error(err || 'Failed to login');
+      await dispatch(loginWithEmail({ email: values.email, password: values.password })).unwrap();
+      navigate(from, { replace: true });
+    } catch (err: unknown) {
+      const typedError = err as AppError;
+      console.error('Login error:', typedError);
+      message.error(getAuthErrorMessage(typedError));
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      console.log('Starting Google login process...');
-      const result = await dispatch(loginWithGoogle()).unwrap();
-      if (result) {
-        console.log('Google login successful, user:', result);
-        message.success('Successfully logged in with Google!');
-        navigate(from, { replace: true });
-      }
-    } catch (err: any) {
-      console.error('Google login error:', {
-        message: err,
-        fullError: err
-      });
-      // The error is already processed by getAuthErrorMessage, but handle specific cases
-      if (err.includes('cancelled')) {
-        message.info('Login cancelled');
-      } else {
-        message.error(err || 'Failed to login with Google');
-      }
-      // Reset loading state in Redux
-      dispatch({ type: 'auth/resetLoading' });
+      await dispatch(loginWithGoogle()).unwrap();
+      navigate(from, { replace: true });
+    } catch (err: unknown) {
+      const typedError = err as AppError;
+      console.error('Google login error:', typedError);
+      message.error(getAuthErrorMessage(typedError));
     }
   };
 
   const handleFacebookLogin = async () => {
     try {
-      console.log('Starting Facebook login process...');
-      const result = await dispatch(loginWithFacebook()).unwrap();
-      if (result) {
-        console.log('Facebook login successful, user:', result);
-        message.success('Successfully logged in with Facebook!');
-        navigate(from, { replace: true });
-      }
-    } catch (err: any) {
-      console.error('Facebook login error:', {
-        message: err,
-        fullError: err
-      });
-      // The error is already processed by getAuthErrorMessage, but handle specific cases
-      if (err.includes('cancelled')) {
-        message.info('Login cancelled');
-      } else {
-        message.error(err || 'Failed to login with Facebook');
-      }
-      // Reset loading state in Redux
-      dispatch({ type: 'auth/resetLoading' });
+      await dispatch(loginWithFacebook()).unwrap();
+      navigate(from, { replace: true });
+    } catch (err: unknown) {
+      const typedError = err as AppError;
+      console.error('Facebook login error:', typedError);
+      message.error(getAuthErrorMessage(typedError));
     }
   };
 
@@ -99,7 +64,7 @@ const Login = () => {
 
           <Form
             name="login"
-            onFinish={handleEmailLogin}
+            onFinish={onFinish}
             layout="vertical"
             className={styles.form}
             validateTrigger="onBlur"

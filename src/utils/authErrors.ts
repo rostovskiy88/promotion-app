@@ -1,6 +1,8 @@
-export const getAuthErrorMessage = (error: any): string => {
+import { AppError } from '../types/firebase';
+
+export const getAuthErrorMessage = (error: AppError): string => {
   // Check if it's a Firebase error with a code
-  if (error?.code) {
+  if (error && typeof error === 'object' && 'code' in error) {
     switch (error.code) {
       case 'auth/invalid-credential':
       case 'auth/wrong-password':
@@ -41,20 +43,21 @@ export const getAuthErrorMessage = (error: any): string => {
   }
   
   // If it's not a Firebase error or doesn't have a code, check the message
-  if (error?.message) {
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = error.message as string;
     // Check if the message contains Firebase error patterns
-    if (error.message.includes('auth/invalid-credential') || 
-        error.message.includes('auth/wrong-password') ||
-        error.message.includes('auth/user-not-found')) {
+    if (message.includes('auth/invalid-credential') || 
+        message.includes('auth/wrong-password') ||
+        message.includes('auth/user-not-found')) {
       return 'Incorrect email or password. Please check your credentials and try again.';
     }
     
-    if (error.message.includes('auth/invalid-email')) {
+    if (message.includes('auth/invalid-email')) {
       return 'Please enter a valid email address.';
     }
     
     // Return the original message if it doesn't match any Firebase patterns
-    return error.message;
+    return message;
   }
   
   // Fallback for any other error format

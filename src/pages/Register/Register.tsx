@@ -11,6 +11,8 @@ import { getAuthErrorMessage } from '../../utils/authErrors';
 import styles from './Register.module.css';
 import registerImage from '../../assets/sign-up.png';
 import { createOrGetUser } from '../../services/userService';
+import { RegisterFormData } from '../../types/forms';
+import { AppError } from '../../types/firebase';
 
 const Register: React.FC = () => {
   const { message } = App.useApp();
@@ -20,53 +22,60 @@ const Register: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const handleFinish = async (values: any) => {
+  const handleFinish = async (values: RegisterFormData) => {
     setLoading(true);
     try {
-      const { name, email, password } = values;
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: name });
-      // Create user in Firestore
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        values.email, 
+        values.password
+      );
+      
+      // Update the user's display name
+      await updateProfile(userCredential.user, {
+        displayName: values.name
+      });
+
+      // Create user document in Firestore
       await createOrGetUser({
         uid: userCredential.user.uid,
-        email: userCredential.user.email!,
-        displayName: name,
+        email: userCredential.user.email || values.email,
+        displayName: values.name,
         photoURL: userCredential.user.photoURL || '',
       });
-      message.success('Registration successful!');
+
+      message.success('Account created successfully!');
       navigate('/dashboard');
-    } catch (error: any) {
-      message.error(getAuthErrorMessage(error));
+      
+    } catch (error: unknown) {
+      const typedError = error as AppError;
+      console.error('Registration error:', typedError);
+      message.error(getAuthErrorMessage(typedError));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogle = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       await dispatch(loginWithGoogle()).unwrap();
       navigate('/dashboard');
-    } catch (err: any) {
-      if (err.includes('cancelled')) {
-        message.info('Login cancelled');
-      } else {
-        message.error(err || 'Failed to login with Google');
-      }
-      dispatch({ type: 'auth/resetLoading' });
+    } catch (err: unknown) {
+      const typedError = err as AppError;
+      console.error('Google sign-up error:', typedError);
+      message.error(getAuthErrorMessage(typedError));
     }
   };
 
-  const handleFacebook = async () => {
+  const handleFacebookSignUp = async () => {
     try {
       await dispatch(loginWithFacebook()).unwrap();
       navigate('/dashboard');
-    } catch (err: any) {
-      if (err.includes('cancelled')) {
-        message.info('Login cancelled');
-      } else {
-        message.error(err || 'Failed to login with Facebook');
-      }
-      dispatch({ type: 'auth/resetLoading' });
+    } catch (err: unknown) {
+      const typedError = err as AppError;
+      console.error('Facebook sign-up error:', typedError);
+      message.error(getAuthErrorMessage(typedError));
     }
   };
 
@@ -164,13 +173,13 @@ const Register: React.FC = () => {
           <div className={styles.socialButtons}>
             <Button
               className={styles.socialButton}
-              onClick={handleGoogle}
+              onClick={handleGoogleSignUp}
             >
               <GoogleOutlined />
             </Button>
             <Button
                 className={styles.socialButton}
-                onClick={handleFacebook}
+                onClick={handleFacebookSignUp}
             >
               <FacebookFilled />
             </Button>

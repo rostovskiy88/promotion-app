@@ -1,9 +1,8 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from 'antd';
 import ArticleDetails from './ArticleDetails';
-import { getArticleById } from '../../services/articleService';
+import * as articleService from '../../services/articleService';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
 
 // Mock dependencies
@@ -60,13 +59,13 @@ describe('ArticleDetails Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useFirestoreUser as jest.Mock).mockReturnValue(mockCurrentUser);
-    (getArticleById as jest.Mock).mockResolvedValue(mockArticle);
+    (articleService.getArticleById as jest.Mock).mockResolvedValue(mockArticle);
   });
 
   describe('Loading State', () => {
     it('shows loading spinner while fetching article', async () => {
       // Make the service call hang to test loading state
-      (getArticleById as jest.Mock).mockImplementation(() => new Promise(() => {}));
+      (articleService.getArticleById as jest.Mock).mockImplementation(() => new Promise(() => {}));
       
       renderComponent();
 
@@ -111,7 +110,7 @@ describe('ArticleDetails Component', () => {
     });
 
     it('does not render image section when imageUrl is not provided', async () => {
-      (getArticleById as jest.Mock).mockResolvedValue({
+      (articleService.getArticleById as jest.Mock).mockResolvedValue({
         ...mockArticle,
         imageUrl: undefined,
       });
@@ -211,7 +210,7 @@ describe('ArticleDetails Component', () => {
     it('handles missing article ID', async () => {
       // We'll test this by checking that the component handles the case properly
       // Since mocking useParams per test is complex, we'll test the fetch behavior instead
-      (getArticleById as jest.Mock).mockResolvedValue(null);
+      (articleService.getArticleById as jest.Mock).mockResolvedValue(null);
 
       renderComponent();
 
@@ -221,7 +220,7 @@ describe('ArticleDetails Component', () => {
     });
 
     it('handles article not found', async () => {
-      (getArticleById as jest.Mock).mockResolvedValue(null);
+      (articleService.getArticleById as jest.Mock).mockResolvedValue(null);
 
       renderComponent();
 
@@ -232,7 +231,7 @@ describe('ArticleDetails Component', () => {
 
     it('handles service error', async () => {
       const mockError = new Error('Service error');
-      (getArticleById as jest.Mock).mockRejectedValue(mockError);
+      (articleService.getArticleById as jest.Mock).mockRejectedValue(mockError);
 
       renderComponent();
 
@@ -256,7 +255,7 @@ describe('ArticleDetails Component', () => {
         toDate: () => new Date('2023-12-25T10:00:00Z'),
       };
 
-      (getArticleById as jest.Mock).mockResolvedValue({
+      (articleService.getArticleById as jest.Mock).mockResolvedValue({
         ...mockArticle,
         createdAt: mockTimestamp,
       });
@@ -289,7 +288,7 @@ describe('ArticleDetails Component', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(getArticleById).toHaveBeenCalledWith('test-article-id');
+        expect(articleService.getArticleById).toHaveBeenCalledWith('test-article-id');
       });
     });
   });

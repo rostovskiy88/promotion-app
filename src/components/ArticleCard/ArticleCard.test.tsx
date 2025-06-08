@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from 'antd';
@@ -117,7 +116,6 @@ describe('ArticleCard Component', () => {
       renderComponent();
 
       const readMoreButton = screen.getByText('Read more →');
-      const mockEvent = { preventDefault: jest.fn(), type: 'click' };
 
       fireEvent.click(readMoreButton);
       

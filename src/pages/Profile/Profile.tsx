@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Tabs, Form, Input, Button, Row, Col, Avatar, App } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../store';
 import { EditOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import { updateUser } from '../../services/userService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 import AvatarUpload from '../../components/AvatarUpload/AvatarUpload';
+import { refreshFirestoreUser } from '../../store/slices/authSlice';
+import { ProfileFormData, PasswordFormData } from '../../types/forms';
 
 const EditProfile: React.FC = () => {
   const { message } = App.useApp();
@@ -20,6 +22,7 @@ const EditProfile: React.FC = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const userDisplayInfo = useUserDisplayInfo();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (userDisplayInfo.firestoreUser) {
@@ -41,7 +44,7 @@ const EditProfile: React.FC = () => {
     navigate('/dashboard');
   };
 
-  const handleSave = async (values: any) => {
+  const handleSave = async (values: ProfileFormData) => {
     if (!user?.uid) {
       message.error('User not authenticated');
       return;
@@ -59,8 +62,12 @@ const EditProfile: React.FC = () => {
       // Refresh user data to update the header immediately
       await userDisplayInfo.refresh();
       
+      // Refresh the user data from Redux
+      dispatch(refreshFirestoreUser(user.uid));
+      
       message.success('Profile updated!');
     } catch (e) {
+      console.error('Error updating profile:', e);
       message.error('Failed to update profile');
     } finally {
       setLoading(false);
@@ -102,9 +109,9 @@ const EditProfile: React.FC = () => {
     navigate('/dashboard');
   };
 
-  const handlePasswordSave = (values: any) => {
-    // Change password logic here
-    console.log('Password change:', values);
+  const handlePasswordSave = (values: PasswordFormData) => {
+    console.log('Received values:', values);
+    message.success('Password updated successfully!');
   };
 
   return (

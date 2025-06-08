@@ -1,4 +1,5 @@
 // Form interface types to replace 'any' usage
+import { UploadFile } from './firebase';
 
 export interface LoginFormData {
   email: string;
@@ -33,7 +34,7 @@ export interface ArticleFormData {
 }
 
 export interface AvatarFormData {
-  avatar: any[]; // File upload array from AntD
+  avatar: UploadFile[]; // Properly typed file upload array from AntD
 }
 
 export interface ForgotPasswordFormData {
