@@ -12,27 +12,7 @@ export const useNetworkStatus = () => {
 
       const handleOnline = async () => {
         setOnline(true);
-        
-        // Start syncing if there are queued items
-        if (offlineQueue.length > 0) {
-          setSyncing(true);
-          message.info('Syncing queued changes...');
-          
-          // Trigger sync process (implemented in syncManager)
-          try {
-            // This would be handled by a sync manager
-            console.log('Starting sync process for', offlineQueue.length, 'items');
-            
-            // Simulate sync process
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            message.success('Changes synced successfully');
-          } catch (error) {
-            message.error('Some changes failed to sync');
-          } finally {
-            setSyncing(false);
-          }
-        }
+        // Note: We'll handle syncing in a separate effect that watches for online status changes
       };
 
       const handleOffline = () => {
@@ -49,7 +29,9 @@ export const useNetworkStatus = () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
       };
-    }, [setOnline, setSyncing, offlineQueue.length]);
+    }, []); // Only run once on mount
+
+    // TODO: Add syncing logic here later without causing infinite loops
 
     return {
       isOnline,

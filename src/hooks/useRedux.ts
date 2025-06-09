@@ -29,6 +29,7 @@ import {
   setCacheEntry,
   addToOfflineQueue,
   setOnlineStatus,
+  resetSessionState,
   setSyncing
 } from '../store/slices/cacheSlice';
 import {
@@ -183,8 +184,9 @@ export const useCache = () => {
     addToQueue: (action: string, data: any) =>
       dispatch(addToOfflineQueue({ action, data })),
     
-    setOnline: (isOnline: boolean) => dispatch(setOnlineStatus(isOnline)),
-    setSyncing: (syncing: boolean) => dispatch(setSyncing(syncing)),
+    setOnline: useCallback((isOnline: boolean) => dispatch(setOnlineStatus(isOnline)), [dispatch]),
+    resetSession: useCallback(() => dispatch(resetSessionState()), [dispatch]),
+    setSyncing: useCallback((syncing: boolean) => dispatch(setSyncing(syncing)), [dispatch]),
   };
 };
 

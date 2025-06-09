@@ -126,16 +126,26 @@ const cacheSlice = createSlice({
     // Network Status
     setOnlineStatus: (state, action: PayloadAction<boolean>) => {
       const wasOffline = !state.isOnline;
+      const isInitialLoad = state.lastOnlineTime === 0;
       
       state.isOnline = action.payload;
       
       if (!action.payload) {
         // Going offline
         state.hasBeenOfflineSession = true;
-      } else if (action.payload && wasOffline && state.hasBeenOfflineSession) {
-        // Coming back online after being offline
+      } else if (action.payload && wasOffline && state.hasBeenOfflineSession && !isInitialLoad) {
+        // Coming back online after being offline (but not on initial app load)
+        state.lastOnlineTime = Date.now();
+      } else if (action.payload && isInitialLoad) {
+        // Initial app load - just set the timestamp, don't show restoration message
         state.lastOnlineTime = Date.now();
       }
+    },
+    
+    // Reset session state (call this on app initialization)
+    resetSessionState: (state) => {
+      state.hasBeenOfflineSession = false;
+      state.lastOnlineTime = 0;
     },
     
     // Sync Status
@@ -185,6 +195,7 @@ export const {
   incrementRetries,
   clearOfflineQueue,
   setOnlineStatus,
+  resetSessionState,
   setSyncing,
   addSyncError,
   clearSyncErrors,
