@@ -107,6 +107,45 @@ body {
   color: var(--text-tertiary) !important;
 }
 
+[data-theme="dark"] .ant-input-password {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-input-password .ant-input {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-input-password .ant-input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+[data-theme="dark"] .ant-input-affix-wrapper {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+  border-color: #1557ff !important;
+}
+
+[data-theme="dark"] .ant-input-affix-wrapper-focused {
+  border-color: #1557ff !important;
+  box-shadow: 0 0 0 2px rgba(21, 87, 255, 0.2) !important;
+}
+
+/* Additional dark mode input fixes */
+[data-theme="dark"] input {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
 [data-theme="dark"] .ant-select-selector {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
@@ -128,6 +167,23 @@ body {
 
 [data-theme="dark"] .ant-dropdown-menu-item:hover {
   background: #1557ff20 !important;
+}
+
+/* Dark mode Typography fixes */
+[data-theme="dark"] .ant-typography {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-typography-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-typography-paragraph {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-typography-text {
+  color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .ant-btn {

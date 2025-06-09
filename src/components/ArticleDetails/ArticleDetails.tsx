@@ -114,14 +114,14 @@ const ArticleDetails: React.FC = () => {
           </Title>
           
           {/* Author and Date Info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#666' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)' }}>
             <Avatar src={article.authorAvatar} size={32}>
               {article.authorName.charAt(0)}
             </Avatar>
             <div>
-              <Text strong style={{ color: '#333' }}>{article.authorName}</Text>
+              <Text strong style={{ color: 'var(--text-primary)' }}>{article.authorName}</Text>
               <br />
-              <Text style={{ fontSize: '14px', color: '#666' }}>
+              <Text style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                 {new Date(
                   typeof article.createdAt === 'string' 
                     ? article.createdAt 
@@ -137,8 +137,8 @@ const ArticleDetails: React.FC = () => {
         </div>
 
         {/* Article Content */}
-        <div style={{ fontSize: '16px', lineHeight: '1.8', color: '#333' }}>
-          <Paragraph style={{ fontSize: '16px', marginBottom: '24px' }}>
+        <div style={{ fontSize: '16px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
+          <Paragraph style={{ fontSize: '16px', marginBottom: '24px', color: 'var(--text-primary)' }}>
             {article.content}
           </Paragraph>
         </div>

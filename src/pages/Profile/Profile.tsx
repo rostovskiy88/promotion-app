@@ -39,6 +39,12 @@ const EditProfile: React.FC = () => {
     (provider) => provider.providerId === 'google.com'
   );
 
+  const isFacebookUser = user?.providerData?.some(
+    (provider) => provider.providerId === 'facebook.com'
+  );
+
+  const isSocialUser = isGoogleUser || isFacebookUser;
+
   const handleCancel = () => {
     form.resetFields();
     navigate('/dashboard');
@@ -237,9 +243,9 @@ const EditProfile: React.FC = () => {
                 key: '3',
                 label: <span className={activeTab === '3' ? styles.activeTab : styles.inactiveTab}>Change Password</span>,
                 children: <>
-                  {isGoogleUser && (
+                  {isSocialUser && (
                     <div className={styles.googleInfo}>
-                      You signed in with Google. To change your password, visit your Google Account settings.
+                      You signed in with {isGoogleUser ? 'Google' : 'Facebook'}. Password changes are not available for social login accounts.
                     </div>
                   )}
                   <div className={styles.sectionTitle}>Change your password</div>
@@ -250,18 +256,18 @@ const EditProfile: React.FC = () => {
                     requiredMark={false}
                   >
                     <Form.Item label="Old Password" name="oldPassword">
-                      <Input.Password placeholder="Enter your current password" size="large" className={styles.input} disabled={isGoogleUser} />
+                      <Input.Password placeholder="Enter your current password" size="large" className={styles.input} disabled={isSocialUser} />
                     </Form.Item>
                     <Form.Item label="New Password" name="newPassword">
-                      <Input.Password placeholder="Enter your new password" size="large" className={styles.input} disabled={isGoogleUser} />
+                      <Input.Password placeholder="Enter your new password" size="large" className={styles.input} disabled={isSocialUser} />
                     </Form.Item>
                     <Form.Item label="Confirm New Password" name="confirmPassword">
-                      <Input.Password placeholder="Enter your new password again" size="large" className={styles.input} disabled={isGoogleUser} />
+                      <Input.Password placeholder="Enter your new password again" size="large" className={styles.input} disabled={isSocialUser} />
                     </Form.Item>
                     <Form.Item className={styles.buttonRow}>
                       <div className={styles.buttonGroup}>
                         <Button onClick={handlePasswordCancel} className={`${styles.button} ${styles.cancelButton}`}>Cancel</Button>
-                        <Button type="primary" htmlType="submit" className={`${styles.button} ${styles.saveButton}`} disabled={isGoogleUser}>Save</Button>
+                        <Button type="primary" htmlType="submit" className={`${styles.button} ${styles.saveButton}`} disabled={isSocialUser}>Save</Button>
                       </div>
                     </Form.Item>
                   </Form>

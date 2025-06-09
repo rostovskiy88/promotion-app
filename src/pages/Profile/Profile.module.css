@@ -107,6 +107,13 @@
   background: #f7f8fa;
 }
 
+/* Dark mode support for inputs */
+[data-theme="dark"] .input {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
 .googleInfo {
   color: #b0b4ba;
   margin-bottom: 16px;
