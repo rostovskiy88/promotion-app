@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, Space, Tag } from 'antd';
-import { WifiOutlined, CloudOutlined, SyncOutlined } from '@ant-design/icons';
+import { WifiOutlined, SyncOutlined } from '@ant-design/icons';
 import { useCache } from '../../hooks/useRedux';
 import { OfflineQueueItem } from '../../types/firebase';
 

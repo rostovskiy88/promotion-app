@@ -115,7 +115,7 @@ jobs:
         path: dist/
 
     - name: Start development server
-      run: npm run dev &
+      run: npx vite --port 5173 &
       env:
         VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
         VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}

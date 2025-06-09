@@ -11,7 +11,7 @@ const urlsToCache = [
 ];
 
 // Install event - cache static resources
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+some f// eslint-disable-next-line @typescript-eslint/no-explicit-any
 self.addEventListener('install', (event: any) => {
   console.log('[SW] Install event');
   event.waitUntil(

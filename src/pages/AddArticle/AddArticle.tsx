@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, Upload, Col, Select, message, Progress } from 'antd';
+import { Card, Form, Input, Button, Upload, Col, Select, message } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+
 import { addArticle } from '../../services/articleService';
-import { uploadImage, validateImageFile, generateImagePath } from '../../services/imageService';
+import { uploadImage, validateImageFile } from '../../services/imageService';
 import styles from './AddArticle.module.css';
 import { useAuth } from '../../hooks/useRedux';
 
@@ -17,20 +17,13 @@ interface ArticleFormValues {
   image?: File[];
 }
 
-interface CustomRequestOptions {
-  file: unknown;
-  onSuccess: (response?: unknown) => void;
-  onError?: (error: Error) => void;
-}
-
 const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+
   const navigate = useNavigate();
-  const userDisplayInfo = useUserDisplayInfo();
   const { user } = useAuth();
 
   const handleFinish = async (values: ArticleFormValues) => {
@@ -103,7 +96,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const customRequest = ({ file, onSuccess }: any) => {
+  const customRequest = ({ onSuccess }: any) => {
     // For Ant Design Upload component - just call onSuccess immediately
     setTimeout(() => {
       onSuccess?.();
@@ -132,7 +125,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
             <Form.Item label="Title" name="title" rules={[{ required: true, message: 'Please enter a title' }]}>
               <Input placeholder="Enter your title" size="large" className={styles.input} />
             </Form.Item>
-            <Form.Item label="Text" name="text" rules={[{ required: true, message: 'Please enter article content' }]}>
+            <Form.Item label="Text" name="content" rules={[{ required: true, message: 'Please enter article content' }]}>
               <Input.TextArea placeholder="Enter your text copy" rows={6} className={styles.input} />
             </Form.Item>
             
@@ -171,14 +164,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
                   </div>
                 </div>
               )}
-              
-              {/* Upload Progress */}
-              {isUploading && (
-                <div style={{ marginBottom: '16px' }}>
-                  <Progress percent={100} status="active" />
-                  <div style={{ fontSize: '12px', color: '#666' }}>Uploading image...</div>
-                </div>
-              )}
 
               <Upload.Dragger
                 name="cover"
@@ -187,7 +172,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
                 customRequest={customRequest}
                 beforeUpload={handleFileSelect}
                 className={styles.uploadDragger}
-                disabled={isUploading}
               >
                 <div className={styles.uploadContent}>
                   <UploadOutlined className={styles.uploadIcon} />
@@ -201,16 +185,15 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
             </Form.Item>
             
             <Form.Item className={styles.formFooter}>
-              <Button onClick={onCancel} className={styles.cancelButton} disabled={loading || isUploading}>
+              <Button onClick={onCancel} className={styles.cancelButton} disabled={loading}>
                 Cancel
               </Button>
               <Button 
                 type="primary" 
                 htmlType="submit" 
-                loading={loading || isUploading}
-                disabled={isUploading}
+                loading={loading}
               >
-                {isUploading ? 'Publishing...' : 'Publish'}
+                Publish
               </Button>
             </Form.Item>
           </Form>

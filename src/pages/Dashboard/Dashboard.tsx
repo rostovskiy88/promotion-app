@@ -11,6 +11,7 @@ import styles from './Dashboard.module.css';
 import { formatArticleDate } from '../../utils/formatArticleDate';
 import { addSampleArticles } from '../../utils/addSampleArticles';
 import { useArticles, useUI } from '../../hooks/useRedux';
+import { Article } from '../../types/article';
 
 const { Option } = Select;
 
@@ -280,7 +281,7 @@ const Dashboard: React.FC = () => {
         ) : (
           <>
             <div className={styles.articlesGrid}>
-              {articlesToDisplay.map(article => (
+              {articlesToDisplay.map((article: Article) => (
                 <ArticleCard
                   key={article.id}
                   category={article.category ?? ''}
