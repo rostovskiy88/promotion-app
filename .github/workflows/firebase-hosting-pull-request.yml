@@ -80,15 +80,7 @@ jobs:
         env:
           CYPRESS_BASE_URL: http://localhost:5173
 
-      - name: Upload E2E artifacts on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: pr-cypress-artifacts
-          path: |
-            cypress/videos/
-            cypress/screenshots/
-          retention-days: 7
+
 
       - name: Notify Slack on PR Test Failure
         if: failure()

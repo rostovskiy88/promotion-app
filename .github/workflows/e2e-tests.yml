@@ -134,21 +134,7 @@ jobs:
       env:
         CYPRESS_BASE_URL: http://localhost:5173
 
-    - name: Upload test videos
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: cypress-videos-${{ matrix.name }}-${{ github.run_id }}
-        path: cypress/videos/
-        retention-days: 7
 
-    - name: Upload test screenshots
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: cypress-screenshots-${{ matrix.name }}-${{ github.run_id }}
-        path: cypress/screenshots/
-        retention-days: 7
 
   test-report:
     runs-on: ubuntu-latest
@@ -172,8 +158,4 @@ jobs:
     - name: Report failure
       if: needs.e2e-tests.result == 'failure'
       run: |
-        echo "❌ Some E2E tests failed. Check the job logs and artifacts for details." >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Artifacts available:**" >> $GITHUB_STEP_SUMMARY
-        echo "- Test videos (on failure)" >> $GITHUB_STEP_SUMMARY
-        echo "- Test screenshots (on failure)" >> $GITHUB_STEP_SUMMARY 
+        echo "❌ Some E2E tests failed. Check the job logs for details." >> $GITHUB_STEP_SUMMARY 
