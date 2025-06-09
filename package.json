@@ -12,7 +12,15 @@
     "test:e2e": "cypress run",
     "test:e2e:open": "cypress open",
     "test:auth-errors": "cypress run --spec 'cypress/e2e/*auth*.cy.ts'",
-    "test:auth-errors:open": "cypress open --spec 'cypress/e2e/*auth*.cy.ts'"
+    "test:auth-errors:open": "cypress open --spec 'cypress/e2e/*auth*.cy.ts'",
+    "test:e2e:articles": "cypress run --spec 'cypress/e2e/article-*.cy.ts'",
+    "test:e2e:profile": "cypress run --spec 'cypress/e2e/profile-*.cy.ts'",
+    "test:e2e:weather": "cypress run --spec 'cypress/e2e/weather-*.cy.ts'",
+    "test:e2e:theme": "cypress run --spec 'cypress/e2e/theme-*.cy.ts'",
+    "test:e2e:search": "cypress run --spec 'cypress/e2e/search-*.cy.ts'",
+    "test:e2e:pwa": "cypress run --spec 'cypress/e2e/pwa-*.cy.ts'",
+    "test:e2e:critical": "npm run test:auth-errors && cypress run --spec 'cypress/e2e/article-workflow.cy.ts'",
+    "test:ci": "npm test -- --watchAll=false --coverage && npm run test:e2e:critical"
   },
   "dependencies": {
     "@firebase/auth": "^1.10.0",
@@ -58,6 +66,7 @@
     "ts-jest": "^29.3.4",
     "typescript": "^5.2.2",
     "vite": "^5.4.18",
-    "vite-plugin-pwa": "^0.17.5"
+    "vite-plugin-pwa": "^0.17.5",
+    "wait-on": "^8.0.3"
   }
 }

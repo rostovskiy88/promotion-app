@@ -1,26 +1,27 @@
-# Authentication Error E2E Tests
+# React Promotion App E2E Tests
 
-This directory contains end-to-end tests specifically designed to verify that authentication error messages are user-friendly and don't expose raw Firebase error codes.
+This directory contains comprehensive end-to-end tests for the React Promotion application covering authentication, user management, article workflows, and PWA features.
 
 ## Test Files
 
-### `auth-errors.cy.ts`
-Comprehensive test suite covering all authentication error scenarios:
-- Email login errors (wrong password, invalid email, non-existent users)
-- Password reset errors
-- Registration errors (existing email, weak password)
-- Network error handling
-- Form validation
-- Loading states
-- Error message cleanup
+### Authentication Tests
+- **`auth-errors.cy.ts`**: Comprehensive authentication error handling (invalid credentials, network errors, validation)
+- **`email-auth-errors.cy.ts`**: Focused email authentication error scenarios and user-friendly messaging
 
-### `email-auth-errors.cy.ts`
-Focused test suite specifically for email authentication error messages:
-- Wrong password scenarios
-- Non-existent email scenarios
-- Malformed email handling
-- Loading state verification
-- Error message content validation
+### Article Management Tests  
+- **`article-workflow.cy.ts`**: Basic article creation, editing, and management workflows
+- **`article-management-advanced.cy.ts`**: Advanced CRUD operations, image handling, validation, bulk operations
+
+### User Management Tests
+- **`profile-management.cy.ts`**: Profile updates, avatar management, password changes, social user restrictions
+
+### Feature-Specific Tests
+- **`search-infinite-scroll.cy.ts`**: Search functionality, infinite scroll, pagination, category filtering
+- **`weather-widget.cy.ts`**: Weather widget, geolocation, manual city selection, API error handling
+- **`theme-management.cy.ts`**: Dark mode toggle, theme persistence, visual updates, accessibility
+
+### PWA & Performance Tests
+- **`pwa-features.cy.ts`**: Offline functionality, service worker, app installation, push notifications, storage management
 
 ## Running the Tests
 
@@ -112,3 +113,49 @@ The tests are designed to be **flexible** where appropriate:
 - **Wrong credentials**: Always expects user-friendly error message
 - **Weak password**: Accepts either user-friendly error OR successful registration
 - **Form validation**: Tests client-side validation for required fields and email format 
+
+## 🎉 Test Coverage Summary
+
+### **Total Test Coverage**
+- **9 Test Files** with **150+ Individual Test Cases**
+- **Comprehensive Coverage** across all major app features
+- **Multiple Test Categories**: Authentication, CRUD Operations, User Management, PWA Features
+
+### **Key Areas Tested**
+✅ **Authentication & Security**
+- Login/Register error handling
+- User-friendly error messages
+- Social authentication (Google/Facebook)
+- Password validation and restrictions
+
+✅ **Article Management**
+- Full CRUD operations (Create, Read, Update, Delete)
+- Image upload and handling
+- Advanced search and filtering
+- Infinite scroll pagination
+- Category management
+
+✅ **User Experience**
+- Profile management and updates
+- Avatar handling and editing
+- Theme switching (light/dark mode)
+- Responsive design testing
+
+✅ **Advanced Features**
+- Weather widget functionality
+- Geolocation and manual city selection
+- Offline mode and PWA capabilities
+- Service worker and caching
+
+✅ **Performance & Accessibility**
+- Loading states and error handling
+- Mobile and tablet responsiveness
+- Keyboard navigation
+- Screen reader compatibility
+
+### **Test Quality Standards**
+- **Error Handling**: Network errors, API failures, validation errors
+- **User Experience**: Loading states, success messages, navigation flows
+- **Data Persistence**: Cross-session data storage, theme preferences
+- **Security**: Social user restrictions, authentication state management
+- **Performance**: Infinite scroll, image lazy loading, caching strategies

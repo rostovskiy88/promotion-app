@@ -1,0 +1,179 @@
+name: Comprehensive E2E Tests
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - auth
+        - articles
+        - user-management
+        - features
+        - pwa
+      
+  # Scheduled runs
+  schedule:
+    # Run comprehensive E2E tests every day at 2 AM UTC
+    - cron: '0 2 * * *'
+    
+  # Trigger on workflow call from other workflows
+  workflow_call:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: false
+        default: 'all'
+        type: string
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    name: Setup & Build
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+        VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
+        VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files-${{ github.run_id }}
+        path: dist/
+        retention-days: 1
+
+    - name: Set test matrix
+      id: set-matrix
+      run: |
+        if [ "${{ inputs.test_suite }}" = "auth" ]; then
+          echo "matrix={\"include\":[{\"name\":\"Authentication\",\"spec\":\"cypress/e2e/*auth*.cy.ts\"}]}" >> $GITHUB_OUTPUT
+        elif [ "${{ inputs.test_suite }}" = "articles" ]; then
+          echo "matrix={\"include\":[{\"name\":\"Article Management\",\"spec\":\"cypress/e2e/article-*.cy.ts\"}]}" >> $GITHUB_OUTPUT
+        elif [ "${{ inputs.test_suite }}" = "user-management" ]; then
+          echo "matrix={\"include\":[{\"name\":\"User Management\",\"spec\":\"cypress/e2e/profile-*.cy.ts\"}]}" >> $GITHUB_OUTPUT
+        elif [ "${{ inputs.test_suite }}" = "features" ]; then
+          echo "matrix={\"include\":[{\"name\":\"Features\",\"spec\":\"cypress/e2e/weather-*.cy.ts,cypress/e2e/theme-*.cy.ts,cypress/e2e/search-*.cy.ts\"}]}" >> $GITHUB_OUTPUT
+        elif [ "${{ inputs.test_suite }}" = "pwa" ]; then
+          echo "matrix={\"include\":[{\"name\":\"PWA Features\",\"spec\":\"cypress/e2e/pwa-*.cy.ts\"}]}" >> $GITHUB_OUTPUT
+        else
+          echo "matrix={\"include\":[{\"name\":\"Authentication\",\"spec\":\"cypress/e2e/*auth*.cy.ts\"},{\"name\":\"Article Management\",\"spec\":\"cypress/e2e/article-*.cy.ts\"},{\"name\":\"User Management\",\"spec\":\"cypress/e2e/profile-*.cy.ts\"},{\"name\":\"Weather Widget\",\"spec\":\"cypress/e2e/weather-*.cy.ts\"},{\"name\":\"Theme Management\",\"spec\":\"cypress/e2e/theme-*.cy.ts\"},{\"name\":\"Search & Scroll\",\"spec\":\"cypress/e2e/search-*.cy.ts\"},{\"name\":\"PWA Features\",\"spec\":\"cypress/e2e/pwa-*.cy.ts\"}]}" >> $GITHUB_OUTPUT
+        fi
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
+    name: E2E - ${{ matrix.name }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files-${{ github.run_id }}
+        path: dist/
+
+    - name: Start preview server
+      run: npm run preview &
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+        VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
+        VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
+
+    - name: Wait for server to be ready
+      run: npx wait-on http://localhost:4173 --timeout 60000
+
+    - name: Run E2E tests - ${{ matrix.name }}
+      run: npx cypress run --spec "${{ matrix.spec }}"
+      env:
+        CYPRESS_BASE_URL: http://localhost:4173
+
+    - name: Upload test videos
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: cypress-videos-${{ matrix.name }}-${{ github.run_id }}
+        path: cypress/videos/
+        retention-days: 7
+
+    - name: Upload test screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: cypress-screenshots-${{ matrix.name }}-${{ github.run_id }}
+        path: cypress/screenshots/
+        retention-days: 7
+
+  test-report:
+    runs-on: ubuntu-latest
+    needs: [setup, e2e-tests]
+    if: always()
+    name: Test Report
+    
+    steps:
+    - name: Generate test report
+      run: |
+        echo "## E2E Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Report success
+      if: needs.e2e-tests.result == 'success'
+      run: |
+        echo "✅ All E2E tests passed successfully!" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Report failure
+      if: needs.e2e-tests.result == 'failure'
+      run: |
+        echo "❌ Some E2E tests failed. Check the job logs and artifacts for details." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Artifacts available:**" >> $GITHUB_STEP_SUMMARY
+        echo "- Test videos (on failure)" >> $GITHUB_STEP_SUMMARY
+        echo "- Test screenshots (on failure)" >> $GITHUB_STEP_SUMMARY 
