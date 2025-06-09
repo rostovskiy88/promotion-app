@@ -35,10 +35,42 @@ import {
   refreshFirestoreUser
 } from '../store/slices/authSlice';
 
+// Safe Redux hook wrapper
+const useSafeSelector = (selector: (state: any) => any, fallback: any = {}) => {
+  try {
+    return useAppSelector(selector);
+  } catch (error) {
+    console.warn('Redux selector failed, using fallback:', error);
+    return fallback;
+  }
+};
+
+const useSafeDispatch = () => {
+  try {
+    return useAppDispatch();
+  } catch (error) {
+    console.warn('Redux dispatch failed:', error);
+    return () => {};
+  }
+};
+
 // Articles hooks
 export const useArticles = () => {
-  const dispatch = useAppDispatch();
-  const articlesState = useAppSelector(state => state.articles);
+  const dispatch = useSafeDispatch();
+  const articlesState = useSafeSelector(state => state.articles, {
+    articles: [],
+    filteredArticles: [],
+    loading: false,
+    error: null,
+    hasMore: false,
+    lastDocId: null,
+    currentPage: 1,
+    articlesPerPage: 6,
+    category: 'All Categories',
+    sortOrder: 'Descending',
+    searchTerm: '',
+    isSearching: false,
+  });
   
   // For search results, we still use pagination
   const searchArticlesToShow = articlesState.filteredArticles;
@@ -87,8 +119,15 @@ export const useArticles = () => {
 
 // UI hooks
 export const useUI = () => {
-  const dispatch = useAppDispatch();
-  const uiState = useAppSelector(state => state.ui);
+  const dispatch = useSafeDispatch();
+  const uiState = useSafeSelector(state => state.ui, {
+    theme: 'light',
+    globalLoading: false,
+    modals: {},
+    breadcrumbs: [],
+    preferences: {},
+    sidebarCollapsed: false,
+  });
 
   return {
     // State
@@ -115,8 +154,23 @@ export const useUI = () => {
 
 // Cache hooks
 export const useCache = () => {
-  const dispatch = useAppDispatch();
-  const cacheState = useAppSelector(state => state.cache);
+  const dispatch = useSafeDispatch();
+  const cacheState = useSafeSelector(state => state.cache, {
+    apiCache: {},
+    offlineQueue: [],
+    isOnline: true,
+    lastOnlineTime: Date.now(),
+    hasBeenOfflineSession: false,
+    isSyncing: false,
+    syncErrors: [],
+    lastSyncTime: 0,
+    metrics: {
+      apiCalls: 0,
+      cacheHits: 0,
+      cacheMisses: 0,
+      avgResponseTime: 0,
+    },
+  });
 
   return {
     // State
@@ -136,8 +190,13 @@ export const useCache = () => {
 
 // Auth hooks (enhanced)
 export const useAuth = () => {
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector(state => state.auth);
+  const dispatch = useSafeDispatch();
+  const authState = useSafeSelector(state => state.auth, {
+    user: null,
+    firestoreUser: null,
+    loading: false,
+    error: null,
+  });
 
   return {
     // State

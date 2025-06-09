@@ -1,0 +1,28 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.alert {
+  margin: 0;
+  border-radius: 0;
+  pointer-events: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.alert + .alert {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .alert {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .alert + .alert {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+} 

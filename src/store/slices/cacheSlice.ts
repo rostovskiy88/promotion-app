@@ -17,6 +17,7 @@ interface CacheState {
   // Network status
   isOnline: boolean;
   lastOnlineTime: number;
+  hasBeenOfflineSession: boolean;
   
   // Sync status
   isSyncing: boolean;
@@ -37,6 +38,7 @@ const initialState: CacheState = {
   offlineQueue: [],
   isOnline: true,
   lastOnlineTime: Date.now(),
+  hasBeenOfflineSession: false,
   isSyncing: false,
   syncErrors: [],
   lastSyncTime: 0,
@@ -124,9 +126,14 @@ const cacheSlice = createSlice({
     // Network Status
     setOnlineStatus: (state, action: PayloadAction<boolean>) => {
       const wasOffline = !state.isOnline;
+      
       state.isOnline = action.payload;
       
-      if (action.payload && wasOffline) {
+      if (!action.payload) {
+        // Going offline
+        state.hasBeenOfflineSession = true;
+      } else if (action.payload && wasOffline && state.hasBeenOfflineSession) {
+        // Coming back online after being offline
         state.lastOnlineTime = Date.now();
       }
     },
