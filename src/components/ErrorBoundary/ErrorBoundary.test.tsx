@@ -4,7 +4,6 @@ import ErrorBoundary from './ErrorBoundary';
 
 // Mock window.location
 const mockReload = jest.fn();
-const mockAssign = jest.fn();
 
 Object.defineProperty(window, 'location', {
   value: {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -7,7 +6,6 @@ import { App } from 'antd';
 import ProtectedRoute from './ProtectedRoute';
 
 // Mock react-router-dom
-const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   Navigate: ({ to }: { to: string }) => <div data-testid="navigate">{to}</div>,
