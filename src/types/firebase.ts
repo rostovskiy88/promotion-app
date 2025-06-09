@@ -1,11 +1,9 @@
 import { Timestamp } from 'firebase/firestore';
 
 // Firebase Error interface
-export interface FirebaseError {
+export interface FirebaseError extends Error {
   code: string;
   message: string;
-  name?: string;
-  stack?: string;
 }
 
 // Generic error type that covers Firebase errors and standard errors
@@ -92,7 +90,7 @@ export interface CacheData {
 export interface OfflineQueueItem {
   id: string;
   action: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   timestamp: number;
   retries: number;
 }
@@ -117,4 +115,82 @@ export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   error?: string;
+}
+
+// Firebase related types
+
+export interface UploadResult {
+  downloadURL: string;
+  fullPath: string;
+  name: string;
+  size: number;
+  contentType: string;
+}
+
+export interface CustomRequestOption {
+  file: File;
+  filename?: string;
+  onProgress?: (event: { percent: number }) => void;
+  onError?: (error: Error) => void;
+  onSuccess?: (response?: UploadResult) => void;
+  response?: UploadResult;
+  linkProps?: Record<string, unknown>;
+  xhr?: XMLHttpRequest;
+}
+
+export interface UploadChangeInfo {
+  file: {
+    uid: string;
+    name: string;
+    status: 'uploading' | 'done' | 'error' | 'removed';
+    response?: UploadResult;
+  };
+  fileList: CustomRequestOption['file'][];
+}
+
+export interface UploadConfig {
+  accept: string;
+  multiple: boolean;
+  beforeUpload?: (file: File) => boolean | Promise<File>;
+  onSuccess: (response?: UploadResult) => void;
+  onError: (error: Error) => void;
+  onProgress: (percent: number) => void;
+}
+
+export interface OfflineData {
+  articles: unknown[];
+  users: unknown[];
+  lastSync: number;
+  version: number;
+}
+
+export interface CacheEntry<T = unknown> {
+  data: T;
+  timestamp: number;
+  expiresIn: number;
+}
+
+export interface SyncStatus {
+  isSyncing: boolean;
+  lastSyncTime: number;
+  errors: string[];
+}
+
+export interface NetworkStatus {
+  isOnline: boolean;
+  lastOnlineTime: number;
+  hasBeenOfflineSession: boolean;
+}
+
+// Firebase document interfaces
+export interface FirestoreTimestamp {
+  seconds: number;
+  nanoseconds: number;
+  toDate(): Date;
+}
+
+export interface FirebaseDocument {
+  id: string;
+  createdAt: FirestoreTimestamp;
+  updatedAt?: FirestoreTimestamp;
 } 

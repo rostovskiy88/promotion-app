@@ -6,8 +6,22 @@ import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 import { addArticle } from '../../services/articleService';
 import { uploadImage, validateImageFile, generateImagePath } from '../../services/imageService';
 import styles from './AddArticle.module.css';
+import { useAuth } from '../../hooks/useRedux';
 
 const categories = ['Productivity', 'Media', 'Business'];
+
+interface ArticleFormValues {
+  title: string;
+  content: string;
+  category: string;
+  image?: File[];
+}
+
+interface CustomRequestOptions {
+  file: unknown;
+  onSuccess: (response?: unknown) => void;
+  onError?: (error: Error) => void;
+}
 
 const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   const [form] = Form.useForm();
@@ -17,59 +31,50 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
   const userDisplayInfo = useUserDisplayInfo();
+  const { user } = useAuth();
 
-  const handleFinish = async (values: any) => {
-    if (!userDisplayInfo.isAuthenticated || !userDisplayInfo.firestoreUser?.uid) {
-      message.error('User information not found');
+  const handleFinish = async (values: ArticleFormValues) => {
+    if (!user) {
+      message.error('You must be logged in to create an article');
       return;
     }
 
-    // Validate required form values
-    if (!values.title || !values.text || !values.category) {
-      message.error('Please fill in all required fields');
-      return;
-    }
-
-    setLoading(true);
     try {
-      const articleData = {
-        title: values.title as string,
-        content: values.text as string,
-        category: values.category as string,
-        authorId: userDisplayInfo.firestoreUser.uid,
-        authorName: userDisplayInfo.displayName || 'Unknown Author',
-        authorAvatar: userDisplayInfo.avatarUrl || '',
-        imageUrl: '/default-article-cover.png', // Default image
-      };
+      setLoading(true);
 
-      // Upload image if one was selected
-      if (imageFile) {
-        setIsUploading(true);
+      let imageUrl = '';
+      
+      // Handle image upload if image is provided
+      if (values.image && values.image.length > 0) {
         try {
-          console.log('Starting image upload process...');
-          const imagePath = generateImagePath(userDisplayInfo.firestoreUser.uid, imageFile.name);
-          const imageUrl = await uploadImage(imageFile, imagePath);
-          articleData.imageUrl = imageUrl;
-          message.success('Image uploaded successfully!');
-        } catch (error: any) {
-          console.error('Image upload failed:', error);
-          message.error(`Failed to upload image: ${error.message}`);
-          return; // Don't proceed with article creation if image upload fails
-        } finally {
-          setIsUploading(false);
+          const file = values.image[0];
+          if (file instanceof File) {
+            imageUrl = await uploadImage(file, 'articles');
+          }
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+          message.warning('Article created without image due to upload error');
         }
       }
 
-      console.log('Creating article with data:', articleData);
-      await addArticle(articleData);
+      // Add article to Firestore
+      await addArticle({
+        title: values.title,
+        content: values.content,
+        category: values.category,
+        authorName: user.displayName || user.email || 'Unknown',
+        authorId: user.uid,
+        authorAvatar: user.photoURL || '',
+        imageUrl,
+      });
+
       message.success('Article created successfully!');
       navigate('/dashboard');
-    } catch (error: any) {
-      console.error('Article creation failed:', error);
-      message.error(`Failed to create article: ${error.message || 'Unknown error'}`);
+    } catch (error: unknown) {
+      console.error('Error creating article:', error);
+      message.error(error instanceof Error ? error.message : 'Failed to create article');
     } finally {
       setLoading(false);
-      setIsUploading(false); // Ensure uploading state is reset
     }
   };
 
@@ -97,12 +102,12 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     message.info('Image removed');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const customRequest = ({ file, onSuccess }: any) => {
-    // Handle the file selection
-    const isValid = handleFileSelect(file);
-    if (isValid === false) {
-      onSuccess();
-    }
+    // For Ant Design Upload component - just call onSuccess immediately
+    setTimeout(() => {
+      onSuccess?.();
+    }, 0);
   };
 
   return (

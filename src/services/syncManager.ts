@@ -9,6 +9,32 @@ import {
 import { addArticle } from '../services/articleService';
 import { updateUser } from '../services/userService';
 import { OfflineQueueItem } from '../types/firebase';
+import { Article } from '../types/article';
+
+// Define interfaces for sync data
+interface CreateArticleData {
+  title: string;
+  content: string;
+  category: string;
+  userId: string;
+  authorName?: string;
+  authorAvatar?: string;
+  imageUrl?: string;
+}
+
+interface UpdateArticleData {
+  id: string;
+  updates: Partial<Article>;
+}
+
+interface DeleteArticleData {
+  id: string;
+}
+
+interface UpdateProfileData {
+  userId: string;
+  updates: Record<string, unknown>;
+}
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
@@ -67,23 +93,23 @@ export class SyncManager {
   private async processQueueItem(item: OfflineQueueItem): Promise<void> {
     switch (item.action) {
       case 'CREATE_ARTICLE':
-        await this.syncCreateArticle(item.data);
+        await this.syncCreateArticle(item.data as unknown as CreateArticleData);
         break;
       case 'UPDATE_ARTICLE':
-        await this.syncUpdateArticle(item.data);
+        await this.syncUpdateArticle(item.data as unknown as UpdateArticleData);
         break;
       case 'DELETE_ARTICLE':
-        await this.syncDeleteArticle(item.data);
+        await this.syncDeleteArticle(item.data as unknown as DeleteArticleData);
         break;
       case 'UPDATE_PROFILE':
-        await this.syncUpdateProfile(item.data);
+        await this.syncUpdateProfile(item.data as unknown as UpdateProfileData);
         break;
       default:
         throw new Error(`Unknown action: ${item.action}`);
     }
   }
 
-  private async syncCreateArticle(data: any): Promise<void> {
+  private async syncCreateArticle(data: CreateArticleData): Promise<void> {
     const { title, content, category, userId } = data;
     await addArticle({
       title,
@@ -96,19 +122,19 @@ export class SyncManager {
     });
   }
 
-  private async syncUpdateArticle(data: any): Promise<void> {
+  private async syncUpdateArticle(data: UpdateArticleData): Promise<void> {
     // Implement article update sync
     console.log('Syncing article update:', data);
     // await updateArticle(data.id, data.updates);
   }
 
-  private async syncDeleteArticle(data: any): Promise<void> {
+  private async syncDeleteArticle(data: DeleteArticleData): Promise<void> {
     // Implement article deletion sync
     console.log('Syncing article deletion:', data);
     // await deleteArticle(data.id);
   }
 
-  private async syncUpdateProfile(data: any): Promise<void> {
+  private async syncUpdateProfile(data: UpdateProfileData): Promise<void> {
     const { userId, updates } = data;
     await updateUser(userId, updates);
   }

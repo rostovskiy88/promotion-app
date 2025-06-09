@@ -26,7 +26,7 @@ const appReducer = persistCombineReducers(persistConfig, {
 });
 
 // Root reducer that handles store reset
-const rootReducer = (state: any, action: any) => {
+const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: { type: string }) => {
   // When RESET_STORE is dispatched, clear all state
   if (action.type === 'RESET_STORE') {
     // Clear persisted data

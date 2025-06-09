@@ -11,6 +11,7 @@ const urlsToCache = [
 ];
 
 // Install event - cache static resources
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 self.addEventListener('install', (event: any) => {
   console.log('[SW] Install event');
   event.waitUntil(
@@ -20,10 +21,12 @@ self.addEventListener('install', (event: any) => {
     })
   );
   // Force activation
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (self as any).skipWaiting();
 });
 
 // Activate event - clean up old caches
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 self.addEventListener('activate', (event: any) => {
   console.log('[SW] Activate event');
   event.waitUntil(
@@ -39,10 +42,12 @@ self.addEventListener('activate', (event: any) => {
     })
   );
   // Take control of all pages
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (self as any).clients.claim();
 });
 
 // Fetch event - serve from cache, fallback to network
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 self.addEventListener('fetch', (event: any) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -105,12 +110,14 @@ self.addEventListener('fetch', (event: any) => {
 });
 
 // Background sync event
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 self.addEventListener('sync', (event: any) => {
   console.log('[SW] Background sync event:', event.tag);
   
   if (event.tag === 'background-sync') {
     event.waitUntil(
       // Notify the main thread to process offline queue
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (self as any).clients.matchAll().then((clients: any[]) => {
         clients.forEach((client) => {
           client.postMessage({
@@ -124,10 +131,12 @@ self.addEventListener('sync', (event: any) => {
 });
 
 // Message event - handle commands from main thread
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 self.addEventListener('message', (event: any) => {
   console.log('[SW] Message received:', event.data);
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (self as any).skipWaiting();
   }
 }); 
