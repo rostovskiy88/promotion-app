@@ -114,8 +114,8 @@ jobs:
         name: build-files-${{ github.run_id }}
         path: dist/
 
-    - name: Start preview server
-      run: npm run preview &
+    - name: Start development server
+      run: npm run dev &
       env:
         VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
         VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
@@ -127,12 +127,12 @@ jobs:
         VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
 
     - name: Wait for server to be ready
-      run: npx wait-on http://localhost:4173 --timeout 60000
+      run: npx wait-on http://localhost:5173 --timeout 60000
 
     - name: Run E2E tests - ${{ matrix.name }}
       run: npx cypress run --spec "${{ matrix.spec }}"
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
 
     - name: Upload test videos
       uses: actions/upload-artifact@v4

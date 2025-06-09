@@ -80,8 +80,8 @@ jobs:
         name: build-files
         path: dist/
 
-    - name: Start preview server
-      run: npm run preview &
+    - name: Start development server
+      run: npm run dev &
       env:
         VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
         VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
@@ -93,37 +93,37 @@ jobs:
         VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
 
     - name: Wait for server to be ready
-      run: npx wait-on http://localhost:4173 --timeout 60000
+      run: npx wait-on http://localhost:5173 --timeout 60000
 
     - name: Run E2E tests - Authentication
       run: npm run test:auth-errors
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
         
     - name: Run E2E tests - Core Features
       run: npx cypress run --spec "cypress/e2e/article-workflow.cy.ts,cypress/e2e/search-infinite-scroll.cy.ts"
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
         
     - name: Run E2E tests - User Management
       run: npx cypress run --spec "cypress/e2e/profile-management.cy.ts"
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
         
     - name: Run E2E tests - Advanced Features
       run: npx cypress run --spec "cypress/e2e/weather-widget.cy.ts,cypress/e2e/theme-management.cy.ts"
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
         
     - name: Run E2E tests - Article Management
       run: npx cypress run --spec "cypress/e2e/article-management-advanced.cy.ts"
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
         
     - name: Run E2E tests - PWA Features
       run: npx cypress run --spec "cypress/e2e/pwa-features.cy.ts"
       env:
-        CYPRESS_BASE_URL: http://localhost:4173
+        CYPRESS_BASE_URL: http://localhost:5173
 
     - name: Upload E2E test videos
       uses: actions/upload-artifact@v4
