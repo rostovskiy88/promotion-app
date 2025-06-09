@@ -4,7 +4,7 @@ import { message } from 'antd';
 
 export const useNetworkStatus = () => {
   try {
-    const { isOnline, setOnline, setSyncing, offlineQueue } = useCache();
+    const { isOnline, setOnline, offlineQueue } = useCache();
 
     useEffect(() => {
       // Set initial online status without triggering sync
