@@ -89,6 +89,26 @@ jobs:
             cypress/videos/
             cypress/screenshots/
           retention-days: 7
+
+      - name: Notify Slack on PR Test Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#pull-requests'
+          text: |
+            🔴 *PR Tests Failed*
+            
+            *PR:* #${{ github.event.number }} - ${{ github.event.pull_request.title }}
+            *Author:* ${{ github.event.pull_request.user.login }}
+            *Branch:* ${{ github.head_ref }}
+            
+            ❌ Tests failed - please check the workflow
+            
+            🔗 [View PR](${{ github.event.pull_request.html_url }})
+            🔗 [View Workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         
       - name: Deploy to Firebase Preview
         uses: FirebaseExtended/action-hosting-deploy@v0

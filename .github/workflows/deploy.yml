@@ -163,4 +163,61 @@ jobs:
         repoToken: ${{ secrets.GITHUB_TOKEN }}
         firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_REACT_PROMOTION_APP }}
         channelId: live
-        projectId: react-promotion-app 
+        projectId: react-promotion-app
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, e2e-tests, deploy]
+    if: always()
+    name: Slack Notifications
+    
+    steps:
+    - name: Notify Slack on Success
+      if: needs.deploy.result == 'success'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#deployments'
+        text: |
+          🚀 *Deployment Successful!*
+          
+          *Repository:* ${{ github.repository }}
+          *Branch:* ${{ github.ref_name }}
+          *Commit:* `${{ github.sha }}`
+          *Author:* ${{ github.actor }}
+          *Message:* ${{ github.event.head_commit.message }}
+          
+          📊 *Results:*
+          ✅ Unit Tests: ${{ needs.test.result }}
+          ✅ E2E Tests: ${{ needs.e2e-tests.result }}
+          ✅ Deploy: ${{ needs.deploy.result }}
+          
+          🌐 *Live URL:* https://react-promotion-app.web.app
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack on Failure
+      if: contains(needs.*.result, 'failure')
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#deployments'
+        text: |
+          ❌ *Deployment Failed!*
+          
+          *Repository:* ${{ github.repository }}
+          *Branch:* ${{ github.ref_name }}
+          *Commit:* `${{ github.sha }}`
+          *Author:* ${{ github.actor }}
+          *Message:* ${{ github.event.head_commit.message }}
+          
+          📊 *Job Results:*
+          Unit Tests: ${{ needs.test.result }}
+          E2E Tests: ${{ needs.e2e-tests.result }}
+          Deploy: ${{ needs.deploy.result }}
+          
+          🔗 [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
