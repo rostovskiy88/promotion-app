@@ -179,6 +179,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
                   placeholder="Find articles..."
                   value={inputValue}
                   onChange={handleInputChange}
+                  data-testid="search-input"
                   style={{ 
                     width: 340, 
                     marginRight: 24,
@@ -196,6 +197,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
                         size="small"
                         icon={<CloseOutlined />}
                         onClick={handleClearSearch}
+                        data-testid="search-clear"
                         style={{ 
                           border: 'none', 
                           background: 'transparent',

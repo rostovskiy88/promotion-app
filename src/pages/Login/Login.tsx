@@ -81,6 +81,7 @@ const Login = () => {
             >
               <Input 
                 placeholder="Enter your email" 
+                data-testid="email-input"
               />
             </Form.Item>
 
@@ -93,6 +94,7 @@ const Login = () => {
             >
               <Input.Password
                 placeholder="Enter your password"
+                data-testid="password-input"
               />
             </Form.Item>
 
@@ -100,11 +102,13 @@ const Login = () => {
               <Link to="/forgot-password">Forgot password?</Link>
             </div>
 
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              className={styles.submitButton}
+            <Button
+              type="primary"
+              htmlType="submit"
               loading={loading}
+              className={styles.submitButton}
+              size="large"
+              data-testid="login-button"
             >
               Sign in
             </Button>

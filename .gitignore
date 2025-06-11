@@ -31,3 +31,6 @@ dist-ssr
 .env.production.local
 
 coverage/
+
+cypress/screenshots
+cypress/videos

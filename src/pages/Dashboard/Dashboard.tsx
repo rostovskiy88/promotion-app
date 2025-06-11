@@ -211,6 +211,7 @@ const Dashboard: React.FC = () => {
           size="large"
           icon={<UpOutlined />}
           onClick={scrollToTop}
+          data-testid="scroll-to-top"
           style={{
             position: 'fixed',
             bottom: '30px',
@@ -227,7 +228,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Articles Section */}
-      <div className={styles.articlesSection}>
+      <div className={styles.articlesSection} data-testid="articles-section">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <div>
@@ -239,6 +240,7 @@ const Dashboard: React.FC = () => {
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 variant="borderless"
+                data-testid="category-filter"
                 style={{ fontWeight: 600, color: '#222', minWidth: 140 }}
                 dropdownStyle={{ minWidth: 180 }}
               >
@@ -254,6 +256,7 @@ const Dashboard: React.FC = () => {
               value={sortOrder}
               onChange={handleSortChange}
               variant="borderless"
+              data-testid="sort-dropdown"
               style={{ fontWeight: 700, color: '#222', minWidth: 100, marginLeft: 4 }}
               dropdownStyle={{ minWidth: 140 }}
             >
@@ -266,7 +269,7 @@ const Dashboard: React.FC = () => {
         
         {loading || reduxIsSearching ? (
           <div style={{ textAlign: 'center', padding: '48px 0' }}>
-            <Spin size="large" />
+            <Spin size="large" data-testid="loading-indicator" />
             <div style={{ marginTop: 16 }}>Loading articles...</div>
           </div>
         ) : articlesToDisplay.length === 0 ? (
@@ -304,13 +307,16 @@ const Dashboard: React.FC = () => {
             
             {/* Loading more indicator for infinite scroll */}
             {!isSearchMode && loadingMore && (
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center',
-                padding: '24px 0',
-                gap: 12
-              }}>
+              <div 
+                data-testid="loading-more"
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  padding: '24px 0',
+                  gap: 12
+                }}
+              >
                 <Spin />
                 <span>Loading more articles...</span>
               </div>
@@ -352,6 +358,7 @@ const Dashboard: React.FC = () => {
               }
               size="default"
               style={{ userSelect: 'none' }}
+              data-testid="pagination"
             />
           </div>
         )}

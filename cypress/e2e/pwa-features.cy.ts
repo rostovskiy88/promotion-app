@@ -3,11 +3,34 @@
 describe('PWA Features', () => {
   beforeEach(() => {
     cy.visit('http://localhost:5173');
-    cy.get('[data-testid=email-input]').type('test@example.com');
-    cy.get('[data-testid=password-input]').type('password123');
-    cy.get('[data-testid=login-button]').click();
+    
+    // Handle authentication and ensure we're on dashboard
+    cy.url({ timeout: 3000 }).then((url) => {
+      if (url.includes('/dashboard')) {
+        cy.log('Already authenticated and on dashboard');
+        return;
+      }
+      
+      if (!url.includes('/login') && !url.includes('/register')) {
+        cy.log('Authenticated but not on dashboard, navigating to dashboard');
+        cy.visit('/dashboard');
+        cy.url().should('include', '/dashboard');
+        return;
+      }
+      
+      // Try login
+      cy.get('input[placeholder="Enter your email"]').type('testuser@example.com');
+      cy.get('input[placeholder="Enter your password"]').type('testpassword123');
+      cy.get('button[type="submit"]').click();
+      
+      cy.url({ timeout: 10000 }).then((loginUrl) => {
+        if (!loginUrl.includes('/dashboard') && !loginUrl.includes('/login')) {
+          cy.visit('/dashboard');
+        }
+      });
+    });
+    
     cy.url().should('include', '/dashboard');
-    cy.wait(1000);
   });
 
   describe('Offline Functionality', () => {

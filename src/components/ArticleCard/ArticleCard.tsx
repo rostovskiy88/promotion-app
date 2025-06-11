@@ -35,8 +35,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   
   const menu = {
     items: [
-      { key: 'edit', label: 'Edit', onClick: onEdit },
-      { key: 'delete', label: 'Delete', onClick: onDelete },
+      { key: 'edit', label: 'Edit', onClick: onEdit, 'data-testid': 'edit-button' },
+      { key: 'delete', label: 'Delete', onClick: onDelete, 'data-testid': 'delete-button' },
     ],
   };
 
@@ -46,7 +46,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   };
 
   return (
-    <div className="article-card">
+    <div className="article-card" data-testid="article-card">
       <div className="article-card-image" style={{ backgroundImage: `url(${imageUrl})` }}>
         <div className="article-dropdown-wrapper">
           <Dropdown menu={menu} trigger={['click']} placement="bottomRight">
