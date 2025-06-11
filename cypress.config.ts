@@ -14,6 +14,9 @@ export default defineConfig({
   viewportHeight: 720,
   video: false,
   screenshotOnRunFailure: true,
-  defaultCommandTimeout: 10000,
+  defaultCommandTimeout: 3000,
+  requestTimeout: 5000,
+  responseTimeout: 5000,
+  pageLoadTimeout: 10000,
   fixturesFolder: 'cypress/fixtures',
 });

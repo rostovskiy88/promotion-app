@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
     if (searchTerm.trim()) {
       const { totalCount, startItem, endItem } = searchPaginationInfo;
       return (
-        <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
+        <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }} data-testid="results-count">
           {totalCount} article{totalCount !== 1 ? 's' : ''} found
           {totalCount > 0 && ` • Showing ${startItem}-${endItem}`}
         </span>
@@ -176,7 +176,7 @@ const Dashboard: React.FC = () => {
     const totalLoaded = articles.length;
     if (totalLoaded > 0) {
       return (
-        <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>
+        <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }} data-testid="results-count">
           {totalLoaded} article{totalLoaded !== 1 ? 's' : ''} loaded
           {hasMore && ' • Scroll for more'}
         </span>
