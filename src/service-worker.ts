@@ -1,6 +1,4 @@
-// Ensure your tsconfig.json includes "WebWorker" in the "lib" array for correct Service Worker types.
-
-const CACHE_NAME = 'promotion-app-cache-v1';
+const CACHE_NAMEfix = 'promotion-app-cache-v1';
 const DATA_CACHE_NAME = 'promotion-app-data-cache-v1';
 
 const urlsToCache = [
@@ -13,25 +11,23 @@ const urlsToCache = [
 ];
 
 // Install event - cache static resources
-self.addEventListener('install', (event) => {
-  const swEvent = event as ExtendableEvent;
+self.addEventListener('install', (event: any) => {
   console.log('[SW] Install event');
-  swEvent.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache: any) => {
       console.log('[SW] Caching static resources');
       return cache.addAll(urlsToCache);
     })
   );
   // Force activation
-  (self as ServiceWorkerGlobalScope).skipWaiting();
+  (self as any).skipWaiting();
 });
 
 // Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-  const swEvent = event as ExtendableEvent;
+self.addEventListener('activate', (event: any) => {
   console.log('[SW] Activate event');
-  swEvent.waitUntil(
-    caches.keys().then((cacheNames) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames: string[]) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
@@ -43,21 +39,20 @@ self.addEventListener('activate', (event) => {
     })
   );
   // Take control of all pages
-  (self as ServiceWorkerGlobalScope).clients.claim();
+  (self as any).clients.claim();
 });
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', (event) => {
-  const fetchEvent = event as FetchEvent;
-  const { request } = fetchEvent;
+self.addEventListener('fetch', (event: any) => {
+  const { request } = event;
   const url = new URL(request.url);
 
   // Handle API requests differently
   if (url.pathname.includes('/api/') || url.hostname.includes('firestore.googleapis.com')) {
-    fetchEvent.respondWith(
-      caches.open(DATA_CACHE_NAME).then((cache) => {
+    event.respondWith(
+      caches.open(DATA_CACHE_NAME).then((cache: any) => {
         return fetch(request)
-          .then((response) => {
+          .then((response: Response) => {
             // Cache successful GET requests
             if (request.method === 'GET' && response.status === 200) {
               cache.put(request, response.clone());
@@ -66,7 +61,7 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {
             // Offline - serve from cache
-            return cache.match(request).then((cachedResponse) => {
+            return cache.match(request).then((cachedResponse: Response | undefined) => {
               if (cachedResponse) {
                 console.log('[SW] Serving API data from cache:', request.url);
                 return cachedResponse;
@@ -89,17 +84,17 @@ self.addEventListener('fetch', (event) => {
     );
   } else {
     // Handle static resources
-    fetchEvent.respondWith(
-      caches.match(request).then((response) => {
+    event.respondWith(
+      caches.match(request).then((response: Response | undefined) => {
         if (response) {
           return response;
         }
-        return fetch(request).then((response) => {
+        return fetch(request).then((response: Response) => {
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
           const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
+          caches.open(CACHE_NAME).then((cache: any) => {
             cache.put(request, responseToCache);
           });
           return response;
@@ -110,14 +105,13 @@ self.addEventListener('fetch', (event) => {
 });
 
 // Background sync event
-self.addEventListener('sync', (event) => {
-  const syncEvent = event as SyncEvent;
-  console.log('[SW] Background sync event:', syncEvent.tag);
+self.addEventListener('sync', (event: any) => {
+  console.log('[SW] Background sync event:', event.tag);
   
-  if (syncEvent.tag === 'background-sync') {
-    syncEvent.waitUntil(
-      (self as ServiceWorkerGlobalScope).clients.matchAll().then((clients) => {
-        clients.forEach((client) => {
+  if (event.tag === 'background-sync') {
+    event.waitUntil(
+      (self as any).clients.matchAll().then((clients: any[]) => {
+        clients.forEach((client: any) => {
           client.postMessage({
             type: 'BACKGROUND_SYNC',
             payload: { action: 'PROCESS_QUEUE' }
@@ -129,11 +123,10 @@ self.addEventListener('sync', (event) => {
 });
 
 // Message event - handle commands from main thread
-self.addEventListener('message', (event) => {
-  const msgEvent = event as MessageEvent;
-  console.log('[SW] Message received:', msgEvent.data);
+self.addEventListener('message', (event: any) => {
+  console.log('[SW] Message received:', event.data);
   
-  if (msgEvent.data && msgEvent.data.type === 'SKIP_WAITING') {
-    (self as ServiceWorkerGlobalScope).skipWaiting();
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    (self as any).skipWaiting();
   }
 }); 
