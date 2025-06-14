@@ -3,7 +3,7 @@ import { uploadImage, generateImagePath } from './imageService';
 /**
  * Converts a canvas to a File object
  */
-export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avatar.png'): File => {
+export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avatar.png'): Promise<File> => {
   // Create a blob from the canvas
   return new Promise<File>((resolve) => {
     canvas.toBlob((blob) => {
@@ -15,7 +15,7 @@ export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avat
         resolve(file);
       }
     }, 'image/png', 0.9);
-  }) as any;
+  });
 };
 
 /**

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from 'antd';
 import ArticleCard, { ArticleCardProps } from './ArticleCard';
@@ -97,7 +97,7 @@ describe('ArticleCard Component', () => {
       expect(mockOnEdit).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onDelete when delete menu item is clicked', () => {
+    it('calls onDelete when delete menu item is clicked', async () => {
       const mockOnDelete = jest.fn();
       renderComponent({ onDelete: mockOnDelete });
 
@@ -108,6 +108,24 @@ describe('ArticleCard Component', () => {
       // Click the Delete option
       const deleteOption = screen.getByText('Delete');
       fireEvent.click(deleteOption);
+
+      // Wait for the modal to appear and click the "Yes" button
+      // Try multiple selectors for the modal
+      const modal = await waitFor(() => {
+        const modalElement = 
+          document.body.querySelector('.ant-modal') ||
+          document.body.querySelector('.ant-modal-confirm') ||
+          document.body.querySelector('[role="dialog"]') ||
+          document.body.querySelector('.ant-modal-root');
+        
+        if (!modalElement) {
+          throw new Error('Modal not found');
+        }
+        return modalElement as HTMLElement;
+      });
+      
+      const yesButton = within(modal).getByText('Yes');
+      fireEvent.click(yesButton);
 
       expect(mockOnDelete).toHaveBeenCalledTimes(1);
     });

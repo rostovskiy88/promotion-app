@@ -4,7 +4,7 @@ interface Modal {
   id: string;
   isOpen: boolean;
   title?: string;
-  content?: any;
+  content?: React.ReactNode;
   onConfirm?: () => void;
   onCancel?: () => void;
 }

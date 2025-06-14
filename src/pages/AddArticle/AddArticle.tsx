@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, Upload, Col, Select, message } from 'antd';
+import { Card, Form, Input, Button, Upload, Col, Select, App as AntdApp } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,6 +25,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { message } = AntdApp.useApp();
 
   const handleFinish = async (values: ArticleFormValues) => {
     if (!user) {
@@ -48,6 +49,10 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
           console.error('Image upload failed:', uploadError);
           message.warning('Article created without image due to upload error');
         }
+      }
+      // Set default image if none provided
+      if (!imageUrl) {
+        imageUrl = '/default-article-cover.png';
       }
 
       // Add article to Firestore

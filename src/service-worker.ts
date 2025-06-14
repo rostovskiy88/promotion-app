@@ -1,3 +1,5 @@
+// Ensure your tsconfig.json includes "WebWorker" in the "lib" array for correct Service Worker types.
+
 const CACHE_NAME = 'promotion-app-cache-v1';
 const DATA_CACHE_NAME = 'promotion-app-data-cache-v1';
 
@@ -11,25 +13,24 @@ const urlsToCache = [
 ];
 
 // Install event - cache static resources
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-self.addEventListener('install', (event: any) => {
+self.addEventListener('install', (event) => {
+  const swEvent = event as ExtendableEvent;
   console.log('[SW] Install event');
-  event.waitUntil(
+  swEvent.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[SW] Caching static resources');
       return cache.addAll(urlsToCache);
     })
   );
   // Force activation
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (self as any).skipWaiting();
+  (self as ServiceWorkerGlobalScope).skipWaiting();
 });
 
 // Activate event - clean up old caches
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-self.addEventListener('activate', (event: any) => {
+self.addEventListener('activate', (event) => {
+  const swEvent = event as ExtendableEvent;
   console.log('[SW] Activate event');
-  event.waitUntil(
+  swEvent.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
@@ -42,19 +43,18 @@ self.addEventListener('activate', (event: any) => {
     })
   );
   // Take control of all pages
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (self as any).clients.claim();
+  (self as ServiceWorkerGlobalScope).clients.claim();
 });
 
 // Fetch event - serve from cache, fallback to network
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-self.addEventListener('fetch', (event: any) => {
-  const { request } = event;
+self.addEventListener('fetch', (event) => {
+  const fetchEvent = event as FetchEvent;
+  const { request } = fetchEvent;
   const url = new URL(request.url);
 
   // Handle API requests differently
   if (url.pathname.includes('/api/') || url.hostname.includes('firestore.googleapis.com')) {
-    event.respondWith(
+    fetchEvent.respondWith(
       caches.open(DATA_CACHE_NAME).then((cache) => {
         return fetch(request)
           .then((response) => {
@@ -89,7 +89,7 @@ self.addEventListener('fetch', (event: any) => {
     );
   } else {
     // Handle static resources
-    event.respondWith(
+    fetchEvent.respondWith(
       caches.match(request).then((response) => {
         if (response) {
           return response;
@@ -110,15 +110,13 @@ self.addEventListener('fetch', (event: any) => {
 });
 
 // Background sync event
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-self.addEventListener('sync', (event: any) => {
-  console.log('[SW] Background sync event:', event.tag);
+self.addEventListener('sync', (event) => {
+  const syncEvent = event as SyncEvent;
+  console.log('[SW] Background sync event:', syncEvent.tag);
   
-  if (event.tag === 'background-sync') {
-    event.waitUntil(
-      // Notify the main thread to process offline queue
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (self as any).clients.matchAll().then((clients: any[]) => {
+  if (syncEvent.tag === 'background-sync') {
+    syncEvent.waitUntil(
+      (self as ServiceWorkerGlobalScope).clients.matchAll().then((clients) => {
         clients.forEach((client) => {
           client.postMessage({
             type: 'BACKGROUND_SYNC',
@@ -131,12 +129,11 @@ self.addEventListener('sync', (event: any) => {
 });
 
 // Message event - handle commands from main thread
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-self.addEventListener('message', (event: any) => {
-  console.log('[SW] Message received:', event.data);
+self.addEventListener('message', (event) => {
+  const msgEvent = event as MessageEvent;
+  console.log('[SW] Message received:', msgEvent.data);
   
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (self as any).skipWaiting();
+  if (msgEvent.data && msgEvent.data.type === 'SKIP_WAITING') {
+    (self as ServiceWorkerGlobalScope).skipWaiting();
   }
 }); 

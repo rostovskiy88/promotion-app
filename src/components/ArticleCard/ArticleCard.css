@@ -104,14 +104,18 @@
 
 .article-card-readmore {
   margin-left: auto;
+  margin-top: -6px;
   color: #1557ff;
   font-weight: 500;
   font-size: 15px;
-  text-decoration: none;
-  line-height: 1.2;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
 }
+
 
 /* Only minimal responsive fix for below full HD */
 @media (max-width: 1919px) {

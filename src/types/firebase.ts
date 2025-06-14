@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+import type { Article } from './article';
 
 // Firebase Error interface
 export interface FirebaseError extends Error {
@@ -17,9 +18,9 @@ export interface UploadFile {
   uid: string;
   name: string;
   status?: 'uploading' | 'done' | 'error' | 'removed';
-  response?: any;
-  linkProps?: any;
-  xhr?: any;
+  response?: Record<string, unknown>;
+  linkProps?: Record<string, unknown>;
+  xhr?: XMLHttpRequest;
   url?: string;
   originFileObj?: File;
   size?: number;
@@ -82,9 +83,9 @@ export interface GeocodingResponse {
 
 // Cache and offline types
 export interface CacheData {
-  articles?: any[];
-  users?: any[];
-  [key: string]: any;
+  articles?: Article[];
+  users?: User[];
+  [key: string]: unknown;
 }
 
 export interface OfflineQueueItem {
@@ -106,7 +107,7 @@ export interface PreferencesPayload {
   theme?: 'light' | 'dark';
   language?: string;
   notifications?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Generic API response wrapper
@@ -193,4 +194,12 @@ export interface FirebaseDocument {
   id: string;
   createdAt: FirestoreTimestamp;
   updatedAt?: FirestoreTimestamp;
+}
+
+// Placeholder User type if not defined elsewhere
+export interface User {
+  id: string;
+  email: string;
+  displayName?: string;
+  // Add more fields as needed
 } 
