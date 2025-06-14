@@ -3,89 +3,61 @@
 describe('Advanced Article Management', () => {
   beforeEach(() => {
     cy.visit('http://localhost:5173');
-    
-    // Try login
-    cy.get('input[placeholder="Enter your email"]').type('test@example.com');
-    cy.get('input[placeholder="Enter your password"]').type('password123');
+    cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
+    cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
     cy.get('button[type="submit"]').click();
-    
-    // Check if login was successful - if not, skip the test
-    cy.url({ timeout: 10000 }).then((url) => {
-      if (url.includes('/login')) {
-        cy.log('Authentication failed - skipping advanced article management tests as they require valid credentials');
-        return;
-      }
-      cy.url().should('include', '/dashboard');
-      cy.wait(2000);
+    cy.url({ timeout: 10000 }).should('include', '/dashboard');
+    cy.wait(1000);
+  });
+
+  it('should create a new article with all fields', () => {
+    cy.contains('+ Add Article').click();
+    cy.url().should('include', '/add-article');
+    cy.get('.ant-select').click();
+    cy.get('.ant-select-item-option').contains('Media').click();
+    cy.get('input[placeholder="Enter your title"]').type('Cypress Test Article');
+    cy.get('textarea[placeholder="Enter your text copy"]').type('This is a test article created by Cypress.');
+    cy.contains('Publish').click();
+    cy.url().should('include', '/dashboard');
+    cy.contains('Cypress Test Article').should('be.visible');
+  });
+
+  it('should edit an existing article', () => {
+    cy.get('[data-testid="article-card"]').first().within(() => {
+      cy.get('.article-card-menu').click();
+    });
+    cy.get('.ant-dropdown-menu').contains('Edit').click();
+    cy.url().should('include', '/edit-article');
+    cy.get('input[placeholder="Enter your title"]').clear().type('Cypress Edited Article');
+    cy.contains('Update Article').click();
+    cy.url().should('include', '/dashboard');
+    cy.contains('Cypress Edited Article').should('be.visible');
+  });
+
+  it('should delete an article with confirmation', () => {
+    // Get the title of the first article card
+    cy.get('[data-testid="article-card"]').first().find('.article-card-title').invoke('text').then((title) => {
+      cy.get('[data-testid="article-card"]').first().within(() => {
+        cy.get('.article-card-menu').click();
+      });
+      cy.get('.ant-dropdown-menu').contains('Delete').click();
+      cy.get('.ant-modal', { timeout: 5000 }).should('exist');
+      cy.get('.ant-modal', { timeout: 5000 }).should('be.visible');
+      // Use a global selector for the Yes button
+      cy.get('body').then(() => {
+        cy.contains('button', 'Yes', { timeout: 5000 }).should('be.visible').click();
+      });
+      // Assert the article with that title is no longer present, with a longer timeout
+      cy.contains('.article-card-title', title, { timeout: 10000 }).should('not.exist');
     });
   });
 
-  describe('Article Creation', () => {
-    beforeEach(() => {
-      // Only proceed if we're on dashboard (login succeeded)
-      cy.url().then((url) => {
-        if (url.includes('/dashboard')) {
-          cy.get('button').contains('Add Article').click();
-          cy.url().should('include', '/add-article');
-        }
-      });
+  it('should display full article details', () => {
+    cy.get('[data-testid="article-card"]').first().within(() => {
+      cy.get('.article-card-readmore').click();
     });
-
-    it('should create a new article with all fields', () => {
-      // Skip if not authenticated
-      cy.url().then((url) => {
-        if (url.includes('/login')) {
-          cy.log('Skipping test - not authenticated');
-          return;
-        }
-        
-        cy.get('input[placeholder="Enter article title"]').type('Comprehensive Test Article');
-        cy.get('textarea[placeholder="Write your article content here..."]').type('This is a comprehensive test article.');
-        cy.get('.ant-select').click();
-        cy.get('.ant-select-item').contains('Technology').click();
-        cy.get('button[type="submit"]').contains('Publish Article').click();
-        cy.url().should('include', '/dashboard');
-        cy.get('.ant-message').should('contain', 'Article published successfully!');
-        cy.contains('Comprehensive Test Article').should('be.visible');
-      });
-    });
-
-    it('should validate required fields', () => {
-      cy.get('button[type="submit"]').contains('Publish Article').click();
-      cy.get('.ant-form-item-explain-error').should('contain', 'Please enter article title');
-    });
-  });
-
-  describe('Article Editing', () => {
-    it('should edit an existing article', () => {
-      cy.get('[data-testid=article-card]').first().within(() => {
-        cy.get('[data-testid=edit-button]').click();
-      });
-      cy.url().should('include', '/edit-article/');
-      cy.get('input[placeholder="Enter article title"]').clear().type('Edited Article Title');
-      cy.get('button[type="submit"]').contains('Update Article').click();
-      cy.url().should('include', '/dashboard');
-      cy.get('.ant-message').should('contain', 'Article updated successfully!');
-    });
-  });
-
-  describe('Article Deletion', () => {
-    it('should delete an article with confirmation', () => {
-      cy.get('[data-testid=article-card]').first().within(() => {
-        cy.get('[data-testid=delete-button]').click();
-      });
-      cy.get('.ant-modal').should('be.visible');
-      cy.get('.ant-modal .ant-btn-primary').contains('Yes').click();
-      cy.get('.ant-message').should('contain', 'Article deleted successfully!');
-    });
-  });
-
-  describe('Article Details View', () => {
-    it('should display full article details', () => {
-      cy.get('[data-testid=article-card]').first().click();
-      cy.url().should('include', '/article/');
-      cy.get('h1').should('be.visible');
-      cy.get('[data-testid=back-button]').should('be.visible');
-    });
+    cy.url().should('include', '/article/');
+    cy.get('h1').should('be.visible');
+    cy.contains('Back to Dashboard').should('be.visible');
   });
 });

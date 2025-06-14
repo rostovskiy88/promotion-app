@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown, Avatar, Typography } from 'antd';
+import { Dropdown, Avatar, Typography, Modal } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './ArticleCard.css';
@@ -33,10 +33,24 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 }) => {
   const navigate = useNavigate();
   
+  // Add confirmation before delete
+  const handleDelete = () => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this article?',
+      content: 'This action cannot be undone.',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        onDelete && onDelete();
+      },
+    });
+  };
+
   const menu = {
     items: [
       { key: 'edit', label: 'Edit', onClick: onEdit, 'data-testid': 'edit-button' },
-      { key: 'delete', label: 'Delete', onClick: onDelete, 'data-testid': 'delete-button' },
+      { key: 'delete', label: 'Delete', onClick: handleDelete, 'data-testid': 'delete-button' },
     ],
   };
 

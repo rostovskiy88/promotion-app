@@ -19,8 +19,8 @@ describe('PWA Features', () => {
       }
       
       // Try login
-      cy.get('input[placeholder="Enter your email"]').type('testuser@example.com');
-      cy.get('input[placeholder="Enter your password"]').type('testpassword123');
+      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
       cy.get('button[type="submit"]').click();
       
       cy.url({ timeout: 10000 }).then((loginUrl) => {

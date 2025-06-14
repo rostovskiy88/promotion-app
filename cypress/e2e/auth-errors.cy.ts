@@ -12,8 +12,8 @@ describe('Authentication Error Handling', () => {
   describe('Email Login Error Cases', () => {
     it('should show user-friendly error for invalid credentials', () => {
       // Type valid email format but incorrect credentials
-      cy.get('input[placeholder="Enter your email"]').type('test@example.com');
-      cy.get('input[placeholder="Enter your password"]').type('wrongpassword123');
+      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
       
       // Submit the form
       cy.get('button[type="submit"]').click();
@@ -108,7 +108,7 @@ describe('Authentication Error Handling', () => {
 
     it('should handle empty password field', () => {
       // Only fill email
-      cy.get('input[placeholder="Enter your email"]').type('test@example.com');
+      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
       
       // Submit the form
       cy.get('button[type="submit"]').click();
@@ -119,8 +119,8 @@ describe('Authentication Error Handling', () => {
 
     it('should show loading state during authentication', () => {
       // Fill credentials
-      cy.get('input[placeholder="Enter your email"]').type('test@example.com');
-      cy.get('input[placeholder="Enter your password"]').type('wrongpassword');
+      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
       
       // Submit and verify loading state
       cy.get('button[type="submit"]').click();
@@ -238,8 +238,8 @@ describe('Authentication Error Handling', () => {
       }).as('networkError');
       
       // Fill credentials
-      cy.get('input[placeholder="Enter your email"]').type('test@example.com');
-      cy.get('input[placeholder="Enter your password"]').type('password123');
+      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
       
       // Submit the form
       cy.get('button[type="submit"]').click();
@@ -254,8 +254,8 @@ describe('Authentication Error Handling', () => {
   describe('Error Message Cleanup', () => {
     it('should clear error messages when navigating between forms', () => {
       // Trigger an error on login
-      cy.get('input[placeholder="Enter your email"]').type('test@example.com');
-      cy.get('input[placeholder="Enter your password"]').type('wrongpassword');
+      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
       cy.get('button[type="submit"]').click();
       
       // Verify error is shown
