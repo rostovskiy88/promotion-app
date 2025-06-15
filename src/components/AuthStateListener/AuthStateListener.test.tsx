@@ -5,15 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import AuthStateListener from './AuthStateListener';
 import { setUser, setFirestoreUser } from '../../store/slices/authSlice';
 
-// Mock Firebase auth
-jest.mock('firebase/auth', () => ({
-  onAuthStateChanged: jest.fn(),
-}));
-
-// Mock Firebase config
-jest.mock('../../config/firebase', () => ({
-  auth: {},
-}));
+// Firebase auth and config are mocked globally via Jest configuration
 
 // Mock Redux actions
 jest.mock('../../store/slices/authSlice', () => ({
@@ -97,7 +89,7 @@ describe('AuthStateListener Component', () => {
       renderComponent();
 
       expect(mockOnAuthStateChanged).toHaveBeenCalledTimes(1);
-      expect(mockOnAuthStateChanged).toHaveBeenCalledWith({}, expect.any(Function));
+      expect(mockOnAuthStateChanged).toHaveBeenCalledWith(expect.any(Object), expect.any(Function));
     });
 
     it('cleans up auth state listener on unmount', () => {
