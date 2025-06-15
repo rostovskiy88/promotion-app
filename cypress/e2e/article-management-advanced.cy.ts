@@ -2,10 +2,16 @@
 
 describe('Advanced Article Management', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:5173');
+    // Login first to access article management features
+    cy.visit('http://localhost:5173/login');
+    cy.url().should('include', '/login');
+    
+    // Use test credentials to login
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
     cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
     cy.get('button[type="submit"]').click();
+    
+    // Wait for login to complete
     cy.url({ timeout: 10000 }).should('include', '/dashboard');
     cy.wait(1000);
   });
