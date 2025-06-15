@@ -1,6 +1,5 @@
 import { Form, Input, Button } from 'antd';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebookF } from 'react-icons/fa';
+import { GoogleIcon, FacebookIcon } from '../../components/Icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithEmail, loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
@@ -123,7 +122,9 @@ const Login = () => {
                 onClick={handleGoogleLogin}
                 loading={loading}
               >
-                <FcGoogle size={20} />
+                <div className={styles.googleIcon}>
+                  <GoogleIcon size={20} />
+                </div>
               </Button>
               <Button 
                 className={styles.socialButton}
@@ -131,7 +132,7 @@ const Login = () => {
                 loading={loading}
               >
                 <div className={styles.facebookIcon}>
-                  <FaFacebookF />
+                  <FacebookIcon size={20} />
                 </div>
               </Button>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox, Divider, App } from 'antd';
-import { GoogleOutlined, FacebookFilled } from '@ant-design/icons';
+import { GoogleIcon, FacebookIcon } from '../../components/Icons';
+
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginWithGoogle, loginWithFacebook } from '../../store/slices/authSlice';
@@ -175,13 +176,17 @@ const Register: React.FC = () => {
               className={styles.socialButton}
               onClick={handleGoogleSignUp}
             >
-              <GoogleOutlined />
+              <div className={styles.googleIcon}>
+                <GoogleIcon size={20} />
+              </div>
             </Button>
             <Button
                 className={styles.socialButton}
                 onClick={handleFacebookSignUp}
             >
-              <FacebookFilled />
+              <div className={styles.facebookIcon}>
+                <FacebookIcon size={20} />
+              </div>
             </Button>
           </div>
           <div className={styles.loginLink}>
