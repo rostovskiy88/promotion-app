@@ -284,22 +284,31 @@ describe('Authentication Error Handling', () => {
 
   describe('Error Message Cleanup', () => {
     it('should clear error messages when navigating between forms', () => {
-      // Trigger an authentication attempt
-      cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+      // Use invalid credentials to trigger an error
+      cy.get('input[placeholder="Enter your email"]').type('invalid@test.com');
+      cy.get('input[placeholder="Enter your password"]').type('wrongpassword');
       cy.get('button[type="submit"]').click();
       
       // Wait for authentication to complete
       cy.get('button[type="submit"]', { timeout: 10000 }).should('not.have.class', 'ant-btn-loading');
+      
+      // Wait a moment for any error messages to appear
+      cy.wait(1000);
       
       // Check if error message appeared, if so test navigation clears it
       cy.get('body').then(($body) => {
         if ($body.find('[class*="message"], [class*="notification"], [role="alert"]').length > 0) {
           cy.log('Error message found, testing navigation clears it');
           
+          // Wait for message to be visible first
+          cy.get('[class*="message"], [class*="notification"], [role="alert"]').should('be.visible');
+          
           // Navigate to register page
           cy.get('a').contains('Sign up').click();
           cy.url().should('include', '/register');
+          
+          // Wait for navigation to complete and messages to clear
+          cy.wait(2000);
           
           // Error message should be cleared (new page)
           cy.get('[class*="message"], [class*="notification"], [role="alert"]').should('not.exist');
@@ -308,7 +317,8 @@ describe('Authentication Error Handling', () => {
           cy.get('a').contains('Login').click();
           cy.url().should('include', '/login');
           
-          // No error should be visible
+          // Wait for navigation and ensure no error is visible
+          cy.wait(1000);
           cy.get('[class*="message"], [class*="notification"], [role="alert"]').should('not.exist');
         } else {
           cy.log('No error message to clear - test navigation still works');
