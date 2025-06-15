@@ -96,7 +96,7 @@ describe('PWA Features', () => {
       cy.get('button[type="submit"]').contains('Publish Article').click();
       
       // Should show offline error
-      cy.get('.ant-message').should('contain', 'Cannot create articles while offline');
+      cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Cannot create articles while offline');
     });
   });
 
@@ -226,7 +226,7 @@ describe('PWA Features', () => {
       cy.get('button[type="submit"]').contains('Publish Article').click();
       
       // Should show queued message
-      cy.get('.ant-message').should('contain', 'Article queued for sync');
+              cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Article queued for sync');
     });
 
     it('should sync queued actions when back online', () => {
@@ -252,7 +252,7 @@ describe('PWA Features', () => {
       cy.get('button').contains('Enable Notifications').click();
       
       // Should show success message
-      cy.get('.ant-message').should('contain', 'Notifications enabled');
+              cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Notifications enabled');
     });
 
     it('should handle notification permission denial', () => {
@@ -263,7 +263,7 @@ describe('PWA Features', () => {
       cy.get('button').contains('Enable Notifications').click();
       
       // Should show denial message
-      cy.get('.ant-message').should('contain', 'Notifications disabled');
+              cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Notifications disabled');
     });
 
     it('should display push notifications when received', () => {

@@ -17,12 +17,12 @@ describe('Email Authentication - Error Messages', () => {
     
     // Wait for response - could be error or successful login (depending on Firebase config)
     cy.get('body', { timeout: 10000 }).then(($body) => {
-      if ($body.find('.ant-message').length > 0) {
+      if ($body.find('.ant-message-notice, .ant-notification-notice').length > 0) {
         // If message appears, verify it's user-friendly
-        cy.get('.ant-message').should('not.contain', 'Firebase');
-        cy.get('.ant-message').should('not.contain', 'auth/invalid-credential');
-        cy.get('.ant-message').should('not.contain', 'auth/user-not-found');
-        cy.get('.ant-message').should('not.contain', 'auth/wrong-password');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'Firebase');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/invalid-credential');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/user-not-found');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/wrong-password');
       } else {
         // If no error message, check what happened
         cy.url().then((url) => {
@@ -50,10 +50,10 @@ describe('Email Authentication - Error Messages', () => {
     
     // Wait for response - could be error or successful login (depending on Firebase config)
     cy.get('body', { timeout: 10000 }).then(($body) => {
-      if ($body.find('.ant-message').length > 0) {
+      if ($body.find('.ant-message-notice, .ant-notification-notice').length > 0) {
         // If message appears, verify it's user-friendly
-        cy.get('.ant-message').should('not.contain', 'Firebase');
-        cy.get('.ant-message').should('not.contain', 'auth/');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'Firebase');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/');
       } else {
         // If no error message, check what happened
         cy.url().then((url) => {
@@ -84,7 +84,7 @@ describe('Email Authentication - Error Messages', () => {
     cy.get('.ant-form-item-explain-error').should('contain', 'Please enter a valid email address');
     
     // Should NOT show Firebase error messages (because form validation prevents submission)
-    cy.get('.ant-message').should('not.exist');
+    cy.get('.ant-message-notice, .ant-notification-notice').should('not.exist');
   });
 
   it('should preserve user-friendly errors during loading states', () => {
@@ -98,10 +98,10 @@ describe('Email Authentication - Error Messages', () => {
     
     // After loading completes, check what happened
     cy.get('body', { timeout: 10000 }).then(($body) => {
-      if ($body.find('.ant-message').length > 0) {
+      if ($body.find('.ant-message-notice, .ant-notification-notice').length > 0) {
         // Error appeared - should be user-friendly
-        cy.get('.ant-message').should('contain', 'Incorrect email or password');
-        cy.get('.ant-message').should('not.contain', 'Firebase');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Incorrect email or password');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'Firebase');
       } else {
         // No error message - either succeeded or form validation prevented it
         cy.url().then((url) => {
@@ -128,7 +128,7 @@ describe('Email Authentication - Error Messages', () => {
     cy.get('button[type="submit"]').click();
     
     // Wait for error
-    cy.get('.ant-message', { timeout: 10000 }).should('be.visible');
+    cy.get('.ant-message-notice, .ant-notification-notice', { timeout: 10000 }).should('be.visible');
     
     // Start typing in email field - this might trigger error clearing
     cy.get('input[placeholder="Enter your email"]').clear().type('new@email.com');
@@ -158,13 +158,13 @@ describe('Registration - Error Messages', () => {
     cy.get('button').contains('Get started now').click();
     
     // Wait for potential error (if email exists)
-    cy.get('.ant-message', { timeout: 10000 }).should('be.visible');
+    cy.get('.ant-message-notice, .ant-notification-notice', { timeout: 10000 }).should('be.visible');
     
     // If it's an error (not success), it should be user-friendly
     cy.get('body').then(($body) => {
-      if ($body.find('.ant-message-error').length > 0) {
-        cy.get('.ant-message').should('not.contain', 'Firebase');
-        cy.get('.ant-message').should('not.contain', 'auth/email-already-in-use');
+      if ($body.find('.ant-message-error, .ant-notification-notice-error').length > 0) {
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'Firebase');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/email-already-in-use');
       }
     });
   });
@@ -184,16 +184,16 @@ describe('Registration - Error Messages', () => {
     
     // Wait for response - might be success or weak password error
     cy.get('body', { timeout: 10000 }).then(($body) => {
-      if ($body.find('.ant-message').length > 0) {
+      if ($body.find('.ant-message-notice, .ant-notification-notice').length > 0) {
         // Message appeared - check what type
-        if ($body.find('.ant-message-error').length > 0) {
+        if ($body.find('.ant-message-error, .ant-notification-notice-error').length > 0) {
           // Error message - should be user-friendly
-          cy.get('.ant-message').should('not.contain', 'Firebase');
-          cy.get('.ant-message').should('not.contain', 'auth/weak-password');
-          cy.get('.ant-message').should('contain', 'Password is too weak');
+          cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'Firebase');
+          cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/weak-password');
+          cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Password is too weak');
         } else {
           // Success message - Firebase accepted this password
-          cy.get('.ant-message').should('contain', 'Registration successful');
+          cy.get('.ant-message-notice, .ant-notification-notice').should('contain', 'Registration successful');
         }
       } else {
         // No message yet - check URL for success or accept that Firebase might accept this password
@@ -226,13 +226,13 @@ describe('Password Reset - Error Messages', () => {
     cy.get('button').contains('Reset').click();
     
     // Wait for response
-    cy.get('.ant-message', { timeout: 10000 }).should('be.visible');
+    cy.get('.ant-message-notice, .ant-notification-notice', { timeout: 10000 }).should('be.visible');
     
     // If it's an error, should be user-friendly
     cy.get('body').then(($body) => {
-      if ($body.find('.ant-message-error').length > 0) {
-        cy.get('.ant-message').should('not.contain', 'Firebase');
-        cy.get('.ant-message').should('not.contain', 'auth/');
+      if ($body.find('.ant-message-error, .ant-notification-notice-error').length > 0) {
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'Firebase');
+        cy.get('.ant-message-notice, .ant-notification-notice').should('not.contain', 'auth/');
       }
     });
   });
