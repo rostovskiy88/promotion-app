@@ -1,4 +1,4 @@
-const CACHE_NAMEfix = 'promotion-app-cache-v1';
+const CACHE_NAME = 'promotion-app-cache-v1';
 const DATA_CACHE_NAME = 'promotion-app-data-cache-v1';
 
 const urlsToCache = [
