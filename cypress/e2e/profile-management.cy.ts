@@ -11,10 +11,10 @@ describe('User Profile Management', () => {
     // Use test credentials to login
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
     cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
-    cy.get('button[type="submit"]').click();
+    cy.get('[data-testid="login-button"]').click();
     
     // Wait for authentication to complete (but don't fail if it doesn't work)
-    cy.get('button[type="submit"]', { timeout: 15000 }).should('not.have.class', 'ant-btn-loading');
+    cy.get('[data-testid="login-button"]', { timeout: 15000 }).should('not.have.class', 'ant-btn-loading');
     
     // Give it a moment for any navigation to occur
     cy.wait(2000);

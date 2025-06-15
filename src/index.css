@@ -197,6 +197,25 @@ body {
   border: 1px solid #1557ff !important;
 }
 
+/* Custom button styling for dark mode */
+[data-theme="dark"] .ant-select-selector {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Fix for our custom white buttons in dark mode */
+[data-theme="dark"] div[style*="background-color: rgb(255, 255, 255)"],
+[data-theme="dark"] div[style*="backgroundColor: '#fff'"] {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] div[style*="background-color: rgb(255, 255, 255)"] span,
+[data-theme="dark"] div[style*="backgroundColor: '#fff'"] span {
+  color: var(--text-primary) !important;
+}
+
 * {
   margin: 0;
   padding: 0;

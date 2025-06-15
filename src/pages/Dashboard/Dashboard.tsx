@@ -235,16 +235,8 @@ const Dashboard: React.FC = () => {
               <h2 style={{ margin: 0 }}>{getDisplayTitle()}</h2>
               {getResultsCount()}
             </div>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              backgroundColor: '#fff',
-              border: '1px solid #d9d9d9',
-              padding: '8px 12px',
-              height: 40,
-              gap: 8
-            }}>
-              <span style={{ color: '#b0b4ba', fontWeight: 500, fontSize: 14 }}>
+            <div className={styles.filterButton}>
+              <span>
                 Show:
               </span>
               <Select
@@ -266,16 +258,8 @@ const Dashboard: React.FC = () => {
               </Select>
             </div>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            backgroundColor: '#fff',
-            border: '1px solid #d9d9d9',
-            padding: '8px 12px',
-            height: 40,
-            gap: 8
-          }}>
-            <span style={{ color: '#b0b4ba', fontWeight: 500, fontSize: 14 }}>
+          <div className={styles.filterButton}>
+            <span>
               Sort by:
             </span>
             <Select

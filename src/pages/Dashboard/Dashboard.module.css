@@ -126,6 +126,33 @@
   margin-top: 2px;
 }
 
+/* Filter button styling */
+.filterButton {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+  padding: 8px 12px;
+  height: 40px;
+  gap: 8px;
+}
+
+.filterButton span {
+  color: #b0b4ba;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Dark mode filter button styling */
+[data-theme="dark"] .filterButton {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .filterButton span {
+  color: var(--text-secondary);
+}
+
 @media (max-width: 768px) {
   .dashboardContainer {
     flex-direction: column;

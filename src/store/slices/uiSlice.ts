@@ -16,10 +16,7 @@ const getInitialTheme = (): 'light' | 'dark' => {
     if (savedTheme) {
       return savedTheme;
     }
-    // Check system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
+    // Default to light theme for new users (don't check system preference)
   }
   return 'light';
 };
