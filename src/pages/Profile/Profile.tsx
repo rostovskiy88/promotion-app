@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, Button, Row, Col, Avatar, App, Upload } from 'antd';
+import { Card, Tabs, Form, Input, Button, Row, Col, App, Upload } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { auth } from '../../config/firebase';
 import { RootState, AppDispatch } from '../../store';
-import { EditOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import { updateUser } from '../../services/userService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 import AvatarUpload from '../../components/AvatarUpload/AvatarUpload';
 import { refreshFirestoreUser } from '../../store/slices/authSlice';
 import { ProfileFormData, PasswordFormData } from '../../types/forms';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 
 const EditProfile: React.FC = () => {
   const { message } = App.useApp();
@@ -17,6 +19,7 @@ const EditProfile: React.FC = () => {
   const [passwordForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState('1');
   const [loading, setLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
   const [avatarUploadVisible, setAvatarUploadVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -117,9 +120,48 @@ const EditProfile: React.FC = () => {
     navigate('/dashboard');
   };
 
-  const handlePasswordSave = (values: PasswordFormData) => {
-    console.log('Received values:', values);
-    message.success('Password updated successfully!');
+  const handlePasswordSave = async (values: PasswordFormData) => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      message.error('User not authenticated');
+      return;
+    }
+
+    // Validate that new passwords match
+    if (values.newPassword !== values.confirmPassword) {
+      message.error('New passwords do not match');
+      return;
+    }
+
+    // Validate password strength
+    if (values.newPassword.length < 6) {
+      message.error('New password must be at least 6 characters long');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      // First, reauthenticate the user with their current password
+      const credential = EmailAuthProvider.credential(currentUser.email!, values.oldPassword);
+      await reauthenticateWithCredential(currentUser, credential);
+
+      // If reauthentication succeeds, update the password
+      await updatePassword(currentUser, values.newPassword);
+
+      // Reset the form and show success message
+      passwordForm.resetFields();
+      message.success('Password updated successfully!');
+      
+      console.log('Password updated successfully for user:', currentUser.uid);
+    } catch (error: any) {
+      console.error('Password update failed:', error);
+      
+      // Use the auth error utility to get user-friendly messages
+      const errorMessage = getAuthErrorMessage(error);
+      message.error(errorMessage);
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   return (
@@ -238,19 +280,55 @@ const EditProfile: React.FC = () => {
                     onFinish={handlePasswordSave}
                     requiredMark={false}
                   >
-                    <Form.Item label="Old Password" name="oldPassword">
+                    <Form.Item 
+                      label="Old Password" 
+                      name="oldPassword"
+                      rules={[
+                        { required: true, message: 'Please enter your current password' }
+                      ]}
+                    >
                       <Input.Password placeholder="Enter your current password" size="large" className={styles.input} disabled={isSocialUser} />
                     </Form.Item>
-                    <Form.Item label="New Password" name="newPassword">
+                    <Form.Item 
+                      label="New Password" 
+                      name="newPassword"
+                      rules={[
+                        { required: true, message: 'Please enter your new password' },
+                        { min: 6, message: 'Password must be at least 6 characters long' }
+                      ]}
+                    >
                       <Input.Password placeholder="Enter your new password" size="large" className={styles.input} disabled={isSocialUser} />
                     </Form.Item>
-                    <Form.Item label="Confirm New Password" name="confirmPassword">
+                    <Form.Item 
+                      label="Confirm New Password" 
+                      name="confirmPassword"
+                      dependencies={['newPassword']}
+                      rules={[
+                        { required: true, message: 'Please confirm your new password' },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue('newPassword') === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('The two passwords do not match!'));
+                          },
+                        }),
+                      ]}
+                    >
                       <Input.Password placeholder="Enter your new password again" size="large" className={styles.input} disabled={isSocialUser} />
                     </Form.Item>
                     <Form.Item className={styles.buttonRow}>
                       <div className={styles.buttonGroup}>
                         <Button onClick={handlePasswordCancel} className={`${styles.button} ${styles.cancelButton}`}>Cancel</Button>
-                        <Button type="primary" htmlType="submit" className={`${styles.button} ${styles.saveButton}`} disabled={isSocialUser}>Save</Button>
+                        <Button 
+                          type="primary" 
+                          htmlType="submit" 
+                          className={`${styles.button} ${styles.saveButton}`} 
+                          disabled={isSocialUser}
+                          loading={passwordLoading}
+                        >
+                          Save
+                        </Button>
                       </div>
                     </Form.Item>
                   </Form>

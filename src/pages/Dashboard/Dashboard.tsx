@@ -370,9 +370,11 @@ const Dashboard: React.FC = () => {
           <Button type="primary" block onClick={() => navigate('/dashboard/add-article')}>
             + Add Article
           </Button>
-          <Button type="default" block onClick={handleAddSampleArticles}>
-            Add Sample Articles
-          </Button>
+          {import.meta.env.DEV && (
+            <Button type="default" block onClick={handleAddSampleArticles}>
+              Add Sample Articles
+            </Button>
+          )}
           <WeatherWidget />
         </div>
       </div>
