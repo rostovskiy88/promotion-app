@@ -4,7 +4,7 @@ import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
 import { addArticle } from '../../services/articleService';
-import { uploadImage, validateImageFile } from '../../services/imageService';
+import { uploadImage, validateImageFile, generateImagePath } from '../../services/imageService';
 import styles from './AddArticle.module.css';
 import { useAuth } from '../../hooks/useRedux';
 
@@ -14,7 +14,6 @@ interface ArticleFormValues {
   title: string;
   content: string;
   category: string;
-  image?: File[];
 }
 
 const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
@@ -39,12 +38,13 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
       let imageUrl = '';
       
       // Handle image upload if image is provided
-      if (values.image && values.image.length > 0) {
+      if (imageFile) {
         try {
-          const file = values.image[0];
-          if (file instanceof File) {
-            imageUrl = await uploadImage(file, 'articles');
-          }
+          console.log('Uploading image:', imageFile.name);
+          // Generate a proper path for the image
+          const imagePath = generateImagePath(user.uid, imageFile.name, 'articles');
+          imageUrl = await uploadImage(imageFile, imagePath);
+          console.log('Image uploaded successfully:', imageUrl);
         } catch (uploadError) {
           console.error('Image upload failed:', uploadError);
           message.warning('Article created without image due to upload error');
