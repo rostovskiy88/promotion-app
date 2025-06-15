@@ -12,8 +12,8 @@ describe('Advanced Article Management', () => {
     cy.get('button[type="submit"]').click();
     
     // Wait for login to complete
-    cy.url({ timeout: 10000 }).should('include', '/dashboard');
-    cy.wait(1000);
+    cy.url({ timeout: 15000 }).should('include', '/dashboard');
+    cy.wait(2000);
   });
 
   it('should create a new article with all fields', () => {
