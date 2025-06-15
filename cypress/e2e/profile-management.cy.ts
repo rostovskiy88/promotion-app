@@ -10,7 +10,7 @@ describe('User Profile Management', () => {
     
     // Use test credentials to login
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-    cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+    cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
     cy.get('button[type="submit"]').click();
     
     // Wait for authentication to complete (but don't fail if it doesn't work)
@@ -156,7 +156,7 @@ describe('User Profile Management', () => {
             const passwords = $body.find('input[type="password"], input[placeholder*="password"]');
             
             // Current password
-            cy.wrap(passwords.first()).type('7250563Asd');
+            cy.wrap(passwords.first()).type('7250563Asd/');
             
             // New password
             cy.wrap(passwords.eq(1)).type('NewPassword123!');
@@ -193,7 +193,7 @@ describe('User Profile Management', () => {
           if ($body.find('input[type="password"]').length >= 2) {
             const passwords = $body.find('input[type="password"]');
             
-            cy.wrap(passwords.first()).type('7250563Asd'); // Current password
+            cy.wrap(passwords.first()).type('7250563Asd/'); // Current password
             cy.wrap(passwords.eq(1)).type('weak'); // Weak new password
             
             if ($body.find('button:contains("Change"), button[type="submit"]').length > 0) {

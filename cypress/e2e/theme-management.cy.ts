@@ -10,7 +10,7 @@ describe('Theme Management', () => {
     
     // Use test credentials to login
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-    cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+    cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
     cy.get('button[type="submit"]').click();
     
     // Wait for authentication to complete (but don't fail if it doesn't work)
@@ -167,7 +167,7 @@ describe('Theme Management', () => {
       // Attempt to login again
       cy.visit('http://localhost:5173/login');
       cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
       cy.get('button[type="submit"]').click();
       
       // Wait for authentication to complete (but don't fail if it doesn't work)

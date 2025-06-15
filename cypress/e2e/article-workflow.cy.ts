@@ -11,7 +11,7 @@ describe('Article Management', () => {
   it('should complete full article workflow', () => {
     // Login
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-    cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+    cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
     cy.get('button[type="submit"]').click();
 
     // Check if login was successful
@@ -49,7 +49,7 @@ describe('Article Management', () => {
   it('should work offline', () => {
     // Login first
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-    cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+    cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
     cy.get('button[type="submit"]').click();
 
     // Check if login was successful

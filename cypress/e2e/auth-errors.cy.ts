@@ -13,7 +13,7 @@ describe('Authentication Error Handling', () => {
     it('should show user-friendly error for invalid credentials', () => {
       // Type valid email format but incorrect credentials
       cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
       
       // Submit the form
       cy.get('button[type="submit"]').click();
@@ -120,7 +120,7 @@ describe('Authentication Error Handling', () => {
     it('should show loading state during authentication', () => {
       // Fill credentials
       cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
       
       // Submit and verify loading state
       cy.get('button[type="submit"]').click();
@@ -258,7 +258,7 @@ describe('Authentication Error Handling', () => {
       
       // Fill credentials
       cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-      cy.get('input[placeholder="Enter your password"]').type('7250563Asd');
+      cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
       
       // Submit the form
       cy.get('button[type="submit"]').click();
