@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, Button, Row, Col, Avatar, App } from 'antd';
+import { Card, Tabs, Form, Input, Button, Row, Col, Avatar, App, Upload } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
@@ -18,7 +18,8 @@ const EditProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState('1');
   const [loading, setLoading] = useState(false);
   const [avatarUploadVisible, setAvatarUploadVisible] = useState(false);
-  const [avatarUploadMode, setAvatarUploadMode] = useState<'upload' | 'edit'>('upload');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const userDisplayInfo = useUserDisplayInfo();
@@ -94,19 +95,20 @@ const EditProfile: React.FC = () => {
       await userDisplayInfo.refresh();
       
       message.success('Avatar updated!');
+      
+      // Clear the selected file and close modal
+      setSelectedFile(null);
+      setAvatarUploadVisible(false);
     } catch (error) {
       console.error('Failed to update avatar in database:', error);
       message.error('Failed to save avatar');
     }
   };
 
-  const handleEditAvatar = () => {
-    setAvatarUploadMode('edit');
-    setAvatarUploadVisible(true);
-  };
-
-  const handleChangeAvatar = () => {
-    setAvatarUploadMode('upload');
+  const handleChangeAvatar = (file?: File) => {
+    if (file) {
+      setSelectedFile(file);
+    }
     setAvatarUploadVisible(true);
   };
 
@@ -177,57 +179,38 @@ const EditProfile: React.FC = () => {
                 label: <span className={activeTab === '2' ? styles.activeTab : styles.inactiveTab}>User Avatar</span>,
                 children: <>
                   <div className={styles.sectionTitle}>Change your photo</div>
-                  <div className={styles.coverLabel}>Upload and crop your avatar</div>
+                  <div className={styles.coverLabel}>Drag and drop file below</div>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-                    {/* Current Avatar Display */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ position: 'relative' }}>
-                        <Avatar 
-                          src={userDisplayInfo.avatarUrl} 
-                          size={120} 
-                          style={{ 
-                            border: '3px solid #e5e6e8',
-                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                          }} 
-                        >
-                          {userDisplayInfo.displayName.charAt(0)}
-                        </Avatar>
-                        <Button
-                          type="primary"
-                          shape="circle"
-                          icon={<EditOutlined />}
-                          size="small"
-                          style={{
-                            position: 'absolute',
-                            bottom: 0,
-                            right: 0,
-                            border: '2px solid white',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-                          }}
-                          onClick={handleEditAvatar}
-                        />
-                      </div>
+                  <div style={{ marginTop: '20px' }}>
+                    <Upload.Dragger
+                      accept=".jpg,.jpeg,.png"
+                      showUploadList={false}
+                      beforeUpload={(file: File) => {
+                        handleChangeAvatar(file);
+                        return false;
+                      }}
+                      style={{
+                        padding: '60px 20px',
+                        border: '2px dashed #d9d9d9',
+                        borderRadius: '8px',
+                        backgroundColor: '#fafafa'
+                      }}
+                    >
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#333' }}>
-                          {userDisplayInfo.displayName || 'User'}
+                        <div style={{ fontSize: '48px', color: '#d9d9d9', marginBottom: '16px' }}>
+                          ☁️
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
+                          JPG, PNG
                         </div>
                         <div style={{ fontSize: '14px', color: '#666' }}>
-                          Click the edit button to change your avatar
+                          You can also upload files by{' '}
+                          <span style={{ color: '#1890ff', cursor: 'pointer' }}>
+                            clicking here
+                          </span>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Upload Button */}
-                    <Button 
-                      type="primary" 
-                      size="large"
-                      icon={<EditOutlined />}
-                      onClick={handleChangeAvatar}
-                      className={`${styles.button} ${styles.saveButton}`}
-                    >
-                      Change Avatar
-                    </Button>
+                    </Upload.Dragger>
                   </div>
 
                   <Form.Item className={styles.buttonRow} style={{ marginTop: '32px' }}>
@@ -281,11 +264,13 @@ const EditProfile: React.FC = () => {
       {/* Avatar Upload Modal */}
       <AvatarUpload
         visible={avatarUploadVisible}
-        onCancel={() => setAvatarUploadVisible(false)}
+        onCancel={() => {
+          setAvatarUploadVisible(false);
+          setSelectedFile(null);
+        }}
         onSuccess={handleAvatarSuccess}
         userId={user?.uid || ''}
-        mode={avatarUploadMode}
-        currentAvatarUrl={userDisplayInfo.avatarUrl}
+        initialFile={selectedFile}
       />
     </Row>
   );

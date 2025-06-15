@@ -10,8 +10,7 @@ interface AvatarUploadProps {
   onCancel: () => void;
   onSuccess: (avatarUrl: string) => void;
   userId: string;
-  mode: 'upload' | 'edit';
-  currentAvatarUrl?: string;
+  initialFile?: File | null;
 }
 
 const AvatarUpload: React.FC<AvatarUploadProps> = ({
@@ -19,37 +18,26 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
   onCancel,
   onSuccess,
   userId,
-  mode,
-  currentAvatarUrl
+  initialFile
 }) => {
-  const [image, setImage] = useState<File | string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [scale, setScale] = useState(1.2);
   const [rotate, setRotate] = useState(0);
   const [uploading, setUploading] = useState(false);
-  const [loadingImage, setLoadingImage] = useState(false);
   const editorRef = useRef<AvatarEditor>(null);
 
-  // Load current avatar when in edit mode
+  // Reset state when modal opens or set initial file
   useEffect(() => {
-    if (visible && mode === 'edit' && currentAvatarUrl) {
-      setLoadingImage(true);
-      console.log('Loading avatar for editing:', currentAvatarUrl);
-      
-      // Simply use the URL directly and let AvatarEditor handle it
-      // Remove crossOrigin to avoid CORS preflight issues
-      setImage(currentAvatarUrl);
+    if (visible) {
+      if (initialFile) {
+        setImage(initialFile);
+      } else {
+        setImage(null);
+      }
       setScale(1.2);
       setRotate(0);
-      setLoadingImage(false);
-      console.log('Avatar set for editing');
-      
-    } else if (visible && mode === 'upload') {
-      setImage(null);
-      setScale(1.2);
-      setRotate(0);
-      setLoadingImage(false);
     }
-  }, [visible, mode, currentAvatarUrl]);
+  }, [visible, initialFile]);
 
   const handleFileSelect = (file: File) => {
     const validation = validateAvatarFile(file);
@@ -73,80 +61,20 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       // Get the cropped image as canvas
       const canvas = editorRef.current.getImageScaledToCanvas();
       
-      // Add some debugging
       console.log('Canvas created successfully, size:', canvas.width, 'x', canvas.height);
-      console.log('Current hostname:', window.location.hostname);
-      console.log('Image source:', typeof image === 'string' ? image.substring(0, 50) + '...' : 'File object');
       
       // Upload the avatar
       const avatarUrl = await uploadAvatar(canvas, userId);
       
-      message.success(mode === 'edit' ? 'Avatar adjusted successfully!' : 'Avatar uploaded successfully!');
       onSuccess(avatarUrl);
       handleClose();
     } catch (error: any) {
       console.error('Avatar upload failed:', error);
-      console.error('Error details:', {
-        message: error.message,
-        name: error.name,
-        stack: error.stack?.substring(0, 200)
-      });
       
-      // Check if we're actually in development (localhost) or production
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      console.log('Is localhost?', isLocalhost);
-      
-      // Handle the tainted canvas error
-      if (error.message?.includes('tainted') || error.message?.includes('CORS') || error.message?.includes('toBlob')) {
-        if (mode === 'edit') {
-          if (isLocalhost) {
-            // Only show development message for actual localhost
-            message.warning({
-              content: (
-                <div>
-                  <div style={{ fontWeight: 'bold' }}>Can't save edits in development mode</div>
-                  <div style={{ marginTop: '4px', fontSize: '12px' }}>
-                    Browser security prevents editing cloud images locally. Switching to upload mode...
-                  </div>
-                </div>
-              ),
-              duration: 4,
-            });
-            
-            // Automatically switch to upload mode after a short delay
-            setTimeout(() => {
-              setImage(null);
-              setLoadingImage(false);
-              message.info('You can now upload a new avatar image to replace the current one.');
-            }, 1500);
-          } else {
-            // For production, show a different error and try to work around it
-            message.error({
-              content: (
-                <div>
-                  <div style={{ fontWeight: 'bold' }}>Unable to save avatar changes</div>
-                  <div style={{ marginTop: '4px', fontSize: '12px' }}>
-                    There may be a temporary issue. Please try uploading a new image instead.
-                  </div>
-                </div>
-              ),
-              duration: 5,
-            });
-            
-            // For production, switch to upload mode to let user upload new image
-            setTimeout(() => {
-              setImage(null);
-              setLoadingImage(false);
-              message.info('Please upload a new avatar image.');
-            }, 2000);
-          }
-        } else {
-          message.error('Unable to process image. Please try a different image.');
-        }
-      } else if (error.message?.includes('storage')) {
+      if (error.message?.includes('storage')) {
         message.error('Failed to save avatar to storage. Please check your connection and try again.');
       } else {
-        message.error(`Failed to ${mode === 'edit' ? 'adjust' : 'upload'} avatar: ${error.message}`);
+        message.error(`Failed to upload avatar: ${error.message}`);
       }
     } finally {
       setUploading(false);
@@ -154,25 +82,11 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
   };
 
   const handleClose = () => {
-    // Clean up blob URLs to prevent memory leaks
-    if (image && typeof image === 'string' && image.startsWith('blob:')) {
-      URL.revokeObjectURL(image);
-    }
     setImage(null);
     setScale(1.2);
     setRotate(0);
-    setLoadingImage(false);
     onCancel();
   };
-
-  // Cleanup blob URLs on unmount
-  useEffect(() => {
-    return () => {
-      if (image && typeof image === 'string' && image.startsWith('blob:')) {
-        URL.revokeObjectURL(image);
-      }
-    };
-  }, [image]);
 
   const handleRotateLeft = () => {
     setRotate(prev => prev - 90);
@@ -182,36 +96,13 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
     setRotate(prev => prev + 90);
   };
 
-  const getModalTitle = () => {
-    if (mode === 'edit') {
-      if (loadingImage) {
-        return 'Loading Avatar...';
-      } else if (!image) {
-        return 'Upload New Avatar';
-      } else {
-        return 'Adjust Avatar';
-      }
-    }
-    return 'Upload Avatar';
-  };
-
-  const getButtonText = () => {
-    if (uploading) {
-      return mode === 'edit' ? 'Saving...' : 'Uploading...';
-    }
-    
-    if (mode === 'edit') {
-      return !image ? 'Save Avatar' : 'Save Changes';
-    }
-    return 'Save Avatar';
-  };
-
   return (
     <Modal
-      title={getModalTitle()}
+      title="Upload Avatar"
       open={visible}
       onCancel={handleClose}
-      width={500}
+      width={520}
+      centered
       footer={[
         <Button key="cancel" onClick={handleClose}>
           Cancel
@@ -223,27 +114,25 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
           onClick={handleSave}
           disabled={!image}
         >
-          {getButtonText()}
+          {uploading ? 'Uploading...' : 'Save Avatar'}
         </Button>,
       ]}
+      styles={{
+        body: { 
+          padding: '24px',
+          display: 'flex',
+          justifyContent: 'center'
+        },
+        mask: {
+          backgroundColor: 'rgba(0, 0, 0, 0.6)'
+        }
+      }}
+      style={{
+        marginLeft: '200px'
+      }}
     >
       <div className="avatar-upload-container">
-        {loadingImage ? (
-          <div className="upload-area" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', marginBottom: '12px' }}>Loading your avatar...</div>
-              <div className="loading-spinner" style={{ 
-                width: '40px', 
-                height: '40px', 
-                border: '4px solid #f3f3f3',
-                borderTop: '4px solid #1890ff',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-                margin: '0 auto'
-              }}></div>
-            </div>
-          </div>
-        ) : !image ? (
+        {!image ? (
           <div className="upload-area">
             <Upload.Dragger
               accept=".jpg,.jpeg,.png"
@@ -255,7 +144,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
                 <UploadOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
                 <div style={{ marginTop: '16px' }}>
                   <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                    {mode === 'edit' ? 'Upload New Avatar' : 'Select Avatar Image'}
+                    Select Avatar Image
                   </div>
                   <div style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>
                     Click or drag image to upload<br />
@@ -285,7 +174,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
               />
             </div>
             
-            <div className="editor-controls">
+            <div className="editor-controls" style={{ width: '100%', maxWidth: '340px' }}>
               <div className="control-row">
                 <span>Zoom:</span>
                 <Slider
@@ -318,29 +207,15 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
                 </Space>
               </div>
               
-              {mode === 'upload' && (
-                <div className="control-row">
-                  <Button 
-                    type="link" 
-                    onClick={() => setImage(null)}
-                    style={{ padding: 0 }}
-                  >
-                    Choose Different Image
-                  </Button>
-                </div>
-              )}
-              
-              {mode === 'edit' && (
-                <div className="control-row">
-                  <Button 
-                    type="link" 
-                    onClick={() => setImage(null)}
-                    style={{ padding: 0 }}
-                  >
-                    Upload New Image Instead
-                  </Button>
-                </div>
-              )}
+              <div className="control-row" style={{ justifyContent: 'center' }}>
+                <Button 
+                  type="link" 
+                  onClick={() => setImage(null)}
+                  style={{ padding: 0 }}
+                >
+                  Choose Different Image
+                </Button>
+              </div>
             </div>
           </div>
         )}
