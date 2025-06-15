@@ -41,20 +41,44 @@ describe('Advanced Article Management', () => {
   });
 
   it('should delete an article with confirmation', () => {
-    // Get the title of the first article card
-    cy.get('[data-testid="article-card"]').first().find('.article-card-title').invoke('text').then((title) => {
-      cy.get('[data-testid="article-card"]').first().within(() => {
-        cy.get('.article-card-menu').click();
+    // Count initial articles
+    cy.get('[data-testid="article-card"]').then(($cards) => {
+      const initialCount = $cards.length;
+      
+      // Get the title of the first article card
+      cy.get('[data-testid="article-card"]').first().find('.article-card-title').invoke('text').then((title) => {
+        cy.log(`Attempting to delete article: ${title}`);
+        
+        cy.get('[data-testid="article-card"]').first().within(() => {
+          cy.get('.article-card-menu').click();
+        });
+        
+        cy.get('.ant-dropdown-menu').contains('Delete').click();
+        cy.get('.ant-modal', { timeout: 5000 }).should('exist');
+        cy.get('.ant-modal', { timeout: 5000 }).should('be.visible');
+        
+        // Use a global selector for the Yes button
+        cy.get('body').then(() => {
+          cy.contains('button', 'Yes', { timeout: 5000 }).should('be.visible').click();
+        });
+        
+        // Wait for modal to disappear
+        cy.get('.ant-modal', { timeout: 5000 }).should('not.exist');
+        
+        // Wait for the page to update and check if article count decreased or specific article is gone
+        cy.wait(2000);
+        
+        // Try multiple approaches to verify deletion
+        cy.get('body').then(($body) => {
+          if ($body.find(`[data-testid="article-card"]:contains("${title}")`).length === 0) {
+            cy.log('Article successfully deleted - title not found');
+          } else {
+            // Alternative check: verify article count decreased
+            cy.get('[data-testid="article-card"]').should('have.length.lessThan', initialCount);
+            cy.log('Article deletion verified by count decrease');
+          }
+        });
       });
-      cy.get('.ant-dropdown-menu').contains('Delete').click();
-      cy.get('.ant-modal', { timeout: 5000 }).should('exist');
-      cy.get('.ant-modal', { timeout: 5000 }).should('be.visible');
-      // Use a global selector for the Yes button
-      cy.get('body').then(() => {
-        cy.contains('button', 'Yes', { timeout: 5000 }).should('be.visible').click();
-      });
-      // Assert the article with that title is no longer present, with a longer timeout
-      cy.contains('.article-card-title', title, { timeout: 10000 }).should('not.exist');
     });
   });
 

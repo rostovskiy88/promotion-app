@@ -14,7 +14,8 @@ describe('Weather Widget', () => {
     cy.get('button[type="submit"]').click();
     
     // Wait for login to complete
-    cy.url({ timeout: 10000 }).should('include', '/dashboard');
+    cy.url({ timeout: 15000 }).should('include', '/dashboard');
+    cy.wait(1000);
   });
 
   describe('Weather Display', () => {

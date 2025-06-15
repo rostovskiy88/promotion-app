@@ -24,7 +24,7 @@ interface SearchProviderProps {
 
 export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] fix tests= useState(false);
 
   const clearSearch = () => {
     setSearchTerm('');
