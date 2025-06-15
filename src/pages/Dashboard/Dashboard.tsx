@@ -235,36 +235,67 @@ const Dashboard: React.FC = () => {
               <h2 style={{ margin: 0 }}>{getDisplayTitle()}</h2>
               {getResultsCount()}
             </div>
-            <span style={{ color: '#b0b4ba', fontWeight: 500 }}>
-              Show: <Select
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              backgroundColor: '#fff',
+              border: '1px solid #d9d9d9',
+              padding: '8px 12px',
+              height: 40,
+              gap: 8
+            }}>
+              <span style={{ color: '#b0b4ba', fontWeight: 500, fontSize: 14 }}>
+                Show:
+              </span>
+              <Select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 variant="borderless"
                 data-testid="category-filter"
-                style={{ fontWeight: 600, color: '#222', minWidth: 140 }}
+                style={{ 
+                  fontWeight: 600, 
+                  color: '#222', 
+                  minWidth: 140,
+                  border: 'none'
+                }}
                 dropdownStyle={{ minWidth: 180 }}
               >
                 {categories.map(cat => (
                   <Option key={cat} value={cat}>{cat}</Option>
                 ))}
               </Select>
-            </span>
+            </div>
           </div>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: '#b0b4ba', fontWeight: 500 }}>Sort by:</span>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            backgroundColor: '#fff',
+            border: '1px solid #d9d9d9',
+            padding: '8px 12px',
+            height: 40,
+            gap: 8
+          }}>
+            <span style={{ color: '#b0b4ba', fontWeight: 500, fontSize: 14 }}>
+              Sort by:
+            </span>
             <Select
               value={sortOrder}
               onChange={handleSortChange}
-              variant="borderless"
               data-testid="sort-dropdown"
-              style={{ fontWeight: 700, color: '#222', minWidth: 100, marginLeft: 4 }}
+              variant="borderless"
+              style={{ 
+                fontWeight: 600, 
+                color: '#222', 
+                minWidth: 100,
+                border: 'none'
+              }}
               dropdownStyle={{ minWidth: 140 }}
             >
               {sortOptions.map(opt => (
                 <Option key={opt} value={opt}>{opt}</Option>
               ))}
             </Select>
-          </span>
+          </div>
         </div>
         
         {loading || reduxIsSearching ? (
@@ -367,9 +398,15 @@ const Dashboard: React.FC = () => {
       {/* Widget Section */}
       <div className={styles.widgetSection}>
         <div className={styles.rightSidebar}>
-          <Button type="primary" block onClick={() => navigate('/dashboard/add-article')}>
-            + Add Article
-          </Button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button 
+              type="primary" 
+              onClick={() => navigate('/dashboard/add-article')}
+              style={{ marginTop: 4, height: 40, width: '50%' }}
+            >
+              + Add Article
+            </Button>
+          </div>
           {import.meta.env.DEV && (
             <Button type="default" block onClick={handleAddSampleArticles}>
               Add Sample Articles
