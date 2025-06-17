@@ -29,7 +29,7 @@ export const useNetworkStatus = () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
       };
-    }, []); // Only run once on mount
+    }, []);
 
     // TODO: Add syncing logic here later without causing infinite loops
 
