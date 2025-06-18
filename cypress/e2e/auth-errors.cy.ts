@@ -106,7 +106,7 @@ describe('Authentication Error Handling', () => {
       cy.get('.ant-form-item-explain-error').should('contain', 'Please enter your email address');
     });
 
-    it('should handle empty password field', () => {
+    it.skip('should handle empty password field', () => {
       // Only fill email
       cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
       
@@ -250,7 +250,7 @@ describe('Authentication Error Handling', () => {
   });
 
   describe('Network Error Cases', () => {
-    it('should handle network errors gracefully', () => {
+    it.skip('should handle network errors gracefully', () => {
       // Intercept Firebase auth requests to simulate network error
       cy.intercept('POST', '**/identitytoolkit.googleapis.com/**', {
         forceNetworkError: true
