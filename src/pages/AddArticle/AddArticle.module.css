@@ -23,8 +23,18 @@
 
 .uploadDragger {
   background: #f7f8fa;
-  border: 1.5px dashed #b0b4ba;
+  border: none;
   border-radius: 8px;
+  box-shadow: 0 0 0 1.5px #e5e7eb inset;
+}
+
+:global(.ant-upload-drag) {
+  border: none !important;
+}
+:global(.ant-upload-drag)::before,
+:global(.ant-upload-drag)::after {
+  display: none !important;
+  content: none !important;
 }
 
 .uploadContent {
