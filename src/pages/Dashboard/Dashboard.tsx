@@ -7,6 +7,7 @@ import NoArticles from '../../components/NoArticles/NoArticles';
 import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { useArticles, useUI } from '../../hooks/useRedux';
+import { getAllAuthors } from '../../services/userService';
 import { Article } from '../../types/article';
 import { addSampleArticles } from '../../utils/addSampleArticles';
 import { formatArticleDate } from '../../utils/formatArticleDate';
@@ -20,6 +21,7 @@ const sortOptions = ['Ascending', 'Descending'];
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [isAtTop, setIsAtTop] = useState(true);
+  const [authorsMap, setAuthorsMap] = useState<Record<string, any>>({});
 
   // 🔥 NOW USING REDUX WITH LAZY LOADING!
   const {
@@ -195,9 +197,23 @@ const Dashboard: React.FC = () => {
 
   // Determine which articles to show
   const articlesToDisplay = searchTerm.trim() ? currentPageSearchArticles : articles;
+  useEffect(() => {
+    console.log('[Dashboard] Articles to display:', articlesToDisplay);
+  }, [articlesToDisplay]);
   const isSearchMode = searchTerm.trim();
   const showPagination = isSearchMode && searchPaginationInfo.hasMultiplePages;
   const showScrollToTop = !isSearchMode && articles.length > 6 && !isAtTop; // Show when more than one chunk loaded AND not at top
+
+  useEffect(() => {
+    (async () => {
+      const authors = await getAllAuthors();
+      const map: Record<string, any> = {};
+      authors.forEach(author => {
+        if (author.uid) map[author.uid] = author;
+      });
+      setAuthorsMap(map);
+    })();
+  }, []);
 
   return (
     <div className={styles.dashboardContainer}>
@@ -304,25 +320,33 @@ const Dashboard: React.FC = () => {
         ) : (
           <>
             <div className={styles.articlesGrid}>
-              {articlesToDisplay.map((article: Article) => (
-                <ArticleCard
-                  key={article.id}
-                  category={article.category ?? ''}
-                  date={formatArticleDate(
-                    typeof article.createdAt === 'string' ? new Date(article.createdAt) : article.createdAt.toDate()
-                  )}
-                  title={article.title}
-                  description={article.content ?? ''}
-                  authorName={article.authorName || 'Anonymous'}
-                  authorAvatar={article.authorAvatar || '/default-avatar.png'}
-                  readMoreUrl={`/dashboard/article/${article.id}`}
-                  imageUrl={
-                    typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'
-                  }
-                  onEdit={() => article.id && handleEdit(article.id)}
-                  onDelete={() => article.id && handleDelete(article.id)}
-                />
-              ))}
+              {articlesToDisplay.map((article: Article) => {
+                const author = article.authorId && authorsMap[article.authorId];
+                return (
+                  <ArticleCard
+                    key={article.id}
+                    category={article.category ?? ''}
+                    date={formatArticleDate(
+                      typeof article.createdAt === 'string' ? new Date(article.createdAt) : article.createdAt.toDate()
+                    )}
+                    title={article.title}
+                    description={article.content ?? ''}
+                    authorName={
+                      author
+                        ? `${author.firstName || ''} ${author.lastName || ''}`.trim() || author.email
+                        : article.authorName || 'Anonymous'
+                    }
+                    authorAvatar={author ? author.avatarUrl : article.authorAvatar || '/default-avatar.png'}
+                    authorId={article.authorId}
+                    readMoreUrl={`/dashboard/article/${article.id}`}
+                    imageUrl={
+                      typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'
+                    }
+                    onEdit={() => article.id && handleEdit(article.id)}
+                    onDelete={() => article.id && handleDelete(article.id)}
+                  />
+                );
+              })}
             </div>
 
             {/* Loading more indicator for infinite scroll */}

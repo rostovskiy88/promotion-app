@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 export async function createOrGetUser(user: {
@@ -58,4 +58,10 @@ export async function updateUser(
 ) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, data);
+}
+
+export async function getAllAuthors() {
+  const usersRef = collection(db, 'users');
+  const snapshot = await getDocs(usersRef);
+  return snapshot.docs.map(doc => doc.data());
 }

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dropdown, Avatar, Typography, Modal } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
+import { Avatar, Dropdown, Modal, Typography } from 'antd';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ArticleCard.css';
 
@@ -13,6 +13,7 @@ export interface ArticleCardProps {
   description: string;
   authorName: string;
   authorAvatar: string;
+  authorId: string;
   readMoreUrl: string;
   imageUrl: string;
   onEdit?: () => void;
@@ -26,6 +27,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   description,
   authorName,
   authorAvatar,
+  authorId,
   readMoreUrl,
   imageUrl,
   onEdit,
