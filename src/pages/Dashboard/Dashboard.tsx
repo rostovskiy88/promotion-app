@@ -398,8 +398,8 @@ const Dashboard: React.FC = () => {
               + Add Article
             </Button>
           </div>
-          {import.meta.env.DEV && (
-            <Button type='default' block onClick={handleAddSampleArticles}>
+          {!import.meta.env.DEV && (
+            <Button type='default' block onClick={handleAddSampleArticles} style={{ marginTop: 12 }}>
               Add Sample Articles
             </Button>
           )}
