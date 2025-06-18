@@ -17,11 +17,6 @@ on:
         - features
         - pwa
       
-  # Scheduled runs
-  schedule:
-    # Run comprehensive E2E tests every day at 2 AM UTC
-    - cron: '0 2 * * *'
-    
   # Trigger on workflow call from other workflows
   workflow_call:
     inputs:
