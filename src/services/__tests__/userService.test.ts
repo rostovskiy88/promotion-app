@@ -18,7 +18,7 @@ jest.mock('../../config/firebase', () => ({
 describe('userService', () => {
   const mockDb = {};
   const mockUserRef = { id: 'test-uid' };
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
     (doc as jest.Mock).mockReturnValue(mockUserRef);
@@ -335,4 +335,4 @@ describe('userService', () => {
       expect(updateDoc).toHaveBeenCalledWith(mockUserRef, updateData);
     });
   });
-}); 
+});

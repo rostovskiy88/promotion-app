@@ -10,20 +10,20 @@ interface CacheEntry<T = unknown> {
 interface CacheState {
   // API cache
   apiCache: Record<string, CacheEntry>;
-  
+
   // Offline data
   offlineQueue: OfflineQueueItem[];
-  
+
   // Network status
   isOnline: boolean;
   lastOnlineTime: number;
   hasBeenOfflineSession: boolean;
-  
+
   // Sync status
   isSyncing: boolean;
   syncErrors: string[];
   lastSyncTime: number;
-  
+
   // Performance metrics
   metrics: {
     apiCalls: number;
@@ -63,11 +63,11 @@ const cacheSlice = createSlice({
         expiresIn,
       };
     },
-    
+
     getCacheEntry: (state, action: PayloadAction<string>) => {
       const key = action.payload;
       const entry = state.apiCache[key];
-      
+
       if (entry) {
         const now = Date.now();
         if (now - entry.timestamp < entry.expiresIn) {
@@ -81,12 +81,12 @@ const cacheSlice = createSlice({
         state.metrics.cacheMisses++;
       }
     },
-    
-    clearCache: (state) => {
+
+    clearCache: state => {
       state.apiCache = {};
     },
-    
-    removeExpiredEntries: (state) => {
+
+    removeExpiredEntries: state => {
       const now = Date.now();
       Object.keys(state.apiCache).forEach(key => {
         const entry = state.apiCache[key];
@@ -95,7 +95,7 @@ const cacheSlice = createSlice({
         }
       });
     },
-    
+
     // Offline Queue
     addToOfflineQueue: (state, action: PayloadAction<{ action: string; data: Record<string, unknown> }>) => {
       const queueItem: OfflineQueueItem = {
@@ -107,29 +107,29 @@ const cacheSlice = createSlice({
       };
       state.offlineQueue.push(queueItem);
     },
-    
+
     removeFromOfflineQueue: (state, action: PayloadAction<string>) => {
       state.offlineQueue = state.offlineQueue.filter(item => item.id !== action.payload);
     },
-    
+
     incrementRetries: (state, action: PayloadAction<string>) => {
       const item = state.offlineQueue.find(item => item.id === action.payload);
       if (item) {
         item.retries++;
       }
     },
-    
-    clearOfflineQueue: (state) => {
+
+    clearOfflineQueue: state => {
       state.offlineQueue = [];
     },
-    
+
     // Network Status
     setOnlineStatus: (state, action: PayloadAction<boolean>) => {
       const wasOffline = !state.isOnline;
       const isInitialLoad = state.lastOnlineTime === 0;
-      
+
       state.isOnline = action.payload;
-      
+
       if (!action.payload) {
         // Going offline
         state.hasBeenOfflineSession = true;
@@ -141,13 +141,13 @@ const cacheSlice = createSlice({
         state.lastOnlineTime = Date.now();
       }
     },
-    
+
     // Reset session state (call this on app initialization)
-    resetSessionState: (state) => {
+    resetSessionState: state => {
       state.hasBeenOfflineSession = false;
       state.lastOnlineTime = 0;
     },
-    
+
     // Sync Status
     setSyncing: (state, action: PayloadAction<boolean>) => {
       state.isSyncing = action.payload;
@@ -155,26 +155,26 @@ const cacheSlice = createSlice({
         state.lastSyncTime = Date.now();
       }
     },
-    
+
     addSyncError: (state, action: PayloadAction<string>) => {
       state.syncErrors.push(action.payload);
     },
-    
-    clearSyncErrors: (state) => {
+
+    clearSyncErrors: state => {
       state.syncErrors = [];
     },
-    
+
     // Metrics
-    incrementApiCalls: (state) => {
+    incrementApiCalls: state => {
       state.metrics.apiCalls++;
     },
-    
+
     updateResponseTime: (state, action: PayloadAction<number>) => {
       const { avgResponseTime, apiCalls } = state.metrics;
       state.metrics.avgResponseTime = (avgResponseTime * (apiCalls - 1) + action.payload) / apiCalls;
     },
-    
-    resetMetrics: (state) => {
+
+    resetMetrics: state => {
       state.metrics = {
         apiCalls: 0,
         cacheHits: 0,
@@ -204,4 +204,4 @@ export const {
   resetMetrics,
 } = cacheSlice.actions;
 
-export default cacheSlice.reducer; 
+export default cacheSlice.reducer;

@@ -5,16 +5,20 @@ import { uploadImage, generateImagePath } from './imageService';
  */
 export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avatar.png'): Promise<File> => {
   // Create a blob from the canvas
-  return new Promise<File>((resolve) => {
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const file = new File([blob], fileName, {
-          type: 'image/png',
-          lastModified: Date.now(),
-        });
-        resolve(file);
-      }
-    }, 'image/png', 0.9);
+  return new Promise<File>(resolve => {
+    canvas.toBlob(
+      blob => {
+        if (blob) {
+          const file = new File([blob], fileName, {
+            type: 'image/png',
+            lastModified: Date.now(),
+          });
+          resolve(file);
+        }
+      },
+      'image/png',
+      0.9
+    );
   });
 };
 
@@ -22,12 +26,16 @@ export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avat
  * Converts canvas to blob for direct processing
  */
 export const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      if (blob) {
-        resolve(blob);
-      }
-    }, 'image/png', 0.9);
+  return new Promise(resolve => {
+    canvas.toBlob(
+      blob => {
+        if (blob) {
+          resolve(blob);
+        }
+      },
+      'image/png',
+      0.9
+    );
   });
 };
 
@@ -42,7 +50,7 @@ export const uploadAvatar = async (
   try {
     // Convert canvas to blob
     const blob = await canvasToBlob(canvas);
-    
+
     // Create a File object from the blob
     const file = new File([blob], fileName, {
       type: 'image/png',
@@ -51,10 +59,10 @@ export const uploadAvatar = async (
 
     // Generate path for avatar
     const imagePath = generateImagePath(userId, fileName, 'avatars');
-    
+
     // Upload the file
     const downloadURL = await uploadImage(file, imagePath);
-    
+
     console.log('Avatar uploaded successfully:', downloadURL);
     return downloadURL;
   } catch (error) {
@@ -73,16 +81,16 @@ export const validateAvatarFile = (file: File): { isValid: boolean; error?: stri
   if (!allowedTypes.includes(file.type)) {
     return {
       isValid: false,
-      error: 'Only JPG and PNG files are allowed for avatars'
+      error: 'Only JPG and PNG files are allowed for avatars',
     };
   }
 
   if (file.size > maxSize) {
     return {
       isValid: false,
-      error: 'Avatar file size must be less than 10MB'
+      error: 'Avatar file size must be less than 10MB',
     };
   }
 
   return { isValid: true };
-}; 
+};

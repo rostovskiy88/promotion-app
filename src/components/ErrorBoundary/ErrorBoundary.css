@@ -16,13 +16,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10zm10 0c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10z'/%3E%3C/g%3E%3C/svg%3E") repeat;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10zm10 0c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10z'/%3E%3C/g%3E%3C/svg%3E")
+    repeat;
   animation: drift 30s infinite linear;
 }
 
 @keyframes drift {
-  0% { transform: translateX(-40px) translateY(-40px); }
-  100% { transform: translateX(40px) translateY(40px); }
+  0% {
+    transform: translateX(-40px) translateY(-40px);
+  }
+  100% {
+    transform: translateX(40px) translateY(40px);
+  }
 }
 
 .error-boundary-content {
@@ -39,7 +44,7 @@
   border: 1px solid var(--border-color);
 }
 
-[data-theme="dark"] .error-boundary-content {
+[data-theme='dark'] .error-boundary-content {
   background: rgba(42, 42, 42, 0.95);
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
 }
@@ -62,9 +67,15 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .error-waves {
@@ -239,38 +250,47 @@
     padding: 32px 24px;
     margin: 20px;
   }
-  
+
   .error-icon-large {
     font-size: 60px;
   }
-  
+
   .error-title {
     font-size: 24px;
   }
-  
+
   .error-subtitle p {
     font-size: 14px;
   }
-  
+
   .error-actions {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .reload-button,
   .home-button {
     width: 100%;
     max-width: 280px;
   }
-  
+
   .error-waves {
     width: 150px;
     height: 150px;
   }
-  
-  .wave1 { width: 45px; height: 45px; }
-  .wave2 { width: 75px; height: 75px; }
-  .wave3 { width: 105px; height: 105px; }
+
+  .wave1 {
+    width: 45px;
+    height: 45px;
+  }
+  .wave2 {
+    width: 75px;
+    height: 75px;
+  }
+  .wave3 {
+    width: 105px;
+    height: 105px;
+  }
 }
 
 /* Ant Design Result component overrides */
@@ -288,4 +308,4 @@
 
 .error-boundary-content .ant-result-extra {
   margin-top: 0;
-} 
+}

@@ -34,17 +34,17 @@ const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: {
     // Return initial state
     state = undefined;
   }
-  
+
   return appReducer(state, action);
 };
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [
-          'persist/PERSIST', 
+          'persist/PERSIST',
           'persist/REHYDRATE',
           'ui/openModal', // Modal functions are not serializable
         ],
@@ -66,9 +66,9 @@ export const store = configureStore({
           'payload.firestoreUser.createdAt',
           'payload.firestoreUser.updatedAt',
           'meta.arg.articles',
-        ]
-      }
-    })
+        ],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);
@@ -77,4 +77,4 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector; 
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

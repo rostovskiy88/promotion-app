@@ -75,22 +75,22 @@
 }
 
 /* Dark mode support */
-[data-theme="dark"] .avatar-upload-dragger {
+[data-theme='dark'] .avatar-upload-dragger {
   border-color: #424242 !important;
   background: #2a2a2a !important;
 }
 
-[data-theme="dark"] .avatar-upload-dragger:hover {
+[data-theme='dark'] .avatar-upload-dragger:hover {
   border-color: #1890ff !important;
   background: #1a1a2e !important;
 }
 
-[data-theme="dark"] .editor-container {
+[data-theme='dark'] .editor-container {
   background: #2a2a2a;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .control-row span {
+[data-theme='dark'] .control-row span {
   color: #e8e8e8;
 }
 
@@ -100,15 +100,15 @@
     padding: 16px 0;
     min-height: 350px;
   }
-  
+
   .editor-container {
     padding: 16px;
   }
-  
+
   .editor-controls {
     max-width: 300px;
   }
-  
+
   .upload-content {
     padding: 30px 16px;
   }
@@ -116,6 +116,10 @@
 
 /* Loading spinner animation */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-} 
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

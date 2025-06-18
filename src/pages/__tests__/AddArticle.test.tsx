@@ -27,11 +27,12 @@ jest.mock('react-router-dom', () => ({
 }));
 
 // Create mock store
-const createMockStore = () => configureStore({
-  reducer: {
-    auth: (state = { user: null, loading: false, error: null, initialized: true }) => state,
-  },
-});
+const createMockStore = () =>
+  configureStore({
+    reducer: {
+      auth: (state = { user: null, loading: false, error: null, initialized: true }) => state,
+    },
+  });
 
 // Mock user data
 const mockUser = {
@@ -58,15 +59,13 @@ const mockUser = {
 // Test wrapper component
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Provider store={createMockStore()}>
-    <BrowserRouter>
-      {children}
-    </BrowserRouter>
+    <BrowserRouter>{children}</BrowserRouter>
   </Provider>
 );
 
 describe('AddArticle Component', () => {
   const mockOnCancel = jest.fn();
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
     (useUserDisplayInfo as jest.Mock).mockReturnValue(mockUser);
@@ -84,7 +83,7 @@ describe('AddArticle Component', () => {
   describe('Rendering', () => {
     test('renders all form elements correctly', () => {
       renderAddArticle();
-      
+
       expect(screen.getByText('Add new article')).toBeInTheDocument();
       expect(screen.getByLabelText('Category')).toBeInTheDocument();
       expect(screen.getByLabelText('Title')).toBeInTheDocument();
@@ -97,17 +96,17 @@ describe('AddArticle Component', () => {
     test('renders category options', async () => {
       const user = userEvent.setup();
       renderAddArticle();
-      
+
       const categorySelect = screen.getByLabelText('Category');
       await user.click(categorySelect);
-      
+
       // Use getAllByText since AntD creates multiple elements for each option
       const productivityOptions = screen.getAllByText('Productivity');
       expect(productivityOptions.length).toBeGreaterThan(0);
-      
+
       const mediaOptions = screen.getAllByText('Media');
       expect(mediaOptions.length).toBeGreaterThan(0);
-      
+
       const businessOptions = screen.getAllByText('Business');
       expect(businessOptions.length).toBeGreaterThan(0);
     });
@@ -117,10 +116,10 @@ describe('AddArticle Component', () => {
     test('shows validation errors for required fields', async () => {
       const user = userEvent.setup();
       renderAddArticle();
-      
+
       const publishButton = screen.getByRole('button', { name: /publish/i });
       await user.click(publishButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Please select a category')).toBeInTheDocument();
         expect(screen.getByText('Please enter a title')).toBeInTheDocument();
@@ -133,20 +132,20 @@ describe('AddArticle Component', () => {
     test('allows filling out the form correctly', async () => {
       const user = userEvent.setup();
       renderAddArticle();
-      
+
       // Select category
       const categorySelect = screen.getByLabelText('Category');
       await user.click(categorySelect);
       await user.click(screen.getByRole('option', { name: 'Productivity' }));
-      
+
       // Fill title
       const titleInput = screen.getByLabelText('Title');
       await user.type(titleInput, 'Test Article Title');
-      
+
       // Fill content
       const contentInput = screen.getByLabelText('Text');
       await user.type(contentInput, 'This is test article content');
-      
+
       expect(titleInput).toHaveValue('Test Article Title');
       expect(contentInput).toHaveValue('This is test article content');
     });
@@ -154,10 +153,10 @@ describe('AddArticle Component', () => {
     test('calls onCancel when cancel button is clicked', async () => {
       const user = userEvent.setup();
       renderAddArticle();
-      
+
       const cancelButton = screen.getByRole('button', { name: /cancel/i });
       await user.click(cancelButton);
-      
+
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
     });
   });
@@ -165,7 +164,7 @@ describe('AddArticle Component', () => {
   describe('File Upload', () => {
     test('renders file upload component', () => {
       renderAddArticle();
-      
+
       const fileInput = document.querySelector('input[type="file"]');
       expect(fileInput).toBeInTheDocument();
       expect(fileInput).toHaveAttribute('accept', '.jpg,.jpeg,.png');
@@ -176,14 +175,14 @@ describe('AddArticle Component', () => {
     test('renders submit button and calls onCancel', async () => {
       const user = userEvent.setup();
       renderAddArticle();
-      
+
       // Test that form renders and basic interactions work
       const publishButton = screen.getByRole('button', { name: /publish/i });
       const cancelButton = screen.getByRole('button', { name: /cancel/i });
-      
+
       expect(publishButton).toBeInTheDocument();
       expect(cancelButton).toBeInTheDocument();
-      
+
       // Test cancel functionality
       await user.click(cancelButton);
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
@@ -202,9 +201,9 @@ describe('AddArticle Component', () => {
         isAuthenticated: false,
         refresh: jest.fn(),
       });
-      
+
       renderAddArticle();
-      
+
       // Just verify the component renders without user - use a different selector
       const titleInput = screen.getByLabelText('Title');
       expect(titleInput).toBeInTheDocument();
@@ -216,4 +215,4 @@ describe('AddArticle Component', () => {
       expect(typeof addArticle).toBe('function');
     });
   });
-}); 
+});

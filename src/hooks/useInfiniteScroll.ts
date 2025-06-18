@@ -13,7 +13,7 @@ export const useInfiniteScroll = ({
   loading,
   onLoadMore,
   threshold = 200,
-  root = null
+  root = null,
 }: UseInfiniteScrollOptions) => {
   const loadingRef = useRef(false);
 
@@ -21,10 +21,10 @@ export const useInfiniteScroll = ({
     const scrollElement = root || document.documentElement;
     const scrollHeight = scrollElement.scrollHeight;
     const clientHeight = scrollElement.clientHeight;
-    
+
     // If content is shorter than viewport (no scrollbar), load more content
     const isContentTooShort = scrollHeight <= clientHeight;
-    
+
     if (isContentTooShort && hasMore && !loading && !loadingRef.current) {
       loadingRef.current = true;
       onLoadMore();
@@ -66,13 +66,13 @@ export const useInfiniteScroll = ({
 
   useEffect(() => {
     const scrollElement = root || window;
-    
+
     scrollElement.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     return () => {
       scrollElement.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll, root]);
 
   return null;
-}; 
+};

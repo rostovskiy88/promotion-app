@@ -12,7 +12,7 @@ Object.defineProperty(globalThis, 'import', {
         VITE_FIREBASE_MESSAGING_SENDER_ID: '123456789',
         VITE_FIREBASE_APP_ID: 'test-app-id',
         VITE_FIREBASE_MEASUREMENT_ID: 'test-measurement-id',
-        VITE_OPENWEATHER_API_KEY: 'test-api-key-for-jest'
+        VITE_OPENWEATHER_API_KEY: 'test-api-key-for-jest',
       },
     },
   },
@@ -25,7 +25,7 @@ process.env.VITE_OPENWEATHER_API_KEY = 'test-api-key-for-jest';
 // Patch window.matchMedia for antd/Row in tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: jest.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
@@ -35,4 +35,4 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-}); 
+});

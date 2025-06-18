@@ -61,7 +61,7 @@
 }
 
 .form :global(.ant-form-item-required::before) {
-  color: #FF4D4F !important;
+  color: #ff4d4f !important;
 }
 
 .form :global(.ant-input),
@@ -74,20 +74,20 @@
 }
 
 .form :global(.ant-input-password .ant-input) {
-  background: #F9FAFB;
+  background: #f9fafb;
   padding: 10px 14px;
   border: none;
 }
 
 .form :global(.ant-input-affix-wrapper) {
-  border: 1px solid #E5E7EB;
-  background: #F9FAFB;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
   padding: 0 14px;
 }
 
 .form :global(.ant-form-item-has-error .ant-input),
 .form :global(.ant-form-item-has-error .ant-input-affix-wrapper) {
-  border-color: #FF4D4F !important;
+  border-color: #ff4d4f !important;
 }
 
 .form :global(.ant-form-item-has-error .ant-input-password .ant-input) {
@@ -153,15 +153,15 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
-  background: #FFFFFF;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
   transition: all 0.2s ease;
 }
 
 .socialButton:hover {
-  background: #F9FAFB;
-  border-color: #D1D5DB;
+  background: #f9fafb;
+  border-color: #d1d5db;
   box-shadow: 0 2px 4px rgba(16, 24, 40, 0.1);
 }
 
@@ -192,7 +192,7 @@
 }
 
 .signUpText a {
-  color: #2563EB;
+  color: #2563eb;
   text-decoration: none;
   margin-left: 4px;
 }
@@ -228,4 +228,4 @@
   .imageSection {
     display: none;
   }
-} 
+}

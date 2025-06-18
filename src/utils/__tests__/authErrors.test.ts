@@ -84,25 +84,33 @@ describe('getAuthErrorMessage', () => {
 
   describe('Errors with message but no code', () => {
     it('should return appropriate message for invalid-credential in message', () => {
-      const error: AppError = { message: 'Firebase: Error (auth/invalid-credential).' };
+      const error: AppError = {
+        message: 'Firebase: Error (auth/invalid-credential).',
+      };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Incorrect email or password. Please check your credentials and try again.');
     });
 
     it('should return appropriate message for wrong-password in message', () => {
-      const error: AppError = { message: 'Firebase: Error (auth/wrong-password).' };
+      const error: AppError = {
+        message: 'Firebase: Error (auth/wrong-password).',
+      };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Incorrect email or password. Please check your credentials and try again.');
     });
 
     it('should return appropriate message for user-not-found in message', () => {
-      const error: AppError = { message: 'Firebase: Error (auth/user-not-found).' };
+      const error: AppError = {
+        message: 'Firebase: Error (auth/user-not-found).',
+      };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Incorrect email or password. Please check your credentials and try again.');
     });
 
     it('should return appropriate message for invalid-email in message', () => {
-      const error: AppError = { message: 'Firebase: Error (auth/invalid-email).' };
+      const error: AppError = {
+        message: 'Firebase: Error (auth/invalid-email).',
+      };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Please enter a valid email address.');
     });
@@ -160,9 +168,9 @@ describe('getAuthErrorMessage', () => {
     });
 
     it('should handle error with both code and message', () => {
-      const error: AppError = { 
+      const error: AppError = {
         code: 'auth/invalid-email',
-        message: 'This should be ignored'
+        message: 'This should be ignored',
       };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Please enter a valid email address.');
@@ -181,16 +189,16 @@ describe('getAuthErrorMessage', () => {
     });
 
     it('should handle complex error message patterns', () => {
-      const error: AppError = { 
-        message: 'Multiple patterns: auth/wrong-password and auth/invalid-email'
+      const error: AppError = {
+        message: 'Multiple patterns: auth/wrong-password and auth/invalid-email',
       };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Incorrect email or password. Please check your credentials and try again.');
     });
 
     it('should handle case sensitivity in message patterns', () => {
-      const error: AppError = { 
-        message: 'Error contains AUTH/INVALID-CREDENTIAL in caps'
+      const error: AppError = {
+        message: 'Error contains AUTH/INVALID-CREDENTIAL in caps',
       };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Error contains AUTH/INVALID-CREDENTIAL in caps');
@@ -202,7 +210,7 @@ describe('getAuthErrorMessage', () => {
       const error: AppError = {
         code: 'auth/invalid-credential',
         message: 'Firebase: Error (auth/invalid-credential).',
-        name: 'FirebaseError'
+        name: 'FirebaseError',
       };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Incorrect email or password. Please check your credentials and try again.');
@@ -210,10 +218,10 @@ describe('getAuthErrorMessage', () => {
 
     it('should handle Firebase error without code but with descriptive message', () => {
       const error: AppError = {
-        message: 'The password is invalid or the user does not have a password. (auth/wrong-password)'
+        message: 'The password is invalid or the user does not have a password. (auth/wrong-password)',
       };
       const result = getAuthErrorMessage(error);
       expect(result).toBe('Incorrect email or password. Please check your credentials and try again.');
     });
   });
-}); 
+});

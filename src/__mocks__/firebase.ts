@@ -4,8 +4,8 @@ export const auth = {
   currentUser: {
     uid: 'test-user-id',
     email: 'test@example.com',
-    displayName: 'Test User'
-  }
+    displayName: 'Test User',
+  },
 };
 export const storage = {};
 
@@ -20,5 +20,5 @@ export const updatePassword = jest.fn(() => Promise.resolve());
 export const reauthenticateWithCredential = jest.fn(() => Promise.resolve());
 export const onAuthStateChanged = jest.fn();
 export const EmailAuthProvider = {
-  credential: jest.fn(() => ({ providerId: 'password' }))
-}; 
+  credential: jest.fn(() => ({ providerId: 'password' })),
+};

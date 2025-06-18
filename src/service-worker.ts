@@ -29,7 +29,7 @@ self.addEventListener('activate', (event: any) => {
   event.waitUntil(
     caches.keys().then((cacheNames: string[]) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
+        cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
             console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
@@ -68,14 +68,14 @@ self.addEventListener('fetch', (event: any) => {
               }
               // Return offline response for API calls
               return new Response(
-                JSON.stringify({ 
-                  error: 'Offline', 
-                  message: 'No cached data available' 
+                JSON.stringify({
+                  error: 'Offline',
+                  message: 'No cached data available',
                 }),
                 {
                   status: 503,
                   statusText: 'Service Unavailable',
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json' },
                 }
               );
             });
@@ -107,14 +107,14 @@ self.addEventListener('fetch', (event: any) => {
 // Background sync event
 self.addEventListener('sync', (event: any) => {
   console.log('[SW] Background sync event:', event.tag);
-  
+
   if (event.tag === 'background-sync') {
     event.waitUntil(
       (self as any).clients.matchAll().then((clients: any[]) => {
         clients.forEach((client: any) => {
           client.postMessage({
             type: 'BACKGROUND_SYNC',
-            payload: { action: 'PROCESS_QUEUE' }
+            payload: { action: 'PROCESS_QUEUE' },
           });
         });
       })
@@ -125,8 +125,8 @@ self.addEventListener('sync', (event: any) => {
 // Message event - handle commands from main thread
 self.addEventListener('message', (event: any) => {
   console.log('[SW] Message received:', event.data);
-  
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     (self as any).skipWaiting();
   }
-}); 
+});

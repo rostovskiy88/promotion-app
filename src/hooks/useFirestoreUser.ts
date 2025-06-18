@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
-import { getUserById } from "../services/userService";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
-import { FirestoreUser } from "../types/user";
+import { useEffect, useState, useCallback } from 'react';
+import { getUserById } from '../services/userService';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { FirestoreUser } from '../types/user';
 
 export function useFirestoreUser() {
   const authUser = useSelector((state: RootState) => state.auth.user);
@@ -36,6 +36,6 @@ export function useFirestoreUser() {
 
   return {
     ...firestoreUser,
-    refresh: refreshUser
+    refresh: refreshUser,
   };
-} 
+}

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Layout, Menu, Input, Button, Avatar, Dropdown, Switch } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  DashboardOutlined, 
-  FileTextOutlined, 
-  UserOutlined, 
-  LogoutOutlined, 
+import {
+  DashboardOutlined,
+  FileTextOutlined,
+  UserOutlined,
+  LogoutOutlined,
   SearchOutlined,
   CloseOutlined,
-  BulbOutlined
+  BulbOutlined,
 } from '@ant-design/icons';
 import { logout } from '../../services/authService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
@@ -26,19 +26,13 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const [collapsed, setCollapsed] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const location = useLocation();
-  
+
   // Use the new hook that prioritizes Firestore data over Firebase Auth data
   const userDisplayInfo = useUserDisplayInfo();
-  
+
   // Redux hooks
-  const { 
-    theme, 
-    globalLoading,
-    sidebarCollapsed,
-    toggleTheme,
-    setSidebarCollapsed
-  } = useUI();
-  
+  const { theme, globalLoading, sidebarCollapsed, toggleTheme, setSidebarCollapsed } = useUI();
+
   const { setSearchTerm: setReduxSearchTerm, clearSearch: clearReduxSearch } = useArticles();
 
   // Apply theme to document body
@@ -66,7 +60,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 
   useEffect(() => {
     debouncedSearch(inputValue);
-    
+
     return () => {
       debouncedSearch.cancel();
     };
@@ -105,17 +99,10 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
       {
         key: 'theme',
         label: (
-          <div 
-            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} onClick={e => e.stopPropagation()}>
             <BulbOutlined />
             <span>Dark Mode</span>
-            <Switch 
-              size="small"
-              checked={theme === 'dark'}
-              onChange={toggleTheme}
-            />
+            <Switch size='small' checked={theme === 'dark'} onChange={toggleTheme} />
           </div>
         ),
       },
@@ -125,7 +112,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
       {
         key: 'profile',
         icon: <UserOutlined />,
-        label: <Link to="/dashboard/profile">Profile</Link>,
+        label: <Link to='/dashboard/profile'>Profile</Link>,
       },
       {
         key: 'logout',
@@ -140,12 +127,12 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     {
       key: '/dashboard',
       icon: <DashboardOutlined />,
-      label: <Link to="/dashboard">Dashboard</Link>,
+      label: <Link to='/dashboard'>Dashboard</Link>,
     },
     {
       key: '/dashboard/add-article',
       icon: <FileTextOutlined />,
-      label: <Link to="/dashboard/add-article">Add Article</Link>,
+      label: <Link to='/dashboard/add-article'>Add Article</Link>,
     },
   ];
 
@@ -153,53 +140,43 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider 
-        collapsible 
-        collapsed={collapsed} 
-        onCollapse={handleSidebarToggle}
-        className={styles.sider}
-      >
+      <Sider collapsible collapsed={collapsed} onCollapse={handleSidebarToggle} className={styles.sider}>
         <div className={styles.logo}>
           <Logo collapsed={collapsed} />
         </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={selectedKeys}
-          items={menuItems}
-        />
+        <Menu theme='dark' mode='inline' selectedKeys={selectedKeys} items={menuItems} />
       </Sider>
-      
+
       <Layout>
         <Header className={styles.header}>
           <div className={styles.headerLeft}>
             {location.pathname === '/dashboard' && (
               <div className={styles.searchContainer}>
                 <Input
-                  placeholder="Find articles..."
+                  placeholder='Find articles...'
                   value={inputValue}
                   onChange={handleInputChange}
-                  data-testid="search-input"
-                  style={{ 
-                    width: 340, 
+                  data-testid='search-input'
+                  style={{
+                    width: 340,
                     marginRight: 24,
                     borderRadius: '20px',
                     background: '#f7f8fa',
                     border: 'none',
                     fontSize: '16px',
-                    height: '40px'
+                    height: '40px',
                   }}
                   prefix={<SearchOutlined />}
                   suffix={
                     inputValue ? (
                       <Button
-                        type="text"
-                        size="small"
+                        type='text'
+                        size='small'
                         icon={<CloseOutlined />}
                         onClick={handleClearSearch}
-                        data-testid="search-clear"
-                        style={{ 
-                          border: 'none', 
+                        data-testid='search-clear'
+                        style={{
+                          border: 'none',
                           background: 'transparent',
                           height: '32px',
                           width: '32px',
@@ -207,7 +184,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
                           alignItems: 'center',
                           justifyContent: 'center',
                           padding: 0,
-                          margin: 0
+                          margin: 0,
                         }}
                       />
                     ) : null
@@ -216,43 +193,28 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
               </div>
             )}
           </div>
-          
+
           <div className={styles.headerRight}>
             {/* Global Loading Indicator */}
-            {globalLoading && (
-              <div style={{ marginRight: '16px', color: '#1890ff' }}>
-                Loading...
-              </div>
-            )}
-            
-            <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']}>
+            {globalLoading && <div style={{ marginRight: '16px', color: '#1890ff' }}>Loading...</div>}
+
+            <Dropdown menu={userMenu} placement='bottomRight' trigger={['click']}>
               <div className={styles.userSection}>
-                <Avatar 
-                  src={userDisplayInfo.avatarUrl} 
-                  icon={<UserOutlined />}
-                  className={styles.avatar}
-                />
-                <span className={styles.username}>
-                  {userDisplayInfo.displayName}
-                </span>
+                <Avatar src={userDisplayInfo.avatarUrl} icon={<UserOutlined />} className={styles.avatar} />
+                <span className={styles.username}>{userDisplayInfo.displayName}</span>
               </div>
             </Dropdown>
           </div>
         </Header>
-        
-        <Content className={styles.content}>
-          {children}
-        </Content>
+
+        <Content className={styles.content}>{children}</Content>
       </Layout>
     </Layout>
   );
 };
 
 // Debounce utility function
-function debounce<T extends (...args: any[]) => void>(
-  func: T,
-  wait: number
-): T & { cancel: () => void } {
+function debounce<T extends (...args: any[]) => void>(func: T, wait: number): T & { cancel: () => void } {
   let timeout: NodeJS.Timeout | null = null;
 
   const debounced = (...args: Parameters<T>) => {
@@ -270,4 +232,4 @@ function debounce<T extends (...args: any[]) => void>(
   return debounced as T & { cancel: () => void };
 }
 
-export default AuthenticatedLayout; 
+export default AuthenticatedLayout;

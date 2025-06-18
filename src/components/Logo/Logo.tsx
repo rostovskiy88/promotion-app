@@ -17,4 +17,4 @@ const Logo: React.FC<LogoProps> = ({ collapsed, variant = 'default' }) => {
   );
 };
 
-export default Logo; 
+export default Logo;

@@ -202,4 +202,4 @@ export interface User {
   email: string;
   displayName?: string;
   // Add more fields as needed
-} 
+}

@@ -1,10 +1,10 @@
 import { store } from '../store';
-import { 
-  removeFromOfflineQueue, 
-  incrementRetries, 
-  addSyncError, 
+import {
+  removeFromOfflineQueue,
+  incrementRetries,
+  addSyncError,
   clearSyncErrors,
-  setSyncing 
+  setSyncing,
 } from '../store/slices/cacheSlice';
 import { addArticle } from '../services/articleService';
 import { updateUser } from '../services/userService';
@@ -52,7 +52,7 @@ export class SyncManager {
 
   async processOfflineQueue(): Promise<void> {
     if (this.isProcessing) return;
-    
+
     this.isProcessing = true;
     const state = store.getState();
     const { offlineQueue } = state.cache;
@@ -71,13 +71,11 @@ export class SyncManager {
         store.dispatch(removeFromOfflineQueue(item.id));
       } catch (error) {
         console.error('Failed to sync item:', item, error);
-        
+
         if (item.retries < MAX_RETRIES) {
           store.dispatch(incrementRetries(item.id));
           // Retry with exponential backoff
-          await new Promise(resolve => 
-            setTimeout(resolve, RETRY_DELAY * Math.pow(2, item.retries))
-          );
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * Math.pow(2, item.retries)));
         } else {
           // Max retries reached, add to error list
           store.dispatch(addSyncError(`Failed to sync ${item.action}`));
@@ -165,4 +163,4 @@ if (typeof window !== 'undefined') {
   SyncManager.registerBackgroundSync();
 }
 
-export const syncManager = SyncManager.getInstance(); 
+export const syncManager = SyncManager.getInstance();

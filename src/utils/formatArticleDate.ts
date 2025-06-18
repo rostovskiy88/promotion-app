@@ -6,4 +6,4 @@ export function formatArticleDate(date: Date): string {
     return format(date, 'dd MMM yyyy');
   }
   return formatDistanceToNow(date, { addSuffix: true });
-} 
+}

@@ -1,19 +1,19 @@
 :root {
   /* Main Colors */
-  --color-primary: #4763E4;
+  --color-primary: #4763e4;
   --color-black: #101828;
 
   /* Text Colors */
   --text-primary: var(--color-black); /* Title texts, captions, input fields */
   --text-secondary: #475467; /* Secondary text */
-  --text-inactive: #98A2B3; /* Inactive states */
+  --text-inactive: #98a2b3; /* Inactive states */
   --text-input: #667085; /* Default texts in text field */
-  
+
   /* Other Colors */
-  --color-white: #FFFFFF;
-  --color-input-bg: #F9FAFB;
-  --color-border: #E5E7EB;
-  --color-disabled: #F2F4F7;
+  --color-white: #ffffff;
+  --color-input-bg: #f9fafb;
+  --color-border: #e5e7eb;
+  --color-disabled: #f2f4f7;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -28,20 +28,20 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  
+
   /* Light theme variables */
   --bg-primary: #ffffff;
   --bg-secondary: #f7f8fa;
   --bg-tertiary: #f5f5f5;
   --text-tertiary: #bdbdbd;
-  --shadow: 0 4px 24px rgba(0,0,0,0.06);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   --sidebar-bg: #ffffff;
   --header-bg: #ffffff;
   --card-bg: #ffffff;
 }
 
 /* Dark theme variables */
-[data-theme="dark"] {
+[data-theme='dark'] {
   --bg-primary: #1a1a1a;
   --bg-secondary: #2a2a2a;
   --bg-tertiary: #3a3a3a;
@@ -49,7 +49,7 @@
   --text-secondary: #d1d5db;
   --text-tertiary: #9ca3af;
   --border-color: #374151;
-  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   --sidebar-bg: #1f1f1f;
   --header-bg: #1f1f1f;
   --card-bg: #2a2a2a;
@@ -59,160 +59,162 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Global Ant Design overrides for dark theme */
-[data-theme="dark"] .ant-layout {
+[data-theme='dark'] .ant-layout {
   background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .ant-layout-header {
+[data-theme='dark'] .ant-layout-header {
   background: var(--header-bg) !important;
   border-bottom: 1px solid var(--border-color) !important;
 }
 
-[data-theme="dark"] .ant-layout-sider {
+[data-theme='dark'] .ant-layout-sider {
   background: var(--sidebar-bg) !important;
   border-right: 1.5px solid var(--border-color) !important;
 }
 
-[data-theme="dark"] .ant-menu {
+[data-theme='dark'] .ant-menu {
   background: transparent !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-menu-item {
+[data-theme='dark'] .ant-menu-item {
   color: var(--text-secondary) !important;
 }
 
-[data-theme="dark"] .ant-menu-item-selected {
+[data-theme='dark'] .ant-menu-item-selected {
   background: #1557ff20 !important;
   color: #1557ff !important;
 }
 
-[data-theme="dark"] .ant-card {
+[data-theme='dark'] .ant-card {
   background: var(--card-bg) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-input {
+[data-theme='dark'] .ant-input {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-input::placeholder {
+[data-theme='dark'] .ant-input::placeholder {
   color: var(--text-tertiary) !important;
 }
 
-[data-theme="dark"] .ant-input-password {
+[data-theme='dark'] .ant-input-password {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
 }
 
-[data-theme="dark"] .ant-input-password .ant-input {
+[data-theme='dark'] .ant-input-password .ant-input {
   background: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-input-password .ant-input::placeholder {
+[data-theme='dark'] .ant-input-password .ant-input::placeholder {
   color: var(--text-tertiary) !important;
 }
 
-[data-theme="dark"] .ant-input-affix-wrapper {
+[data-theme='dark'] .ant-input-affix-wrapper {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
 }
 
-[data-theme="dark"] .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+[data-theme='dark'] .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
   border-color: #1557ff !important;
 }
 
-[data-theme="dark"] .ant-input-affix-wrapper-focused {
+[data-theme='dark'] .ant-input-affix-wrapper-focused {
   border-color: #1557ff !important;
   box-shadow: 0 0 0 2px rgba(21, 87, 255, 0.2) !important;
 }
 
 /* Additional dark mode input fixes */
-[data-theme="dark"] input {
+[data-theme='dark'] input {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] input::placeholder {
+[data-theme='dark'] input::placeholder {
   color: var(--text-tertiary) !important;
 }
 
-[data-theme="dark"] .ant-select-selector {
+[data-theme='dark'] .ant-select-selector {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-dropdown {
+[data-theme='dark'] .ant-dropdown {
   background: var(--card-bg) !important;
 }
 
-[data-theme="dark"] .ant-dropdown-menu {
+[data-theme='dark'] .ant-dropdown-menu {
   background: var(--card-bg) !important;
   border: 1px solid var(--border-color) !important;
 }
 
-[data-theme="dark"] .ant-dropdown-menu-item {
+[data-theme='dark'] .ant-dropdown-menu-item {
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-dropdown-menu-item:hover {
+[data-theme='dark'] .ant-dropdown-menu-item:hover {
   background: #1557ff20 !important;
 }
 
 /* Dark mode Typography fixes */
-[data-theme="dark"] .ant-typography {
+[data-theme='dark'] .ant-typography {
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-typography-title {
+[data-theme='dark'] .ant-typography-title {
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-typography-paragraph {
+[data-theme='dark'] .ant-typography-paragraph {
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-typography-text {
+[data-theme='dark'] .ant-typography-text {
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-btn {
+[data-theme='dark'] .ant-btn {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ant-btn-primary {
+[data-theme='dark'] .ant-btn-primary {
   background: #1557ff !important;
   border: 1px solid #1557ff !important;
 }
 
 /* Custom button styling for dark mode */
-[data-theme="dark"] .ant-select-selector {
+[data-theme='dark'] .ant-select-selector {
   background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
 /* Fix for our custom white buttons in dark mode */
-[data-theme="dark"] div[style*="background-color: rgb(255, 255, 255)"],
-[data-theme="dark"] div[style*="backgroundColor: '#fff'"] {
+[data-theme='dark'] div[style*='background-color: rgb(255, 255, 255)'],
+[data-theme='dark'] div[style*="backgroundColor: '#fff'"] {
   background-color: var(--bg-secondary) !important;
   border-color: var(--border-color) !important;
 }
 
-[data-theme="dark"] div[style*="background-color: rgb(255, 255, 255)"] span,
-[data-theme="dark"] div[style*="backgroundColor: '#fff'"] span {
+[data-theme='dark'] div[style*='background-color: rgb(255, 255, 255)'] span,
+[data-theme='dark'] div[style*="backgroundColor: '#fff'"] span {
   color: var(--text-primary) !important;
 }
 
@@ -222,7 +224,9 @@ body {
   box-sizing: border-box;
 }
 
-body, html, #root {
+body,
+html,
+#root {
   min-height: 100vh;
   font-family: 'Roboto', sans-serif;
   color: var(--text-primary);
@@ -298,20 +302,26 @@ button:focus-visible {
 
 .ant-dropdown-menu {
   border-radius: 8px !important;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.12),
+    0 3px 6px rgba(0, 0, 0, 0.08) !important;
   border: 1px solid var(--border-color) !important;
   background: var(--card-bg) !important;
 }
 
-[data-theme="dark"] .ant-dropdown-menu {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2) !important;
+[data-theme='dark'] .ant-dropdown-menu {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.2) !important;
 }
 
 .ant-dropdown-menu-item {
   border-radius: 4px !important;
   margin: 4px 8px !important;
   padding: 8px 12px !important;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .ant-dropdown-menu-item:hover,

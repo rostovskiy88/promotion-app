@@ -14,23 +14,25 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // Show loading spinner while checking auth state
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <Spin size="large" />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <Spin size='large' />
       </div>
     );
   }
 
   if (!user) {
     // Redirect to login page but save the attempted location
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;

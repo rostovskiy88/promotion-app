@@ -32,7 +32,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   onDelete,
 }) => {
   const navigate = useNavigate();
-  
+
   // Add confirmation before delete
   const handleDelete = () => {
     Modal.confirm({
@@ -49,8 +49,18 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
   const menu = {
     items: [
-      { key: 'edit', label: 'Edit', onClick: onEdit, 'data-testid': 'edit-button' },
-      { key: 'delete', label: 'Delete', onClick: handleDelete, 'data-testid': 'delete-button' },
+      {
+        key: 'edit',
+        label: 'Edit',
+        onClick: onEdit,
+        'data-testid': 'edit-button',
+      },
+      {
+        key: 'delete',
+        label: 'Delete',
+        onClick: handleDelete,
+        'data-testid': 'delete-button',
+      },
     ],
   };
 
@@ -60,36 +70,38 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   };
 
   return (
-    <div className="article-card" data-testid="article-card">
-      <div className="article-card-image" style={{ backgroundImage: `url(${imageUrl})` }}>
-        <div className="article-dropdown-wrapper">
-          <Dropdown menu={menu} trigger={['click']} placement="bottomRight">
-            <MoreOutlined className="article-card-menu" />
+    <div className='article-card' data-testid='article-card'>
+      <div className='article-card-image' style={{ backgroundImage: `url(${imageUrl})` }}>
+        <div className='article-dropdown-wrapper'>
+          <Dropdown menu={menu} trigger={['click']} placement='bottomRight'>
+            <MoreOutlined className='article-card-menu' />
           </Dropdown>
         </div>
       </div>
-      <div className="article-card-content">
-        <div className="article-card-meta">
-          <Text className="article-card-category">{category}</Text>
-          <Text className="article-card-date">{date}</Text>
+      <div className='article-card-content'>
+        <div className='article-card-meta'>
+          <Text className='article-card-category'>{category}</Text>
+          <Text className='article-card-date'>{date}</Text>
         </div>
-        <Title level={4} className="article-card-title">{title}</Title>
-        <Text className="article-card-description">{description}</Text>
-        <div className="article-card-footer">
+        <Title level={4} className='article-card-title'>
+          {title}
+        </Title>
+        <Text className='article-card-description'>{description}</Text>
+        <div className='article-card-footer'>
           <Avatar src={authorAvatar} size={32} />
-          <Text className="article-card-author">{authorName}</Text>
-          <button 
-            className="article-card-readmore" 
+          <Text className='article-card-author'>{authorName}</Text>
+          <button
+            className='article-card-readmore'
             onClick={handleReadMore}
-            style={{ 
-              background: 'none', 
-              border: 'none', 
+            style={{
+              background: 'none',
+              border: 'none',
               cursor: 'pointer',
               color: '#1557ff',
               fontWeight: 500,
               fontSize: '15px',
               textDecoration: 'none',
-              marginLeft: 'auto'
+              marginLeft: 'auto',
             }}
           >
             Read more →
@@ -100,4 +112,4 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   );
 };
 
-export default ArticleCard; 
+export default ArticleCard;

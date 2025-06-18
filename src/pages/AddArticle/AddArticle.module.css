@@ -7,7 +7,7 @@
 
 .card {
   width: 500px;
-  box-shadow: 0 8px 32px 0 rgba(16,30,54,0.08);
+  box-shadow: 0 8px 32px 0 rgba(16, 30, 54, 0.08);
 }
 
 .header {
@@ -65,4 +65,4 @@
 
 .cancelButton {
   margin-right: 8px;
-} 
+}

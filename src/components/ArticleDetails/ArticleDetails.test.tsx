@@ -66,7 +66,7 @@ describe('ArticleDetails Component', () => {
     it('shows loading spinner while fetching article', async () => {
       // Make the service call hang to test loading state
       (articleService.getArticleById as jest.Mock).mockImplementation(() => new Promise(() => {}));
-      
+
       renderComponent();
 
       // Check for Spin component (Antd loading spinner)
@@ -91,7 +91,9 @@ describe('ArticleDetails Component', () => {
         expect(screen.getByText('Test Article Title')).toBeInTheDocument();
       });
 
-      expect(screen.getByText('This is the test article content that should be displayed in the article details view.')).toBeInTheDocument();
+      expect(
+        screen.getByText('This is the test article content that should be displayed in the article details view.')
+      ).toBeInTheDocument();
       expect(screen.getByText('TECHNOLOGY')).toBeInTheDocument();
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('December 25, 2023')).toBeInTheDocument();
@@ -292,4 +294,4 @@ describe('ArticleDetails Component', () => {
       });
     });
   });
-}); 
+});

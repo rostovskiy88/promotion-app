@@ -5,11 +5,11 @@ import OfflineIndicator from '../OfflineIndicator/OfflineIndicator';
 
 const AppInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { resetSession } = useCache();
-  
+
   useEffect(() => {
     resetSession();
   }, []);
-  
+
   // Initialize network status monitoring
   useNetworkStatus();
 
@@ -21,4 +21,4 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) =
   );
 };
 
-export default AppInitializer; 
+export default AppInitializer;

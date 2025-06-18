@@ -14,4 +14,4 @@ export interface SerializedUser {
     phoneNumber: string | null;
     photoURL: string | null;
   }[];
-} 
+}

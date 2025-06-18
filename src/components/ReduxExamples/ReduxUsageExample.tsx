@@ -15,7 +15,7 @@ const ReduxUsageExample: React.FC = () => {
   const ui = useUI();
   const cache = useCache();
   const auth = useAuth();
-  
+
   // Combined app state hook
   const appState = useAppState();
 
@@ -51,81 +51,77 @@ const ReduxUsageExample: React.FC = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h2>Redux Multi-Slice Architecture Demo</h2>
-      
+
       {/* Auth State */}
-      <Card title="🔐 Auth State" style={{ marginBottom: '16px' }}>
-        <p><strong>User:</strong> {auth.userDisplayName}</p>
-        <p><strong>Authenticated:</strong> {auth.isAuthenticated ? '✅' : '❌'}</p>
-        <p><strong>Email Verified:</strong> {auth.hasVerifiedEmail ? '✅' : '❌'}</p>
-        <p><strong>Loading:</strong> {auth.loading ? 'Yes' : 'No'}</p>
+      <Card title='🔐 Auth State' style={{ marginBottom: '16px' }}>
+        <p>
+          <strong>User:</strong> {auth.userDisplayName}
+        </p>
+        <p>
+          <strong>Authenticated:</strong> {auth.isAuthenticated ? '✅' : '❌'}
+        </p>
+        <p>
+          <strong>Email Verified:</strong> {auth.hasVerifiedEmail ? '✅' : '❌'}
+        </p>
+        <p>
+          <strong>Loading:</strong> {auth.loading ? 'Yes' : 'No'}
+        </p>
       </Card>
 
       {/* Articles State */}
-      <Card title="📝 Articles State" style={{ marginBottom: '16px' }}>
+      <Card title='📝 Articles State' style={{ marginBottom: '16px' }}>
         <Space wrap>
-          <Tag color="blue">Total Articles: {articles.articles.length}</Tag>
-          <Tag color="green">Filtered: {articles.filteredArticles.length}</Tag>
-          <Tag color="orange">Page: {articles.currentPage}</Tag>
-          <Tag color="purple">Category: {articles.selectedCategory}</Tag>
+          <Tag color='blue'>Total Articles: {articles.articles.length}</Tag>
+          <Tag color='green'>Filtered: {articles.filteredArticles.length}</Tag>
+          <Tag color='orange'>Page: {articles.currentPage}</Tag>
+          <Tag color='purple'>Category: {articles.selectedCategory}</Tag>
         </Space>
         <Divider />
         <Space>
-          <Button onClick={() => articles.fetchArticles()}>
-            Refresh Articles
-          </Button>
+          <Button onClick={() => articles.fetchArticles()}>Refresh Articles</Button>
           <Select
-            placeholder="Search articles..."
+            placeholder='Search articles...'
             style={{ width: 200 }}
             showSearch
             allowClear
             onSearch={handleSearch}
             onClear={() => articles.clearSearch()}
           >
-            <Option value="react">React</Option>
-            <Option value="typescript">TypeScript</Option>
-            <Option value="redux">Redux</Option>
+            <Option value='react'>React</Option>
+            <Option value='typescript'>TypeScript</Option>
+            <Option value='redux'>Redux</Option>
           </Select>
-          <Select
-            value={articles.selectedCategory}
-            onChange={articles.setCategory}
-            style={{ width: 150 }}
-          >
-            <Option value="All Categories">All Categories</Option>
-            <Option value="Technology">Technology</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Science">Science</Option>
+          <Select value={articles.selectedCategory} onChange={articles.setCategory} style={{ width: 150 }}>
+            <Option value='All Categories'>All Categories</Option>
+            <Option value='Technology'>Technology</Option>
+            <Option value='Business'>Business</Option>
+            <Option value='Science'>Science</Option>
           </Select>
         </Space>
       </Card>
 
       {/* UI State */}
-      <Card title="🎨 UI State" style={{ marginBottom: '16px' }}>
-        <Space direction="vertical">
+      <Card title='🎨 UI State' style={{ marginBottom: '16px' }}>
+        <Space direction='vertical'>
           <div>
             <strong>Theme:</strong>{' '}
-            <Switch 
-              checked={ui.theme === 'dark'} 
+            <Switch
+              checked={ui.theme === 'dark'}
               onChange={handleThemeChange}
-              checkedChildren="🌙"
-              unCheckedChildren="☀️"
+              checkedChildren='🌙'
+              unCheckedChildren='☀️'
             />
-            <span style={{ marginLeft: '8px' }}>
-              Current: {ui.theme}
-            </span>
+            <span style={{ marginLeft: '8px' }}>Current: {ui.theme}</span>
           </div>
-          
+
           <div>
-            <strong>Global Loading:</strong>{' '}
-            <Switch 
-              checked={ui.globalLoading}
-              onChange={ui.setGlobalLoading}
-            />
+            <strong>Global Loading:</strong> <Switch checked={ui.globalLoading} onChange={ui.setGlobalLoading} />
           </div>
-          
+
           <div>
             <strong>Sidebar Collapsed:</strong> {ui.sidebarCollapsed ? 'Yes' : 'No'}
           </div>
-          
+
           <Space>
             <Button icon={<SettingOutlined />} onClick={openExampleModal}>
               Open Modal
@@ -135,8 +131,8 @@ const ReduxUsageExample: React.FC = () => {
       </Card>
 
       {/* Cache State */}
-      <Card title="💾 Cache State" style={{ marginBottom: '16px' }}>
-        <Space direction="vertical">
+      <Card title='💾 Cache State' style={{ marginBottom: '16px' }}>
+        <Space direction='vertical'>
           <div>
             <Space>
               <Tag color={cache.isOnline ? 'green' : 'red'}>
@@ -145,12 +141,12 @@ const ReduxUsageExample: React.FC = () => {
               <Tag color={cache.isSyncing ? 'processing' : 'default'}>
                 {cache.isSyncing ? 'Syncing...' : 'Sync Complete'}
               </Tag>
-              <Tag color="blue">
+              <Tag color='blue'>
                 <DatabaseOutlined /> Cache Entries: {Object.keys(cache.apiCache).length}
               </Tag>
             </Space>
           </div>
-          
+
           <div>
             <strong>Performance Metrics:</strong>
             <ul style={{ marginLeft: '20px', marginTop: '8px' }}>
@@ -160,37 +156,35 @@ const ReduxUsageExample: React.FC = () => {
               <li>Avg Response Time: {cache.metrics.avgResponseTime.toFixed(2)}ms</li>
             </ul>
           </div>
-          
+
           <Space>
-            <Button onClick={cacheExampleData}>
-              Cache Example Data
-            </Button>
-            <Button onClick={() => cache.setOnline(!cache.isOnline)}>
-              Toggle Online Status
-            </Button>
+            <Button onClick={cacheExampleData}>Cache Example Data</Button>
+            <Button onClick={() => cache.setOnline(!cache.isOnline)}>Toggle Online Status</Button>
           </Space>
         </Space>
       </Card>
 
       {/* Combined App State */}
-      <Card title="🌐 Combined App State" style={{ marginBottom: '16px' }}>
+      <Card title='🌐 Combined App State' style={{ marginBottom: '16px' }}>
         <Space wrap>
-          <Tag color={appState.isLoading ? 'processing' : 'success'}>
-            Loading: {appState.isLoading ? 'Yes' : 'No'}
-          </Tag>
-          <Tag color={appState.hasErrors ? 'error' : 'success'}>
-            Has Errors: {appState.hasErrors ? 'Yes' : 'No'}
-          </Tag>
+          <Tag color={appState.isLoading ? 'processing' : 'success'}>Loading: {appState.isLoading ? 'Yes' : 'No'}</Tag>
+          <Tag color={appState.hasErrors ? 'error' : 'success'}>Has Errors: {appState.hasErrors ? 'Yes' : 'No'}</Tag>
           <Tag color={appState.isOffline ? 'warning' : 'success'}>
             Offline Mode: {appState.isOffline ? 'Yes' : 'No'}
           </Tag>
         </Space>
       </Card>
 
-      <Card title="📋 Usage Examples" type="inner">
+      <Card title='📋 Usage Examples' type='inner'>
         <h4>How to Use These Redux Slices:</h4>
-        <pre style={{ background: '#f5f5f5', padding: '12px', borderRadius: '4px' }}>
-{`// In any component:
+        <pre
+          style={{
+            background: '#f5f5f5',
+            padding: '12px',
+            borderRadius: '4px',
+          }}
+        >
+          {`// In any component:
 import { useArticles, useUI, useAuth } from '../hooks/useRedux';
 
 const MyComponent = () => {
@@ -217,4 +211,4 @@ const MyComponent = () => {
   );
 };
 
-export default ReduxUsageExample; 
+export default ReduxUsageExample;

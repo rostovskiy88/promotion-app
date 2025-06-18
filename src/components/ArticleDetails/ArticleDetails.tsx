@@ -49,7 +49,7 @@ const ArticleDetails: React.FC = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
-        <Spin size="large" />
+        <Spin size='large' />
       </div>
     );
   }
@@ -64,39 +64,49 @@ const ArticleDetails: React.FC = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       {/* Header with back button and edit button */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <Button 
-          icon={<ArrowLeftOutlined />} 
-          onClick={() => navigate('/dashboard')}
-          type="default"
-        >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}
+      >
+        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/dashboard')} type='default'>
           Back to Dashboard
         </Button>
-        
+
         {isAuthor && (
-          <Button 
-            icon={<EditOutlined />} 
+          <Button
+            icon={<EditOutlined />}
             onClick={() => navigate(`/dashboard/edit-article/${article.id}`)}
-            type="primary"
+            type='primary'
           >
             Edit Article
           </Button>
         )}
       </div>
-      
-      <div style={{ padding: '32px', background: 'var(--card-bg)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+
+      <div
+        style={{
+          padding: '32px',
+          background: 'var(--card-bg)',
+          borderRadius: '12px',
+          border: '1px solid var(--border-color)',
+        }}
+      >
         {/* Article Image */}
         {article.imageUrl && typeof article.imageUrl === 'string' && (
           <div style={{ marginBottom: '24px' }}>
-            <img 
-              src={article.imageUrl} 
+            <img
+              src={article.imageUrl}
               alt={article.title}
-              style={{ 
-                width: '100%', 
-                maxHeight: '300px', 
+              style={{
+                width: '100%',
+                maxHeight: '300px',
                 objectFit: 'cover',
-                borderRadius: '8px'
-              }} 
+                borderRadius: '8px',
+              }}
             />
           </div>
         )}
@@ -104,32 +114,53 @@ const ArticleDetails: React.FC = () => {
         {/* Article Header */}
         <div style={{ marginBottom: '24px' }}>
           {article.category && (
-            <Tag color="blue" style={{ marginBottom: '12px', fontSize: '12px', padding: '4px 12px' }}>
+            <Tag
+              color='blue'
+              style={{
+                marginBottom: '12px',
+                fontSize: '12px',
+                padding: '4px 12px',
+              }}
+            >
               {article.category.toUpperCase()}
             </Tag>
           )}
-          
-          <Title level={1} style={{ margin: '0 0 16px 0', fontSize: '32px', lineHeight: '1.2' }}>
+
+          <Title
+            level={1}
+            style={{
+              margin: '0 0 16px 0',
+              fontSize: '32px',
+              lineHeight: '1.2',
+            }}
+          >
             {article.title}
           </Title>
-          
+
           {/* Author and Date Info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              color: 'var(--text-secondary)',
+            }}
+          >
             <Avatar src={article.authorAvatar} size={32}>
               {article.authorName.charAt(0)}
             </Avatar>
             <div>
-              <Text strong style={{ color: 'var(--text-primary)' }}>{article.authorName}</Text>
+              <Text strong style={{ color: 'var(--text-primary)' }}>
+                {article.authorName}
+              </Text>
               <br />
               <Text style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                 {new Date(
-                  typeof article.createdAt === 'string' 
-                    ? article.createdAt 
-                    : article.createdAt.toDate()
-                ).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                  typeof article.createdAt === 'string' ? article.createdAt : article.createdAt.toDate()
+                ).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </Text>
             </div>
@@ -137,8 +168,20 @@ const ArticleDetails: React.FC = () => {
         </div>
 
         {/* Article Content */}
-        <div style={{ fontSize: '16px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
-          <Paragraph style={{ fontSize: '16px', marginBottom: '24px', color: 'var(--text-primary)' }}>
+        <div
+          style={{
+            fontSize: '16px',
+            lineHeight: '1.8',
+            color: 'var(--text-primary)',
+          }}
+        >
+          <Paragraph
+            style={{
+              fontSize: '16px',
+              marginBottom: '24px',
+              color: 'var(--text-primary)',
+            }}
+          >
             {article.content}
           </Paragraph>
         </div>
@@ -147,4 +190,4 @@ const ArticleDetails: React.FC = () => {
   );
 };
 
-export default ArticleDetails; 
+export default ArticleDetails;

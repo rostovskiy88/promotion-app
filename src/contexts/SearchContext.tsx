@@ -39,9 +39,5 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     clearSearch,
   };
 
-  return (
-    <SearchContext.Provider value={value}>
-      {children}
-    </SearchContext.Provider>
-  );
-}; 
+  return <SearchContext.Provider value={value}>{children}</SearchContext.Provider>;
+};

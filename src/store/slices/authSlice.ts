@@ -44,7 +44,7 @@ const serializeUser = (user: User): SerializedUser => ({
 // Helper function to serialize Firestore user data (convert Timestamps to strings)
 const serializeFirestoreUser = (firestoreUser: any): FirestoreUser | null => {
   if (!firestoreUser) return null;
-  
+
   return {
     ...firestoreUser,
     // Convert Firebase Timestamps to ISO strings
@@ -54,41 +54,35 @@ const serializeFirestoreUser = (firestoreUser: any): FirestoreUser | null => {
   };
 };
 
-export const loginWithGoogle = createAsyncThunk(
-  'auth/loginWithGoogle',
-  async (_, { rejectWithValue }) => {
-    try {
-      const result = await authService.loginWithGoogle();
-      await createOrGetUser({
-        uid: result.user.uid,
-        email: result.user.email!,
-        displayName: result.user.displayName || '',
-        photoURL: result.user.photoURL || '',
-      });
-      return serializeUser(result.user);
-    } catch (error: any) {
-      return rejectWithValue(getAuthErrorMessage(error));
-    }
+export const loginWithGoogle = createAsyncThunk('auth/loginWithGoogle', async (_, { rejectWithValue }) => {
+  try {
+    const result = await authService.loginWithGoogle();
+    await createOrGetUser({
+      uid: result.user.uid,
+      email: result.user.email!,
+      displayName: result.user.displayName || '',
+      photoURL: result.user.photoURL || '',
+    });
+    return serializeUser(result.user);
+  } catch (error: any) {
+    return rejectWithValue(getAuthErrorMessage(error));
   }
-);
+});
 
-export const loginWithFacebook = createAsyncThunk(
-  'auth/loginWithFacebook',
-  async (_, { rejectWithValue }) => {
-    try {
-      const result = await authService.loginWithFacebook();
-      await createOrGetUser({
-        uid: result.user.uid,
-        email: result.user.email!,
-        displayName: result.user.displayName || '',
-        photoURL: result.user.photoURL || '',
-      });
-      return serializeUser(result.user);
-    } catch (error: any) {
-      return rejectWithValue(getAuthErrorMessage(error));
-    }
+export const loginWithFacebook = createAsyncThunk('auth/loginWithFacebook', async (_, { rejectWithValue }) => {
+  try {
+    const result = await authService.loginWithFacebook();
+    await createOrGetUser({
+      uid: result.user.uid,
+      email: result.user.email!,
+      displayName: result.user.displayName || '',
+      photoURL: result.user.photoURL || '',
+    });
+    return serializeUser(result.user);
+  } catch (error: any) {
+    return rejectWithValue(getAuthErrorMessage(error));
   }
-);
+});
 
 export const loginWithEmail = createAsyncThunk(
   'auth/loginWithEmail',
@@ -108,20 +102,17 @@ export const loginWithEmail = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      await authService.logout();
-      // Clear any persisted auth state
-      localStorage.removeItem('auth');
-      sessionStorage.removeItem('auth');
-      return null;
-    } catch (error: any) {
-      return rejectWithValue(getAuthErrorMessage(error));
-    }
+export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+  try {
+    await authService.logout();
+    // Clear any persisted auth state
+    localStorage.removeItem('auth');
+    sessionStorage.removeItem('auth');
+    return null;
+  } catch (error: any) {
+    return rejectWithValue(getAuthErrorMessage(error));
   }
-);
+});
 
 // Add new async thunk to fetch/refresh Firestore user data
 export const refreshFirestoreUser = createAsyncThunk(
@@ -148,18 +139,18 @@ const authSlice = createSlice({
     setFirestoreUser: (state, action) => {
       state.firestoreUser = action.payload;
     },
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
-    resetLoading: (state) => {
+    resetLoading: state => {
       state.loading = false;
       state.error = null;
-    }
+    },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       // Google login
-      .addCase(loginWithGoogle.pending, (state) => {
+      .addCase(loginWithGoogle.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -173,7 +164,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
       // Facebook login
-      .addCase(loginWithFacebook.pending, (state) => {
+      .addCase(loginWithFacebook.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -187,7 +178,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
       // Email login
-      .addCase(loginWithEmail.pending, (state) => {
+      .addCase(loginWithEmail.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -201,7 +192,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
       // Logout
-      .addCase(logout.fulfilled, (state) => {
+      .addCase(logout.fulfilled, state => {
         state.user = null;
         state.firestoreUser = null;
         state.initialized = true;
@@ -214,4 +205,4 @@ const authSlice = createSlice({
 });
 
 export const { setUser, setFirestoreUser, clearError, resetLoading } = authSlice.actions;
-export default authSlice.reducer; 
+export default authSlice.reducer;

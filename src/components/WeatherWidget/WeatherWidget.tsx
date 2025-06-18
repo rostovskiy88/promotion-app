@@ -37,9 +37,9 @@ const WeatherWidget: React.FC = () => {
         setLoading(false);
         return;
       }
-      
+
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
-      
+
       // Use direct axios call to avoid HTTP client interceptors
       const response = await axios.get(url);
       setWeather(response.data);
@@ -76,7 +76,7 @@ const WeatherWidget: React.FC = () => {
     if (mode === 'auto') {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (position) => {
+          position => {
             fetchWeatherByCoords(position.coords.latitude, position.coords.longitude);
           },
           () => {
@@ -104,9 +104,9 @@ const WeatherWidget: React.FC = () => {
     setSearching(true);
     try {
       const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
-      
+
       const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(value)}&limit=5&appid=${apiKey}`;
-      
+
       // Use direct axios call to avoid HTTP client interceptors
       const response = await axios.get(url);
       const options: CityOption[] = response.data.map((item: any) => ({
@@ -149,17 +149,27 @@ const WeatherWidget: React.FC = () => {
 
   const today = new Date();
   const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
-  const dateStr = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  const dateStr = today.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
-    <Card className="weather-widget" variant="outlined" styles={{ body: { padding: 24 } }}>
-      <div className="weather-widget-header">
-        <Text className="weather-widget-label">WEATHER WIDGET</Text>
-        <Dropdown menu={{ items: [
-            { key: 'manual', label: 'Select City Manually' },
-            { key: 'auto', label: 'Auto-detect My Location' }
-          ], onClick: handleMenuClick }} trigger={["click"]} placement="bottomRight">
-          <MoreOutlined className="weather-widget-menu" style={{ cursor: 'pointer' }} />
+    <Card className='weather-widget' variant='outlined' styles={{ body: { padding: 24 } }}>
+      <div className='weather-widget-header'>
+        <Text className='weather-widget-label'>WEATHER WIDGET</Text>
+        <Dropdown
+          menu={{
+            items: [
+              { key: 'manual', label: 'Select City Manually' },
+              { key: 'auto', label: 'Auto-detect My Location' },
+            ],
+            onClick: handleMenuClick,
+          }}
+          trigger={['click']}
+          placement='bottomRight'
+        >
+          <MoreOutlined className='weather-widget-menu' style={{ cursor: 'pointer' }} />
         </Dropdown>
       </div>
       {loading ? (
@@ -170,32 +180,34 @@ const WeatherWidget: React.FC = () => {
         <div style={{ color: 'red', margin: '32px 0', textAlign: 'center' }}>{error}</div>
       ) : weather && weather.main ? (
         <>
-          <div className="weather-widget-date-block">
-            <Title level={3} className="weather-widget-date">{dateStr}</Title>
-            <Text className="weather-widget-day">{dayName}</Text>
+          <div className='weather-widget-date-block'>
+            <Title level={3} className='weather-widget-date'>
+              {dateStr}
+            </Title>
+            <Text className='weather-widget-day'>{dayName}</Text>
           </div>
-          <div className="weather-widget-temp-block">
-            <span className="weather-widget-temp">{Math.round(weather.main.temp)}</span>
-            <span className="weather-widget-degree">°C</span>
+          <div className='weather-widget-temp-block'>
+            <span className='weather-widget-temp'>{Math.round(weather.main.temp)}</span>
+            <span className='weather-widget-degree'>°C</span>
             <img
-              className="weather-widget-icon"
+              className='weather-widget-icon'
               src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
               alt={weather.weather[0].description}
               style={{ marginLeft: 16, width: 48, height: 48 }}
             />
           </div>
-          <div className="weather-widget-location">
+          <div className='weather-widget-location'>
             {weather.name}, {weather.sys.country}
           </div>
         </>
       ) : null}
       <Modal
-        title="Select City Manually"
+        title='Select City Manually'
         open={modalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
-        okText="Set City"
-        cancelText="Cancel"
+        okText='Set City'
+        cancelText='Cancel'
         closable={false}
       >
         <AutoComplete
@@ -207,8 +219,8 @@ const WeatherWidget: React.FC = () => {
             setManualCity(option as CityOption);
             setInputCity(option.value);
           }}
-          placeholder="Enter city name"
-          notFoundContent={searching ? <Spin size="small" /> : null}
+          placeholder='Enter city name'
+          notFoundContent={searching ? <Spin size='small' /> : null}
           filterOption={false}
         />
       </Modal>

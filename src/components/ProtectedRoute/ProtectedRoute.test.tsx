@@ -8,7 +8,7 @@ import ProtectedRoute from './ProtectedRoute';
 // Mock react-router-dom
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  Navigate: ({ to }: { to: string }) => <div data-testid="navigate">{to}</div>,
+  Navigate: ({ to }: { to: string }) => <div data-testid='navigate'>{to}</div>,
   useLocation: () => ({ pathname: '/dashboard' }),
 }));
 
@@ -21,7 +21,7 @@ const createMockStore = (authState: any) => {
   });
 };
 
-const TestChild = () => <div data-testid="protected-content">Protected Content</div>;
+const TestChild = () => <div data-testid='protected-content'>Protected Content</div>;
 
 const renderProtectedRoute = (authState: any) => {
   const store = createMockStore(authState);
@@ -141,7 +141,7 @@ describe('ProtectedRoute Component', () => {
       // Should show loading or redirect - either is acceptable for undefined state
       const hasLoading = document.querySelector('.ant-spin');
       const hasRedirect = screen.queryByTestId('navigate');
-      
+
       expect(hasLoading || hasRedirect).toBeTruthy();
     });
 
@@ -157,7 +157,7 @@ describe('ProtectedRoute Component', () => {
       // Should show loading when not initialized OR redirect
       const spinner = document.querySelector('.ant-spin');
       const redirect = screen.queryByTestId('navigate');
-      
+
       // Either loading spinner or redirect should be present
       expect(spinner || redirect).toBeTruthy();
     });
@@ -274,4 +274,4 @@ describe('ProtectedRoute Component', () => {
       expect(screen.getByTestId('navigate')).toBeInTheDocument();
     });
   });
-}); 
+});

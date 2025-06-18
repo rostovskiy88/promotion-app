@@ -13,13 +13,7 @@ interface AvatarUploadProps {
   initialFile?: File | null;
 }
 
-const AvatarUpload: React.FC<AvatarUploadProps> = ({
-  visible,
-  onCancel,
-  onSuccess,
-  userId,
-  initialFile
-}) => {
+const AvatarUpload: React.FC<AvatarUploadProps> = ({ visible, onCancel, onSuccess, userId, initialFile }) => {
   const [image, setImage] = useState<File | null>(null);
   const [scale, setScale] = useState(1.2);
   const [rotate, setRotate] = useState(0);
@@ -60,17 +54,17 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
     try {
       // Get the cropped image as canvas
       const canvas = editorRef.current.getImageScaledToCanvas();
-      
+
       console.log('Canvas created successfully, size:', canvas.width, 'x', canvas.height);
-      
+
       // Upload the avatar
       const avatarUrl = await uploadAvatar(canvas, userId);
-      
+
       onSuccess(avatarUrl);
       handleClose();
     } catch (error: any) {
       console.error('Avatar upload failed:', error);
-      
+
       if (error.message?.includes('storage')) {
         message.error('Failed to save avatar to storage. Please check your connection and try again.');
       } else {
@@ -98,56 +92,55 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
 
   return (
     <Modal
-      title="Upload Avatar"
+      title='Upload Avatar'
       open={visible}
       onCancel={handleClose}
       width={520}
       centered
       footer={[
-        <Button key="cancel" onClick={handleClose}>
+        <Button key='cancel' onClick={handleClose}>
           Cancel
         </Button>,
-        <Button
-          key="save"
-          type="primary"
-          loading={uploading}
-          onClick={handleSave}
-          disabled={!image}
-        >
+        <Button key='save' type='primary' loading={uploading} onClick={handleSave} disabled={!image}>
           {uploading ? 'Uploading...' : 'Save Avatar'}
         </Button>,
       ]}
       styles={{
-        body: { 
+        body: {
           padding: '24px',
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
         },
         mask: {
-          backgroundColor: 'rgba(0, 0, 0, 0.6)'
-        }
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        },
       }}
       style={{
-        marginLeft: '200px'
+        marginLeft: '200px',
       }}
     >
-      <div className="avatar-upload-container">
+      <div className='avatar-upload-container'>
         {!image ? (
-          <div className="upload-area">
+          <div className='upload-area'>
             <Upload.Dragger
-              accept=".jpg,.jpeg,.png"
+              accept='.jpg,.jpeg,.png'
               showUploadList={false}
               beforeUpload={handleFileSelect}
-              className="avatar-upload-dragger"
+              className='avatar-upload-dragger'
             >
-              <div className="upload-content">
+              <div className='upload-content'>
                 <UploadOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
                 <div style={{ marginTop: '16px' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                    Select Avatar Image
-                  </div>
-                  <div style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>
-                    Click or drag image to upload<br />
+                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>Select Avatar Image</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: '#666',
+                      marginTop: '8px',
+                    }}
+                  >
+                    Click or drag image to upload
+                    <br />
                     JPG, PNG up to 10MB
                   </div>
                 </div>
@@ -155,8 +148,8 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
             </Upload.Dragger>
           </div>
         ) : (
-          <div className="editor-area">
-            <div className="editor-container">
+          <div className='editor-area'>
+            <div className='editor-container'>
               <AvatarEditor
                 ref={editorRef}
                 image={image}
@@ -167,15 +160,15 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
                 color={[255, 255, 255, 0.6]} // RGBA
                 scale={scale}
                 rotate={rotate}
-                style={{ 
+                style={{
                   border: '2px solid #d9d9d9',
-                  borderRadius: '50%'
+                  borderRadius: '50%',
                 }}
               />
             </div>
-            
-            <div className="editor-controls" style={{ width: '100%', maxWidth: '340px' }}>
-              <div className="control-row">
+
+            <div className='editor-controls' style={{ width: '100%', maxWidth: '340px' }}>
+              <div className='control-row'>
                 <span>Zoom:</span>
                 <Slider
                   min={0.5}
@@ -186,33 +179,21 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
                   style={{ flex: 1, marginLeft: '12px' }}
                 />
               </div>
-              
-              <div className="control-row">
+
+              <div className='control-row'>
                 <span>Rotate:</span>
                 <Space>
-                  <Button
-                    icon={<RotateLeftOutlined />}
-                    onClick={handleRotateLeft}
-                    size="small"
-                  >
+                  <Button icon={<RotateLeftOutlined />} onClick={handleRotateLeft} size='small'>
                     Left
                   </Button>
-                  <Button
-                    icon={<RotateRightOutlined />}
-                    onClick={handleRotateRight}
-                    size="small"
-                  >
+                  <Button icon={<RotateRightOutlined />} onClick={handleRotateRight} size='small'>
                     Right
                   </Button>
                 </Space>
               </div>
-              
-              <div className="control-row" style={{ justifyContent: 'center' }}>
-                <Button 
-                  type="link" 
-                  onClick={() => setImage(null)}
-                  style={{ padding: 0 }}
-                >
+
+              <div className='control-row' style={{ justifyContent: 'center' }}>
+                <Button type='link' onClick={() => setImage(null)} style={{ padding: 0 }}>
                   Choose Different Image
                 </Button>
               </div>
@@ -224,4 +205,4 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
   );
 };
 
-export default AvatarUpload; 
+export default AvatarUpload;

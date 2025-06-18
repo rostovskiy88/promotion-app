@@ -47,14 +47,14 @@ describe('Logo Component', () => {
     });
 
     it('renders with default styling when explicitly set', () => {
-      render(<Logo variant="default" />);
+      render(<Logo variant='default' />);
 
       const logoContainer = screen.getByText('olegpromo').parentElement;
       expect(logoContainer).toBeInTheDocument();
     });
 
     it('renders with light variant when specified', () => {
-      render(<Logo variant="light" />);
+      render(<Logo variant='light' />);
 
       const logoContainer = screen.getByText('olegpromo').parentElement;
       expect(logoContainer).toBeInTheDocument();
@@ -63,7 +63,7 @@ describe('Logo Component', () => {
 
   describe('Props Combinations', () => {
     it('handles collapsed with default variant', () => {
-      render(<Logo collapsed={true} variant="default" />);
+      render(<Logo collapsed={true} variant='default' />);
 
       const icon = document.querySelector('.anticon-rocket');
       expect(icon).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('Logo Component', () => {
     });
 
     it('handles collapsed with light variant', () => {
-      render(<Logo collapsed={true} variant="light" />);
+      render(<Logo collapsed={true} variant='light' />);
 
       const icon = document.querySelector('.anticon-rocket');
       expect(icon).toBeInTheDocument();
@@ -79,7 +79,7 @@ describe('Logo Component', () => {
     });
 
     it('handles not collapsed with light variant', () => {
-      render(<Logo collapsed={false} variant="light" />);
+      render(<Logo collapsed={false} variant='light' />);
 
       const icon = document.querySelector('.anticon-rocket');
       expect(icon).toBeInTheDocument();
@@ -109,10 +109,10 @@ describe('Logo Component', () => {
 
       const textElement = screen.getByText('olegpromo');
       const container = textElement.parentElement as HTMLElement;
-      
+
       expect(container).toBeInTheDocument();
       expect(container).toContainElement(textElement);
-      
+
       const icon = document.querySelector('.anticon-rocket') as HTMLElement;
       expect(container).toContainElement(icon);
     });
@@ -168,7 +168,7 @@ describe('Logo Component', () => {
 
       const textElement = screen.getByText('olegpromo');
       expect(textElement.tagName).toBe('SPAN');
-      
+
       const container = textElement.parentElement;
       expect(container?.tagName).toBe('DIV');
     });
@@ -178,8 +178,8 @@ describe('Logo Component', () => {
     it('shows text in all non-collapsed states', () => {
       // Test various falsy values for collapsed
       const falsyValues = [false, undefined, null, '', 0];
-      
-      falsyValues.forEach((value) => {
+
+      falsyValues.forEach(value => {
         const { unmount } = render(<Logo collapsed={value as any} />);
         expect(screen.getByText('olegpromo')).toBeInTheDocument();
         unmount();
@@ -200,4 +200,4 @@ describe('Logo Component', () => {
       expect(document.querySelector('.anticon-rocket')).toBeInTheDocument();
     });
   });
-}); 
+});

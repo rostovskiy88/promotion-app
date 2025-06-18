@@ -8,4 +8,4 @@ export interface FirestoreUser {
   avatarUrl?: string;
   age?: number;
   createdAt?: FirebaseTimestamp; // Properly typed Firebase Timestamp
-} 
+}

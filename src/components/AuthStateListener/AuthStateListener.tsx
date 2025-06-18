@@ -29,9 +29,9 @@ const AuthStateListener = () => {
 
   useEffect(() => {
     // Set up the auth state listener
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       console.log('Auth state changed:', user ? 'User logged in' : 'No user');
-      
+
       if (user) {
         // User is logged in
         dispatch(setUser(serializeUser(user)));
@@ -49,4 +49,4 @@ const AuthStateListener = () => {
   return null;
 };
 
-export default AuthStateListener; 
+export default AuthStateListener;

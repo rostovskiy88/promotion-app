@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
@@ -10,7 +16,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Log config for verification (will remove in production)
@@ -19,7 +25,7 @@ console.log('Firebase Config:', {
   authDomain: firebaseConfig.authDomain,
   projectId: firebaseConfig.projectId,
   storageBucket: firebaseConfig.storageBucket,
-  hasApiKey: !!firebaseConfig.apiKey
+  hasApiKey: !!firebaseConfig.apiKey,
 });
 
 // Initialize Firebase
@@ -29,10 +35,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Set auth persistence to local (will persist across page reloads)
-setPersistence(auth, browserLocalPersistence)
-  .catch((error) => {
-    console.error("Auth persistence error:", error);
-  });
+setPersistence(auth, browserLocalPersistence).catch(error => {
+  console.error('Auth persistence error:', error);
+});
 
 // Configure providers
 const googleProvider = new GoogleAuthProvider();
@@ -40,12 +45,12 @@ const facebookProvider = new FacebookAuthProvider();
 
 // Configure Google Auth Provider
 googleProvider.setCustomParameters({
-  prompt: 'select_account' // Forces account selection every time
+  prompt: 'select_account', // Forces account selection every time
 });
 
 // Configure Facebook Auth Provider
 facebookProvider.setCustomParameters({
-  display: 'popup'
+  display: 'popup',
 });
 
 console.log('Firebase Auth initialized:', !!auth);
@@ -61,4 +66,4 @@ console.log('Storage bucket:', storage.app.options.storageBucket);
 
 export { auth, googleProvider, facebookProvider };
 export { db, storage };
-export default app; 
+export default app;

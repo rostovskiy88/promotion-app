@@ -2,18 +2,18 @@
 
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { 
-  fetchArticles, 
+import {
+  fetchArticles,
   loadMoreArticles,
-  searchArticlesThunk, 
+  searchArticlesThunk,
   deleteArticleThunk,
-  setCategory, 
-  setSortOrder, 
-  setSearchTerm, 
-  clearSearch, 
-  setPage, 
+  setCategory,
+  setSortOrder,
+  setSearchTerm,
+  clearSearch,
+  setPage,
   clearError as clearArticleError,
-  resetArticles
+  resetArticles,
 } from '../store/slices/articlesSlice';
 import {
   setTheme,
@@ -23,18 +23,16 @@ import {
   closeModal,
   setBreadcrumbs,
   updatePreferences,
-  setSidebarCollapsed
+  setSidebarCollapsed,
 } from '../store/slices/uiSlice';
 import {
   setCacheEntry,
   addToOfflineQueue,
   setOnlineStatus,
   resetSessionState,
-  setSyncing
+  setSyncing,
 } from '../store/slices/cacheSlice';
-import {
-  refreshFirestoreUser
-} from '../store/slices/authSlice';
+import { refreshFirestoreUser } from '../store/slices/authSlice';
 
 // Safe Redux hook wrapper
 const useSafeSelector = (selector: (state: any) => any, fallback: any = {}) => {
@@ -72,14 +70,14 @@ export const useArticles = () => {
     searchTerm: '',
     isSearching: false,
   });
-  
+
   // For search results, we still use pagination
   const searchArticlesToShow = articlesState.filteredArticles;
   const searchTotalCount = searchArticlesToShow.length;
   const searchStartIndex = (articlesState.currentPage - 1) * articlesState.articlesPerPage;
   const searchEndIndex = searchStartIndex + articlesState.articlesPerPage;
   const currentPageSearchArticles = searchArticlesToShow.slice(searchStartIndex, searchEndIndex);
-  
+
   const searchPaginationInfo = {
     startItem: (articlesState.currentPage - 1) * articlesState.articlesPerPage + 1,
     endItem: Math.min(articlesState.currentPage * articlesState.articlesPerPage, searchTotalCount),
@@ -90,24 +88,33 @@ export const useArticles = () => {
   return {
     // State
     ...articlesState,
-    
+
     // For search results (paginated)
     searchArticlesToShow,
     currentPageSearchArticles,
     searchPaginationInfo,
-    
+
     // Actions
-    fetchArticles: useCallback((category?: string, sortOrder?: 'Ascending' | 'Descending', reset?: boolean) => 
-      dispatch(fetchArticles({ category, sortOrder, reset })), [dispatch]),
-    
-    loadMoreArticles: useCallback((category?: string, sortOrder?: 'Ascending' | 'Descending') => 
-      dispatch(loadMoreArticles({ category, sortOrder })), [dispatch]),
-    
-    searchArticles: useCallback((searchTerm: string, category?: string, sortOrder?: 'Ascending' | 'Descending') =>
-      dispatch(searchArticlesThunk({ searchTerm, category, sortOrder })), [dispatch]),
-    
+    fetchArticles: useCallback(
+      (category?: string, sortOrder?: 'Ascending' | 'Descending', reset?: boolean) =>
+        dispatch(fetchArticles({ category, sortOrder, reset })),
+      [dispatch]
+    ),
+
+    loadMoreArticles: useCallback(
+      (category?: string, sortOrder?: 'Ascending' | 'Descending') =>
+        dispatch(loadMoreArticles({ category, sortOrder })),
+      [dispatch]
+    ),
+
+    searchArticles: useCallback(
+      (searchTerm: string, category?: string, sortOrder?: 'Ascending' | 'Descending') =>
+        dispatch(searchArticlesThunk({ searchTerm, category, sortOrder })),
+      [dispatch]
+    ),
+
     deleteArticle: useCallback((id: string) => dispatch(deleteArticleThunk(id)), [dispatch]),
-    
+
     setCategory: useCallback((category: string) => dispatch(setCategory(category)), [dispatch]),
     setSortOrder: useCallback((order: 'Ascending' | 'Descending') => dispatch(setSortOrder(order)), [dispatch]),
     setSearchTerm: useCallback((term: string) => dispatch(setSearchTerm(term)), [dispatch]),
@@ -133,22 +140,20 @@ export const useUI = () => {
   return {
     // State
     ...uiState,
-    
+
     // Actions
     setTheme: (theme: 'light' | 'dark') => dispatch(setTheme(theme)),
     toggleTheme: () => dispatch(toggleTheme()),
     setGlobalLoading: (loading: boolean) => dispatch(setGlobalLoading(loading)),
-    
-    openModal: (id: string, title?: string, content?: any) =>
-      dispatch(openModal({ id, isOpen: true, title, content })),
-    
+
+    openModal: (id: string, title?: string, content?: any) => dispatch(openModal({ id, isOpen: true, title, content })),
+
     closeModal: (id: string) => dispatch(closeModal(id)),
-    
-    setBreadcrumbs: (breadcrumbs: Array<{ title: string; path?: string }>) =>
-      dispatch(setBreadcrumbs(breadcrumbs)),
-    
+
+    setBreadcrumbs: (breadcrumbs: Array<{ title: string; path?: string }>) => dispatch(setBreadcrumbs(breadcrumbs)),
+
     updatePreferences: (preferences: any) => dispatch(updatePreferences(preferences)),
-    
+
     setSidebarCollapsed: (collapsed: boolean) => dispatch(setSidebarCollapsed(collapsed)),
   };
 };
@@ -176,14 +181,12 @@ export const useCache = () => {
   return {
     // State
     ...cacheState,
-    
+
     // Actions
-    cacheData: (key: string, data: any, expiresIn?: number) =>
-      dispatch(setCacheEntry({ key, data, expiresIn })),
-    
-    addToQueue: (action: string, data: any) =>
-      dispatch(addToOfflineQueue({ action, data })),
-    
+    cacheData: (key: string, data: any, expiresIn?: number) => dispatch(setCacheEntry({ key, data, expiresIn })),
+
+    addToQueue: (action: string, data: any) => dispatch(addToOfflineQueue({ action, data })),
+
     setOnline: useCallback((isOnline: boolean) => dispatch(setOnlineStatus(isOnline)), [dispatch]),
     resetSession: useCallback(() => dispatch(resetSessionState()), [dispatch]),
     setSyncing: useCallback((syncing: boolean) => dispatch(setSyncing(syncing)), [dispatch]),
@@ -203,12 +206,12 @@ export const useAuth = () => {
   return {
     // State
     ...authState,
-    
+
     // Computed values
     isAuthenticated: !!authState.user,
     userDisplayName: authState.user?.displayName || authState.user?.email || 'User',
     hasVerifiedEmail: authState.user?.emailVerified || false,
-    
+
     // Actions
     refreshFirestoreUser: useCallback((uid: string) => dispatch(refreshFirestoreUser(uid)), [dispatch]),
   };
@@ -226,10 +229,10 @@ export const useAppState = () => {
     ui,
     cache,
     auth,
-    
+
     // Global computed state
     isLoading: articles.loading || ui.globalLoading || cache.isSyncing,
     hasErrors: !!articles.error || cache.syncErrors.length > 0,
     isOffline: !cache.isOnline,
   };
-}; 
+};

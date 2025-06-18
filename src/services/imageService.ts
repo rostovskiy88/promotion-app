@@ -15,7 +15,7 @@ export interface ImageUploadOptions {
  * Validates image file type and size
  */
 export const validateImageFile = (
-  file: File, 
+  file: File,
   options: ImageUploadOptions = {}
 ): { isValid: boolean; error?: string } => {
   const { maxSize = MAX_FILE_SIZE, allowedTypes = ALLOWED_IMAGE_TYPES } = options;
@@ -24,7 +24,7 @@ export const validateImageFile = (
   if (!allowedTypes.includes(file.type)) {
     return {
       isValid: false,
-      error: 'Only JPG and PNG files are allowed'
+      error: 'Only JPG and PNG files are allowed',
     };
   }
 
@@ -32,7 +32,7 @@ export const validateImageFile = (
   if (file.size > maxSize) {
     return {
       isValid: false,
-      error: `File size must be less than ${maxSize / (1024 * 1024)}MB`
+      error: `File size must be less than ${maxSize / (1024 * 1024)}MB`,
     };
   }
 
@@ -42,13 +42,13 @@ export const validateImageFile = (
 /**
  * Uploads an image to Firebase Storage
  */
-export const uploadImage = async (
-  file: File,
-  path: string,
-  options: ImageUploadOptions = {}
-): Promise<string> => {
-  console.log('Starting image upload:', { fileName: file.name, path, fileSize: file.size });
-  
+export const uploadImage = async (file: File, path: string, options: ImageUploadOptions = {}): Promise<string> => {
+  console.log('Starting image upload:', {
+    fileName: file.name,
+    path,
+    fileSize: file.size,
+  });
+
   // Validate the file first
   const validation = validateImageFile(file, options);
   if (!validation.isValid) {
@@ -60,25 +60,25 @@ export const uploadImage = async (
     // Create a reference to the file location
     const imageRef = ref(storage, path);
     console.log('Created storage reference:', path);
-    
+
     // Upload the file
     console.log('Starting upload to Firebase Storage...');
     const snapshot = await uploadBytes(imageRef, file);
     console.log('Upload completed successfully:', snapshot.metadata.fullPath);
-    
+
     // Get the download URL
     console.log('Getting download URL...');
     const downloadURL = await getDownloadURL(snapshot.ref);
     console.log('Download URL obtained:', downloadURL);
-    
+
     return downloadURL;
   } catch (error: any) {
     console.error('Error uploading image:', {
       error: error.message,
       code: error.code,
-      details: error
+      details: error,
     });
-    
+
     // Handle specific Firebase errors
     if (error.code === 'storage/unauthorized') {
       throw new Error('Not authorized to upload images. Please check your permissions.');
@@ -112,14 +112,10 @@ export const deleteImage = async (imageUrl: string): Promise<void> => {
 /**
  * Generates a unique filename for an image
  */
-export const generateImagePath = (
-  userId: string,
-  originalFileName: string,
-  folder: string = 'articles'
-): string => {
+export const generateImagePath = (userId: string, originalFileName: string, folder: string = 'articles'): string => {
   const timestamp = Date.now();
   const cleanFileName = originalFileName.replace(/[^a-zA-Z0-9.]/g, '_');
   const path = `${folder}/${userId}/${timestamp}_${cleanFileName}`;
   console.log('Generated image path:', path);
   return path;
-}; 
+};

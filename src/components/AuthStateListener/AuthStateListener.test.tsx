@@ -56,7 +56,7 @@ describe('AuthStateListener Component', () => {
     jest.clearAllMocks();
     mockStore = createMockStore();
     mockUnsubscribe = jest.fn();
-    
+
     // Mock onAuthStateChanged to return unsubscribe function
     mockOnAuthStateChanged.mockImplementation((_auth, callback) => {
       // Store the callback for manual triggering in tests
@@ -65,8 +65,14 @@ describe('AuthStateListener Component', () => {
     });
 
     // Mock Redux action creators to return action objects
-    mockSetUser.mockImplementation((payload) => ({ type: 'auth/setUser', payload }));
-    mockSetFirestoreUser.mockImplementation((payload) => ({ type: 'auth/setFirestoreUser', payload }));
+    mockSetUser.mockImplementation(payload => ({
+      type: 'auth/setUser',
+      payload,
+    }));
+    mockSetFirestoreUser.mockImplementation(payload => ({
+      type: 'auth/setFirestoreUser',
+      payload,
+    }));
   });
 
   const renderComponent = () => {
@@ -80,7 +86,7 @@ describe('AuthStateListener Component', () => {
   describe('Component Lifecycle', () => {
     it('renders without crashing and returns null', () => {
       const { container } = renderComponent();
-      
+
       // Component should render nothing (returns null)
       expect(container.firstChild).toBeNull();
     });
@@ -167,8 +173,8 @@ describe('AuthStateListener Component', () => {
       const callback = (mockOnAuthStateChanged as any).lastCallback;
       callback(mockUser);
 
-      const dispatchCall = dispatchSpy.mock.calls.find(call => 
-        call[0].type === 'auth/setUser' && call[0].payload !== null
+      const dispatchCall = dispatchSpy.mock.calls.find(
+        call => call[0].type === 'auth/setUser' && call[0].payload !== null
       );
 
       expect(dispatchCall).toBeDefined();
@@ -208,8 +214,8 @@ describe('AuthStateListener Component', () => {
       const callback = (mockOnAuthStateChanged as any).lastCallback;
       callback(mockUser);
 
-      const dispatchCall = dispatchSpy.mock.calls.find(call => 
-        call[0].type === 'auth/setUser' && call[0].payload !== null
+      const dispatchCall = dispatchSpy.mock.calls.find(
+        call => call[0].type === 'auth/setUser' && call[0].payload !== null
       );
 
       expect(dispatchCall).toBeDefined();
@@ -253,8 +259,8 @@ describe('AuthStateListener Component', () => {
       const callback = (mockOnAuthStateChanged as any).lastCallback;
       callback(mockUser);
 
-      const dispatchCall = dispatchSpy.mock.calls.find(call => 
-        call[0].type === 'auth/setUser' && call[0].payload !== null
+      const dispatchCall = dispatchSpy.mock.calls.find(
+        call => call[0].type === 'auth/setUser' && call[0].payload !== null
       );
 
       expect(dispatchCall).toBeDefined();
@@ -307,11 +313,17 @@ describe('AuthStateListener Component', () => {
       });
 
       // Login again with different user
-      const newUser = createMockUser({ uid: 'new-uid-456', email: 'new@example.com' });
+      const newUser = createMockUser({
+        uid: 'new-uid-456',
+        email: 'new@example.com',
+      });
       callback(newUser);
       expect(dispatchSpy).toHaveBeenCalledWith({
         type: 'auth/setUser',
-        payload: expect.objectContaining({ uid: 'new-uid-456', email: 'new@example.com' }),
+        payload: expect.objectContaining({
+          uid: 'new-uid-456',
+          email: 'new@example.com',
+        }),
       });
     });
   });
@@ -352,13 +364,13 @@ describe('AuthStateListener Component', () => {
       renderComponent();
 
       const callback = (mockOnAuthStateChanged as any).lastCallback;
-      
+
       // Should not throw and handle gracefully
       expect(() => callback(incompleteUser)).not.toThrow();
-      
+
       expect(dispatchSpy).toHaveBeenCalledWith({
         type: 'auth/setUser',
-        payload: expect.objectContaining({ 
+        payload: expect.objectContaining({
           uid: 'incomplete-uid',
           email: null,
           displayName: null,
@@ -366,9 +378,9 @@ describe('AuthStateListener Component', () => {
           emailVerified: false,
           phoneNumber: null,
           isAnonymous: true,
-          providerData: []
+          providerData: [],
         }),
       });
     });
   });
-}); 
+});

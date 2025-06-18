@@ -61,53 +61,44 @@ const Login = () => {
           <h1 className={styles.title}>👋 Welcome back!</h1>
           <p className={styles.subtitle}>Please enter your details to sign in</p>
 
-          <Form
-            name="login"
-            onFinish={onFinish}
-            layout="vertical"
-            className={styles.form}
-            validateTrigger="onBlur"
-          >
+          <Form name='login' onFinish={onFinish} layout='vertical' className={styles.form} validateTrigger='onBlur'>
             <Form.Item
-              name="email"
-              label="Email"
+              name='email'
+              label='Email'
               required
               rules={[
                 { required: true, message: 'Please enter your email address' },
-                { type: 'email', message: 'Please enter a valid email address' }
+                {
+                  type: 'email',
+                  message: 'Please enter a valid email address',
+                },
               ]}
-              validateTrigger="onBlur"
+              validateTrigger='onBlur'
             >
-              <Input 
-                placeholder="Enter your email" 
-                data-testid="email-input"
-              />
+              <Input placeholder='Enter your email' data-testid='email-input' />
             </Form.Item>
 
             <Form.Item
-              name="password"
-              label="Password"
+              name='password'
+              label='Password'
               required
               rules={[{ required: true, message: 'Please enter your password' }]}
-              validateTrigger="onBlur"
+              validateTrigger='onBlur'
             >
-              <Input.Password
-                placeholder="Enter your password"
-                data-testid="password-input"
-              />
+              <Input.Password placeholder='Enter your password' data-testid='password-input' />
             </Form.Item>
 
             <div className={styles.forgotPassword}>
-              <Link to="/forgot-password">Forgot password?</Link>
+              <Link to='/forgot-password'>Forgot password?</Link>
             </div>
 
             <Button
-              type="primary"
-              htmlType="submit"
+              type='primary'
+              htmlType='submit'
               loading={loading}
               className={styles.submitButton}
-              size="large"
-              data-testid="login-button"
+              size='large'
+              data-testid='login-button'
             >
               Sign in
             </Button>
@@ -117,20 +108,12 @@ const Login = () => {
             </div>
 
             <div className={styles.socialButtons}>
-              <Button 
-                className={styles.socialButton} 
-                onClick={handleGoogleLogin}
-                loading={loading}
-              >
+              <Button className={styles.socialButton} onClick={handleGoogleLogin} loading={loading}>
                 <div className={styles.googleIcon}>
                   <GoogleIcon size={20} />
                 </div>
               </Button>
-              <Button 
-                className={styles.socialButton}
-                onClick={handleFacebookLogin}
-                loading={loading}
-              >
+              <Button className={styles.socialButton} onClick={handleFacebookLogin} loading={loading}>
                 <div className={styles.facebookIcon}>
                   <FacebookIcon size={20} />
                 </div>
@@ -138,8 +121,8 @@ const Login = () => {
             </div>
 
             <div className={styles.signUpText}>
-              Don't have an account? 
-              <Link to="/register">Sign up</Link>
+              Don't have an account?
+              <Link to='/register'>Sign up</Link>
             </div>
           </Form>
         </div>
@@ -148,4 +131,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

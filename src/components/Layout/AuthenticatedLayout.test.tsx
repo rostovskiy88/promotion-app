@@ -193,4 +193,4 @@ describe('AuthenticatedLayout Component', () => {
       expect(screen.getByRole('main')).toBeInTheDocument();
     });
   });
-}); 
+});

@@ -6,12 +6,12 @@ jest.mock('./WeatherWidget', () => {
   return {
     default: function WeatherWidget() {
       return (
-        <div className="ant-card">
+        <div className='ant-card'>
           <h3>Weather</h3>
           <div>Weather widget placeholder</div>
         </div>
       );
-    }
+    },
   };
 });
 
@@ -41,4 +41,4 @@ describe('WeatherWidget Component', () => {
     const card = document.querySelector('.ant-card');
     expect(card).toBeInTheDocument();
   });
-}); 
+});

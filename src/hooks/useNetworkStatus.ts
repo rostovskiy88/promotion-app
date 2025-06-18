@@ -44,4 +44,4 @@ export const useNetworkStatus = () => {
       hasQueuedItems: false,
     };
   }
-}; 
+};

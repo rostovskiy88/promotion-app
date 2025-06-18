@@ -12,4 +12,4 @@ export interface Article {
   authorAvatar: string;
   readMoreUrl?: string;
   // add other fields as needed
-} 
+}

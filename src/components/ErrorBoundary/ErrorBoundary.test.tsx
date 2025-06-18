@@ -43,7 +43,7 @@ describe('ErrorBoundary Component', () => {
   describe('Normal Operation', () => {
     it('renders children when there is no error', () => {
       renderErrorBoundary(false);
-      
+
       expect(screen.getByText('No error')).toBeInTheDocument();
       expect(screen.queryByText('Oops! Something went wrong')).not.toBeInTheDocument();
     });
@@ -52,14 +52,14 @@ describe('ErrorBoundary Component', () => {
   describe('Error State', () => {
     it('renders error UI when child component throws', () => {
       renderErrorBoundary(true);
-      
+
       expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
       expect(screen.queryByText('No error')).not.toBeInTheDocument();
     });
 
     it('displays error message and description', () => {
       renderErrorBoundary(true);
-      
+
       expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
       expect(screen.getByText(/We encountered an unexpected error/)).toBeInTheDocument();
       expect(screen.getByText(/This has been logged and our team will look into it/)).toBeInTheDocument();
@@ -68,28 +68,30 @@ describe('ErrorBoundary Component', () => {
 
     it('shows reload page button', () => {
       renderErrorBoundary(true);
-      
+
       const reloadButton = screen.getByRole('button', { name: /reload page/i });
       expect(reloadButton).toBeInTheDocument();
     });
 
     it('shows go to dashboard button', () => {
       renderErrorBoundary(true);
-      
-      const dashboardButton = screen.getByRole('button', { name: /go to dashboard/i });
+
+      const dashboardButton = screen.getByRole('button', {
+        name: /go to dashboard/i,
+      });
       expect(dashboardButton).toBeInTheDocument();
     });
 
     it('displays error illustration with bug icon', () => {
       renderErrorBoundary(true);
-      
+
       const errorIcon = document.querySelector('.error-icon-large');
       expect(errorIcon).toBeInTheDocument();
     });
 
     it('displays animated wave elements', () => {
       renderErrorBoundary(true);
-      
+
       const waves = document.querySelectorAll('.wave');
       expect(waves).toHaveLength(3);
       expect(document.querySelector('.wave1')).toBeInTheDocument();
@@ -101,10 +103,10 @@ describe('ErrorBoundary Component', () => {
   describe('User Actions', () => {
     it('reloads page when reload button is clicked', () => {
       renderErrorBoundary(true);
-      
+
       const reloadButton = screen.getByRole('button', { name: /reload page/i });
       fireEvent.click(reloadButton);
-      
+
       expect(mockReload).toHaveBeenCalledTimes(1);
     });
 
@@ -119,10 +121,12 @@ describe('ErrorBoundary Component', () => {
       });
 
       renderErrorBoundary(true);
-      
-      const dashboardButton = screen.getByRole('button', { name: /go to dashboard/i });
+
+      const dashboardButton = screen.getByRole('button', {
+        name: /go to dashboard/i,
+      });
       fireEvent.click(dashboardButton);
-      
+
       expect(window.location.href).toBe('/dashboard');
     });
   });
@@ -130,9 +134,9 @@ describe('ErrorBoundary Component', () => {
   describe('Error Information Logging', () => {
     it('logs error information to console', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      
+
       renderErrorBoundary(true);
-      
+
       expect(consoleSpy).toHaveBeenCalled();
     });
   });
@@ -140,30 +144,30 @@ describe('ErrorBoundary Component', () => {
   describe('CSS Classes and Styling', () => {
     it('applies correct container classes', () => {
       renderErrorBoundary(true);
-      
+
       const container = document.querySelector('.error-boundary-container');
       expect(container).toBeInTheDocument();
-      
+
       const content = document.querySelector('.error-boundary-content');
       expect(content).toBeInTheDocument();
     });
 
     it('applies correct button classes', () => {
       renderErrorBoundary(true);
-      
+
       const reloadButton = document.querySelector('.reload-button');
       const homeButton = document.querySelector('.home-button');
-      
+
       expect(reloadButton).toBeInTheDocument();
       expect(homeButton).toBeInTheDocument();
     });
 
     it('applies error illustration classes', () => {
       renderErrorBoundary(true);
-      
+
       const illustration = document.querySelector('.error-illustration');
       const errorWaves = document.querySelector('.error-waves');
-      
+
       expect(illustration).toBeInTheDocument();
       expect(errorWaves).toBeInTheDocument();
     });
@@ -172,17 +176,19 @@ describe('ErrorBoundary Component', () => {
   describe('Accessibility', () => {
     it('has proper button roles and labels', () => {
       renderErrorBoundary(true);
-      
+
       const reloadButton = screen.getByRole('button', { name: /reload page/i });
-      const dashboardButton = screen.getByRole('button', { name: /go to dashboard/i });
-      
+      const dashboardButton = screen.getByRole('button', {
+        name: /go to dashboard/i,
+      });
+
       expect(reloadButton).toBeInTheDocument();
       expect(dashboardButton).toBeInTheDocument();
     });
 
     it('has proper heading structure', () => {
       renderErrorBoundary(true);
-      
+
       // The title should be properly structured for screen readers
       expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
     });
@@ -191,12 +197,12 @@ describe('ErrorBoundary Component', () => {
   describe('Component Lifecycle', () => {
     it('catches errors in componentDidCatch', () => {
       const spy = jest.spyOn(ErrorBoundary.prototype, 'componentDidCatch');
-      
+
       renderErrorBoundary(true);
-      
+
       expect(spy).toHaveBeenCalled();
-      
+
       spy.mockRestore();
     });
   });
-}); 
+});

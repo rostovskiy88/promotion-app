@@ -23,7 +23,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to='/login' replace />,
   },
   {
     path: '/register',
@@ -99,4 +99,4 @@ export const router = createBrowserRouter([
     element: <NotFound />,
   },
   // Add more routes here
-]); 
+]);

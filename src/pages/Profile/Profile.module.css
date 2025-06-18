@@ -7,7 +7,7 @@
 
 .card {
   width: 500px;
-  box-shadow: 0 8px 32px 0 rgba(16,30,54,0.08);
+  box-shadow: 0 8px 32px 0 rgba(16, 30, 54, 0.08);
 }
 
 .header {
@@ -86,7 +86,8 @@
   border: 1.5px solid #d9d9d9;
   transition: border-color 0.2s;
 }
-.cancelButton:hover, .cancelButton:focus {
+.cancelButton:hover,
+.cancelButton:focus {
   border-color: #1557ff;
   color: #1557ff;
   background: #fff;
@@ -98,7 +99,8 @@
   border: none;
   transition: background 0.2s;
 }
-.saveButton:hover, .saveButton:focus {
+.saveButton:hover,
+.saveButton:focus {
   background: #003ecb;
   color: #fff;
 }
@@ -108,7 +110,7 @@
 }
 
 /* Dark mode support for inputs */
-[data-theme="dark"] .input {
+[data-theme='dark'] .input {
   background: var(--bg-secondary) !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
@@ -119,4 +121,4 @@
   margin-bottom: 16px;
   text-align: center;
   font-size: 15px;
-} 
+}

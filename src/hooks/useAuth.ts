@@ -8,6 +8,6 @@ export const useAuth = () => {
     isAuthenticated: !!user,
     user,
     loading,
-    error
+    error,
   };
-}; 
+};

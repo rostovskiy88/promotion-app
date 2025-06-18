@@ -11,7 +11,7 @@ class HttpClient {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
+        Pragma: 'no-cache',
       },
     });
 
@@ -21,17 +21,17 @@ class HttpClient {
   private setupInterceptors() {
     // Request interceptor with Redux integration
     this.client.interceptors.request.use(
-      (config) => {
+      config => {
         const startTime = Date.now();
         config.metadata = { startTime }; // Store start time for performance metrics
-        
+
         // Increment API calls counter in Redux
         store.dispatch(incrementApiCalls());
-        
+
         console.log(`🔄 [${config.method?.toUpperCase()}] ${config.url}`);
         return config;
       },
-      (error) => {
+      error => {
         console.error('❌ Request failed:', error);
         return Promise.reject(error);
       }
@@ -43,12 +43,12 @@ class HttpClient {
         const endTime = Date.now();
         const startTime = response.config.metadata?.startTime || endTime;
         const responseTime = endTime - startTime;
-        
+
         // Update performance metrics in Redux
         store.dispatch(updateResponseTime(responseTime));
-        
+
         console.log(`✅ [${response.status}] ${response.config.url} (${responseTime}ms)`);
-        
+
         // Auto-cache GET requests
         if (response.config.method === 'get' && response.config.url) {
           const cacheKey = this.generateCacheKey(response.config);
@@ -59,18 +59,21 @@ class HttpClient {
           };
           store.dispatch(setCacheEntry(cacheEntry));
         }
-        
+
         return response;
       },
-      (error) => {
+      error => {
         const endTime = Date.now();
         const startTime = error.config?.metadata?.startTime || endTime;
         const responseTime = endTime - startTime;
-        
+
         store.dispatch(updateResponseTime(responseTime));
-        
-        console.error(`❌ [${error.response?.status || 'NETWORK'}] ${error.config?.url} (${responseTime}ms)`, error.message);
-        
+
+        console.error(
+          `❌ [${error.response?.status || 'NETWORK'}] ${error.config?.url} (${responseTime}ms)`,
+          error.message
+        );
+
         // Handle different error types
         if (error.response?.status === 401) {
           console.error('🔒 Unauthorized request - redirecting to login');
@@ -78,7 +81,7 @@ class HttpClient {
         } else if (error.response?.status >= 500) {
           console.error('🔥 Server error');
         }
-        
+
         return Promise.reject(error);
       }
     );
@@ -93,11 +96,11 @@ class HttpClient {
   // Check cache before making request
   private async checkCache(config: AxiosRequestConfig): Promise<any | null> {
     if (config.method !== 'get') return null;
-    
+
     const cacheKey = this.generateCacheKey(config);
     const state = store.getState();
     const cacheEntry = state.cache.apiCache[cacheKey];
-    
+
     if (cacheEntry) {
       const now = Date.now();
       if (now - cacheEntry.timestamp < cacheEntry.expiresIn) {
@@ -105,20 +108,20 @@ class HttpClient {
         return cacheEntry.data;
       }
     }
-    
+
     return null;
   }
 
   // Enhanced request method with caching
   async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const requestConfig = { ...config, url, method: 'get' as const };
-    
+
     // Check cache first
     const cachedData = await this.checkCache(requestConfig);
     if (cachedData) {
       return cachedData;
     }
-    
+
     const response = await this.client.get<T>(url, config);
     return response.data;
   }
@@ -159,4 +162,4 @@ declare module 'axios' {
       startTime: number;
     };
   }
-} 
+}

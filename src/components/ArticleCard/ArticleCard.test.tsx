@@ -112,18 +112,18 @@ describe('ArticleCard Component', () => {
       // Wait for the modal to appear and click the "Yes" button
       // Try multiple selectors for the modal
       const modal = await waitFor(() => {
-        const modalElement = 
+        const modalElement =
           document.body.querySelector('.ant-modal') ||
           document.body.querySelector('.ant-modal-confirm') ||
           document.body.querySelector('[role="dialog"]') ||
           document.body.querySelector('.ant-modal-root');
-        
+
         if (!modalElement) {
           throw new Error('Modal not found');
         }
         return modalElement as HTMLElement;
       });
-      
+
       const yesButton = within(modal).getByText('Yes');
       fireEvent.click(yesButton);
 
@@ -136,7 +136,7 @@ describe('ArticleCard Component', () => {
       const readMoreButton = screen.getByText('Read more →');
 
       fireEvent.click(readMoreButton);
-      
+
       // The preventDefault should be called internally
       expect(mockNavigate).toHaveBeenCalledWith('/article/123');
     });
@@ -147,7 +147,7 @@ describe('ArticleCard Component', () => {
       renderComponent({ onEdit: undefined, onDelete: undefined });
 
       expect(screen.getByText('Test Article Title')).toBeInTheDocument();
-      
+
       // Menu should still be present but items might not function
       const menuButton = document.querySelector('.article-card-menu');
       expect(menuButton).toBeInTheDocument();
@@ -179,7 +179,8 @@ describe('ArticleCard Component', () => {
     });
 
     it('renders long description correctly', () => {
-      const longDescription = 'This is a very long description that contains a lot of text and might be truncated or styled differently in the actual card layout. It should still render properly in our tests.';
+      const longDescription =
+        'This is a very long description that contains a lot of text and might be truncated or styled differently in the actual card layout. It should still render properly in our tests.';
       renderComponent({ description: longDescription });
 
       expect(screen.getByText(longDescription)).toBeInTheDocument();
@@ -210,4 +211,4 @@ describe('ArticleCard Component', () => {
       expect(avatar).toBeInTheDocument();
     });
   });
-}); 
+});

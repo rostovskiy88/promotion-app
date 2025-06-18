@@ -7,7 +7,7 @@ import { useAuth } from './useRedux';
  */
 export const useUserDisplayInfo = () => {
   const auth = useAuth();
-  
+
   // Auto-fetch Firestore user data when auth user is available
   useEffect(() => {
     if (auth.user?.uid && !auth.firestoreUser) {
@@ -28,7 +28,7 @@ export const useUserDisplayInfo = () => {
   })();
 
   const avatarUrl = auth.firestoreUser?.avatarUrl || auth.user?.photoURL || '';
-  
+
   const email = auth.firestoreUser?.email || auth.user?.email || '';
 
   const refresh = async () => {
@@ -51,4 +51,4 @@ export const useUserDisplayInfo = () => {
     // Add refresh function to manually update user data
     refresh,
   };
-}; 
+};

@@ -144,12 +144,12 @@
 }
 
 /* Dark mode filter button styling */
-[data-theme="dark"] .filterButton {
+[data-theme='dark'] .filterButton {
   background-color: var(--bg-secondary);
   border-color: var(--border-color);
 }
 
-[data-theme="dark"] .filterButton span {
+[data-theme='dark'] .filterButton span {
   color: var(--text-secondary);
 }
 
@@ -158,18 +158,18 @@
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .widgetSection {
     width: 100%;
     order: -1;
   }
-  
+
   .rightSidebar {
     flex-direction: row;
     gap: 12px;
   }
-  
+
   .rightSidebar > * {
     flex: 1;
   }
-} 
+}

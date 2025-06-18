@@ -145,7 +145,7 @@ describe('EditProfile Component', () => {
     // Try to enter invalid age
     const ageInput = screen.getByPlaceholderText('Enter your age');
     fireEvent.change(ageInput, { target: { value: '-1' } });
-    
+
     // Submit the form
     fireEvent.click(screen.getByText('Save'));
 
@@ -154,4 +154,4 @@ describe('EditProfile Component', () => {
       expect(screen.getByText('Age must be a natural number')).toBeInTheDocument();
     });
   });
-}); 
+});

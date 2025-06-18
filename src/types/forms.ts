@@ -39,4 +39,4 @@ export interface AvatarFormData {
 
 export interface ForgotPasswordFormData {
   email: string;
-} 
+}

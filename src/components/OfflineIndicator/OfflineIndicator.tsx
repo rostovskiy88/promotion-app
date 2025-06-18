@@ -36,17 +36,15 @@ const OfflineIndicator: React.FC = () => {
               <Space>
                 <WifiOutlined style={{ color: '#ff4d4f' }} />
                 <span>You are currently offline</span>
-                {offlineQueue.length > 0 && (
-                  <Tag color="warning">{offlineQueue.length} actions queued</Tag>
-                )}
+                {offlineQueue.length > 0 && <Tag color='warning'>{offlineQueue.length} actions queued</Tag>}
               </Space>
             }
-            description="Some features may be limited. Your changes will sync when connection is restored."
-            type="warning"
+            description='Some features may be limited. Your changes will sync when connection is restored.'
+            type='warning'
             className={`${styles.alert} offline-notification`}
             showIcon={false}
-            role="alert"
-            aria-live="polite"
+            role='alert'
+            aria-live='polite'
           />
         )}
 
@@ -59,8 +57,8 @@ const OfflineIndicator: React.FC = () => {
                 <span>Syncing data...</span>
               </Space>
             }
-            description="Updating your content with the latest changes."
-            type="info"
+            description='Updating your content with the latest changes.'
+            type='info'
             className={styles.alert}
             showIcon={false}
           />
@@ -75,8 +73,8 @@ const OfflineIndicator: React.FC = () => {
                 <span>Connection restored</span>
               </Space>
             }
-            description="All features are now available."
-            type="success"
+            description='All features are now available.'
+            type='success'
             className={styles.alert}
             showIcon={false}
           />
@@ -92,11 +90,11 @@ const OfflineIndicator: React.FC = () => {
               </Space>
             }
             description={`${syncErrors.length} items failed to sync. Please try again.`}
-            type="error"
+            type='error'
             className={styles.alert}
             showIcon={false}
             action={
-              <Button size="small" type="text" danger>
+              <Button size='small' type='text' danger>
                 Retry
               </Button>
             }
@@ -109,8 +107,8 @@ const OfflineIndicator: React.FC = () => {
     // Return minimal offline indicator using browser API
     return navigator.onLine ? null : (
       <Alert
-        message="You are currently offline"
-        type="warning"
+        message='You are currently offline'
+        type='warning'
         showIcon={false}
         style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
       />
@@ -118,4 +116,4 @@ const OfflineIndicator: React.FC = () => {
   }
 };
 
-export default OfflineIndicator; 
+export default OfflineIndicator;

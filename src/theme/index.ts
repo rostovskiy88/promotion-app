@@ -16,11 +16,11 @@ export const theme: ThemeConfig = {
     // Typography
     fontFamily: 'Roboto, sans-serif',
     fontSize: 14,
-    
+
     // Borders
     borderRadius: 0,
     borderRadiusLG: 8,
-    
+
     // Spacing
     padding: 16,
     paddingLG: 24,
@@ -55,6 +55,6 @@ export const theme: ThemeConfig = {
     },
     Typography: {
       titleMarginBottom: 8,
-    }
+    },
   },
-}; 
+};

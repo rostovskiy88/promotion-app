@@ -37,35 +37,33 @@ const ForgotPassword: React.FC = () => {
 
           <Form
             form={form}
-            name="forgotPassword"
+            name='forgotPassword'
             onFinish={handleSubmit}
-            layout="vertical"
+            layout='vertical'
             className={styles.form}
-            validateTrigger="onBlur"
+            validateTrigger='onBlur'
           >
             <Form.Item
-              name="email"
-              label="Email"
+              name='email'
+              label='Email'
               rules={[
                 { required: true, message: 'Please enter your email address' },
-                { type: 'email', message: 'Please enter a valid email address' }
+                {
+                  type: 'email',
+                  message: 'Please enter a valid email address',
+                },
               ]}
-              validateTrigger="onBlur"
+              validateTrigger='onBlur'
             >
-              <Input size="large" placeholder="Enter your email" />
+              <Input size='large' placeholder='Enter your email' />
             </Form.Item>
 
-            <Button
-              type="primary"
-              htmlType="submit"
-              className={styles.submitButton}
-              size="large"
-            >
+            <Button type='primary' htmlType='submit' className={styles.submitButton} size='large'>
               Reset
             </Button>
 
             <div className={styles.backToLogin}>
-              Remember your password? <Link to="/login">Back to Login</Link>
+              Remember your password? <Link to='/login'>Back to Login</Link>
             </div>
           </Form>
         </div>
@@ -74,4 +72,4 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword; 
+export default ForgotPassword;

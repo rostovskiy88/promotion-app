@@ -24,21 +24,21 @@ const getInitialTheme = (): 'light' | 'dark' => {
 interface UIState {
   // Theme
   theme: 'light' | 'dark';
-  
+
   // Loading states
   globalLoading: boolean;
   loadingStates: Record<string, boolean>;
-  
+
   // Modals
   modals: Record<string, Modal>;
-  
+
   // Navigation
   sidebarCollapsed: boolean;
   breadcrumbs: Array<{ title: string; path?: string }>;
-  
+
   // Layout
   isMobile: boolean;
-  
+
   // Preferences
   preferences: {
     articlesPerPage: number;
@@ -76,67 +76,67 @@ const uiSlice = createSlice({
         localStorage.setItem('theme', action.payload);
       }
     },
-    
-    toggleTheme: (state) => {
+
+    toggleTheme: state => {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
       // Save to localStorage
       if (typeof window !== 'undefined') {
         localStorage.setItem('theme', state.theme);
       }
     },
-    
+
     // Loading states
     setGlobalLoading: (state, action: PayloadAction<boolean>) => {
       state.globalLoading = action.payload;
     },
-    
+
     setLoadingState: (state, action: PayloadAction<{ key: string; loading: boolean }>) => {
       state.loadingStates[action.payload.key] = action.payload.loading;
     },
-    
+
     clearLoadingState: (state, action: PayloadAction<string>) => {
       delete state.loadingStates[action.payload];
     },
-    
+
     // Modals
     openModal: (state, action: PayloadAction<Modal>) => {
       state.modals[action.payload.id] = { ...action.payload, isOpen: true };
     },
-    
+
     closeModal: (state, action: PayloadAction<string>) => {
       if (state.modals[action.payload]) {
         state.modals[action.payload].isOpen = false;
       }
     },
-    
+
     removeModal: (state, action: PayloadAction<string>) => {
       delete state.modals[action.payload];
     },
-    
+
     // Navigation
     setSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
       state.sidebarCollapsed = action.payload;
     },
-    
-    toggleSidebar: (state) => {
+
+    toggleSidebar: state => {
       state.sidebarCollapsed = !state.sidebarCollapsed;
     },
-    
+
     setBreadcrumbs: (state, action: PayloadAction<Array<{ title: string; path?: string }>>) => {
       state.breadcrumbs = action.payload;
     },
-    
+
     // Layout
     setIsMobile: (state, action: PayloadAction<boolean>) => {
       state.isMobile = action.payload;
     },
-    
+
     // Preferences
     updatePreferences: (state, action: PayloadAction<Partial<UIState['preferences']>>) => {
       state.preferences = { ...state.preferences, ...action.payload };
     },
-    
-    resetPreferences: (state) => {
+
+    resetPreferences: state => {
       state.preferences = initialState.preferences;
     },
   },
@@ -159,4 +159,4 @@ export const {
   resetPreferences,
 } = uiSlice.actions;
 
-export default uiSlice.reducer; 
+export default uiSlice.reducer;
