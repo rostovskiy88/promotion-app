@@ -1,6 +1,6 @@
 import { MoreOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Modal, Typography } from 'antd';
-import React from 'react';
+import { Avatar, Dropdown, Modal, Skeleton, Typography } from 'antd';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ArticleCard.css';
 
@@ -34,6 +34,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   onDelete,
 }) => {
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Add confirmation before delete
   const handleDelete = () => {
@@ -73,7 +74,35 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
   return (
     <div className='article-card' data-testid='article-card'>
-      <div className='article-card-image' style={{ backgroundImage: `url(${imageUrl})` }}>
+      <div className='article-card-image' style={{ position: 'relative', background: '#f7f8fa' }}>
+        {!imageLoaded && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#f7f8fa',
+              zIndex: 1,
+            }}
+          >
+            <Skeleton.Image style={{ width: '100%', height: '100%', minHeight: 240, borderRadius: 0 }} active />
+          </div>
+        )}
+        <img
+          src={imageUrl}
+          alt={title}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: imageLoaded ? 'block' : 'none',
+            borderRadius: 'inherit',
+          }}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageLoaded(true)}
+        />
         <div className='article-dropdown-wrapper'>
           <Dropdown menu={menu} trigger={['click']} placement='bottomRight'>
             <MoreOutlined className='article-card-menu' />
