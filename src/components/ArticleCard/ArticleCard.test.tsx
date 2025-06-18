@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { App } from 'antd';
+import { BrowserRouter } from 'react-router-dom';
 import ArticleCard, { ArticleCardProps } from './ArticleCard';
 
 // Mock useNavigate
@@ -17,6 +17,7 @@ const defaultProps: ArticleCardProps = {
   description: 'This is a test description for the article card component.',
   authorName: 'John Doe',
   authorAvatar: 'https://example.com/avatar.jpg',
+  authorId: 'test-author-id',
   readMoreUrl: '/article/123',
   imageUrl: 'https://example.com/image.jpg',
 };

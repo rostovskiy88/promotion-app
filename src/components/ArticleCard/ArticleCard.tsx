@@ -27,7 +27,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   description,
   authorName,
   authorAvatar,
-  authorId,
+  authorId: _authorId,
   readMoreUrl,
   imageUrl,
   onEdit,
