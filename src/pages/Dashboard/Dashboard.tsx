@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Select, Pagination, Spin } from 'antd';
 import { UpOutlined } from '@ant-design/icons';
-import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
-import NoArticles from '../../components/NoArticles/NoArticles';
-import ArticleCard from '../../components/ArticleCard/ArticleCard';
+import { Button, Pagination, Select, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import ArticleCard from '../../components/ArticleCard/ArticleCard';
+import NoArticles from '../../components/NoArticles/NoArticles';
+import WeatherWidget from '../../components/WeatherWidget/WeatherWidget';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
-import styles from './Dashboard.module.css';
-import { formatArticleDate } from '../../utils/formatArticleDate';
-import { addSampleArticles } from '../../utils/addSampleArticles';
 import { useArticles, useUI } from '../../hooks/useRedux';
 import { Article } from '../../types/article';
+import { addSampleArticles } from '../../utils/addSampleArticles';
+import { formatArticleDate } from '../../utils/formatArticleDate';
+import styles from './Dashboard.module.css';
 
 const { Option } = Select;
 
@@ -20,7 +19,6 @@ const sortOptions = ['Ascending', 'Descending'];
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const userDisplayInfo = useUserDisplayInfo();
   const [isAtTop, setIsAtTop] = useState(true);
 
   // 🔥 NOW USING REDUX WITH LAZY LOADING!
@@ -315,8 +313,8 @@ const Dashboard: React.FC = () => {
                   )}
                   title={article.title}
                   description={article.content ?? ''}
-                  authorName={userDisplayInfo.displayName || 'Anonymous'}
-                  authorAvatar={userDisplayInfo.avatarUrl}
+                  authorName={article.authorName || 'Anonymous'}
+                  authorAvatar={article.authorAvatar || '/default-avatar.png'}
                   readMoreUrl={`/dashboard/article/${article.id}`}
                   imageUrl={
                     typeof article.imageUrl === 'string' ? article.imageUrl : 'https://via.placeholder.com/400x200'
