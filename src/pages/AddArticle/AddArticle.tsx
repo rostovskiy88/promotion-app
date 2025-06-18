@@ -1,12 +1,13 @@
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { App as AntdApp, Button, Card, Col, Form, Input, Select, Upload } from 'antd';
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, Upload, Col, Select, App as AntdApp } from 'antd';
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
-import { addArticle } from '../../services/articleService';
-import { uploadImage, validateImageFile, generateImagePath } from '../../services/imageService';
-import styles from './AddArticle.module.css';
 import { useAuth } from '../../hooks/useRedux';
+import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import { addArticle } from '../../services/articleService';
+import { generateImagePath, uploadImage, validateImageFile } from '../../services/imageService';
+import styles from './AddArticle.module.css';
 
 const categories = ['Productivity', 'Media', 'Business'];
 
@@ -24,6 +25,7 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
   const navigate = useNavigate();
   const { user } = useAuth();
+  const userDisplayInfo = useUserDisplayInfo();
   const { message } = AntdApp.useApp();
 
   const handleFinish = async (values: ArticleFormValues) => {
@@ -60,9 +62,9 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
         title: values.title,
         content: values.content,
         category: values.category,
-        authorName: user.displayName || user.email || 'Unknown',
+        authorName: userDisplayInfo.displayName || 'Unknown',
         authorId: user.uid,
-        authorAvatar: user.photoURL || '',
+        authorAvatar: userDisplayInfo.avatarUrl || '',
         imageUrl,
       });
 

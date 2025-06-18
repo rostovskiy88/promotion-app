@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Upload, message, Slider, Space } from 'antd';
-import { UploadOutlined, RotateLeftOutlined, RotateRightOutlined } from '@ant-design/icons';
+import { RotateLeftOutlined, RotateRightOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, message, Modal, Slider, Space, Upload } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import AvatarEditor from 'react-avatar-editor';
-import { validateAvatarFile, uploadAvatar } from '../../services/avatarService';
+import { uploadAvatar, validateAvatarFile } from '../../services/avatarService';
 import './AvatarUpload.css';
 
 interface AvatarUploadProps {
