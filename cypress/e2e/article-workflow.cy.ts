@@ -6,6 +6,8 @@ describe('Article Management', () => {
   beforeEach(() => {
     // Visit the app
     cy.visit('http://localhost:5173');
+    // Ensure the page is fully loaded
+    cy.get('body').should('be.visible');
   });
 
   it('should complete full article workflow', () => {

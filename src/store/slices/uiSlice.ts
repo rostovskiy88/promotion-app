@@ -9,23 +9,19 @@ interface Modal {
   onCancel?: () => void;
 }
 
-// Function to get initial theme from localStorage
 const getInitialTheme = (): 'light' | 'dark' => {
   if (typeof window !== 'undefined') {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     if (savedTheme) {
       return savedTheme;
     }
-    // Default to light theme for new users (don't check system preference)
   }
   return 'light';
 };
 
 interface UIState {
-  // Theme
   theme: 'light' | 'dark';
 
-  // Loading states
   globalLoading: boolean;
   loadingStates: Record<string, boolean>;
 
