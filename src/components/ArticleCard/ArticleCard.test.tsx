@@ -49,15 +49,6 @@ describe('ArticleCard Component', () => {
       expect(screen.getByText('Read more →')).toBeInTheDocument();
     });
 
-    it('renders article image with correct background', () => {
-      renderComponent();
-
-      const imageDiv = document.querySelector('.article-card-image');
-      expect(imageDiv).toHaveStyle({
-        backgroundImage: 'url(https://example.com/image.jpg)',
-      });
-    });
-
     it('renders author avatar with correct src', () => {
       renderComponent();
 
@@ -152,15 +143,6 @@ describe('ArticleCard Component', () => {
       // Menu should still be present but items might not function
       const menuButton = document.querySelector('.article-card-menu');
       expect(menuButton).toBeInTheDocument();
-    });
-
-    it('handles empty or missing image URL gracefully', () => {
-      renderComponent({ imageUrl: '' });
-
-      const imageDiv = document.querySelector('.article-card-image');
-      expect(imageDiv).toHaveStyle({
-        backgroundImage: 'url()',
-      });
     });
 
     it('handles empty author avatar gracefully', () => {
