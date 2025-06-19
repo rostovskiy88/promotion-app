@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Form, Input, Button, Upload, Col, Select, message, Spin, Progress } from 'antd';
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Form, Input, message, Progress, Select, Spin, Upload } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 import { getArticleById, updateArticle } from '../../services/articleService';
-import { uploadImage, validateImageFile, generateImagePath } from '../../services/imageService';
+import { generateImagePath, uploadImage, validateImageFile } from '../../services/imageService';
 import { Article } from '../../types/article';
 import styles from '../AddArticle/AddArticle.module.css';
 
@@ -35,13 +35,11 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
         const articleData = await getArticleById(id);
         if (articleData) {
           setArticle(articleData);
-          // Prefill the form with existing data
           form.setFieldsValue({
             title: articleData.title,
             text: articleData.content,
             category: articleData.category,
           });
-          // Set current image preview
           if (articleData.imageUrl && typeof articleData.imageUrl === 'string') {
             setImagePreview(articleData.imageUrl);
           }
@@ -67,7 +65,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
       return;
     }
 
-    // Validate required form values
     if (!values.title || !values.text || !values.category) {
       message.error('Please fill in all required fields');
       return;
@@ -91,7 +88,7 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
         } catch (error: any) {
           console.error('Image upload failed:', error);
           message.error(`Failed to upload image: ${error.message}`);
-          return; // Don't proceed with article update if image upload fails
+          return;
         } finally {
           setIsUploading(false);
         }
@@ -105,7 +102,7 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
       message.error(`Failed to update article: ${error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
-      setIsUploading(false); // Ensure uploading state is reset
+      setIsUploading(false);
     }
   };
 
@@ -122,7 +119,7 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     setImagePreview(previewUrl);
 
     message.success(`${file.name} selected successfully`);
-    return false; // Prevent auto upload
+    return false;
   };
 
   const handleRemoveImage = () => {
@@ -147,7 +144,7 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   }
 
   if (!article) {
-    return null; // Will be redirected
+    return null;
   }
 
   return (

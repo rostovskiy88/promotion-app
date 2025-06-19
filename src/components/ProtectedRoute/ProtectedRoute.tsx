@@ -1,7 +1,8 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
 import { Spin } from 'antd';
+import { useSelector } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
+import { RootState } from '../../store';
+import { AuthState } from '../../store/slices/authSlice';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
-  const { user, loading } = useSelector((state: RootState) => state.auth);
+  const { user, loading } = useSelector((state: RootState) => state.auth as AuthState);
 
   // Show loading spinner while checking auth state
   if (loading) {

@@ -40,7 +40,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ visible, onCancel, onSucces
     }
 
     setImage(file);
-    return false; // Prevent auto upload
+    return false;
   };
 
   const handleSave = async () => {
@@ -51,7 +51,6 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ visible, onCancel, onSucces
 
     setUploading(true);
     try {
-      // Get the cropped image as canvas
       const canvas = editorRef.current.getImageScaledToCanvas();
 
       const avatarUrl = await uploadAvatar(canvas, userId);

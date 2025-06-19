@@ -80,9 +80,8 @@ const Dashboard: React.FC = () => {
     }
   }, [selectedCategory, sortOrder]);
 
-  // Set up infinite scrolling for main articles view
   useInfiniteScroll({
-    hasMore: hasMore && !searchTerm.trim(), // Only for main view, not search
+    hasMore: hasMore && !searchTerm.trim(),
     loading: loadingMore,
     onLoadMore: () => {
       if (!searchTerm.trim()) {

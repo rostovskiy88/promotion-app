@@ -1,12 +1,12 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { User } from 'firebase/auth';
 import { authService } from '../../services/auth';
-import { SerializedUser } from '../../types/auth';
 import { createOrGetUser, getUserById } from '../../services/userService';
-import { getAuthErrorMessage } from '../../utils/authErrors';
+import { SerializedUser } from '../../types/auth';
 import { FirestoreUser } from '../../types/user';
+import { getAuthErrorMessage } from '../../utils/authErrors';
 
-interface AuthState {
+export interface AuthState {
   user: SerializedUser | null;
   firestoreUser: FirestoreUser | null;
   loading: boolean;

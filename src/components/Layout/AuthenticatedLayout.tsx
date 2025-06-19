@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Layout, Menu, Input, Button, Avatar, Dropdown, Switch } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
 import {
+  BulbOutlined,
+  CloseOutlined,
   DashboardOutlined,
   FileTextOutlined,
-  UserOutlined,
   LogoutOutlined,
   SearchOutlined,
-  CloseOutlined,
-  BulbOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { logout } from '../../services/authService';
+import { Avatar, Button, Dropdown, Input, Layout, Menu, Switch } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useArticles, useUI } from '../../hooks/useRedux';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
-import { useUI, useArticles } from '../../hooks/useRedux';
+import { logout } from '../../services/authService';
 import Logo from '../Logo/Logo';
 import styles from './AuthenticatedLayout.module.css';
 
@@ -29,17 +29,14 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 
   const userDisplayInfo = useUserDisplayInfo();
 
-  // Redux hooks
   const { theme, globalLoading, sidebarCollapsed, toggleTheme, setSidebarCollapsed } = useUI();
 
   const { setSearchTerm: setReduxSearchTerm, clearSearch: clearReduxSearch } = useArticles();
 
-  // Apply theme to document body
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // Sync Redux sidebar state with local state
   useEffect(() => {
     setCollapsed(sidebarCollapsed);
   }, [sidebarCollapsed]);
@@ -49,7 +46,6 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     setSidebarCollapsed(collapsed);
   };
 
-  // Debounced search - updates Redux
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setReduxSearchTerm(value);
@@ -65,7 +61,6 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     };
   }, [inputValue, debouncedSearch]);
 
-  // Clear search when navigating away from dashboard
   useEffect(() => {
     if (!location.pathname.includes('/dashboard')) {
       clearReduxSearch();
@@ -85,10 +80,8 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const handleLogout = async () => {
     try {
       await logout();
-      // Navigation is handled by the logout function
     } catch (error) {
       console.error('Logout failed:', error);
-      // Fallback - force redirect even if logout fails
       window.location.href = '/login';
     }
   };
@@ -194,7 +187,6 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           </div>
 
           <div className={styles.headerRight}>
-            {/* Global Loading Indicator */}
             {globalLoading && <div style={{ marginRight: '16px', color: '#1890ff' }}>Loading...</div>}
 
             <Dropdown menu={userMenu} placement='bottomRight' trigger={['click']}>

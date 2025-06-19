@@ -48,7 +48,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
           message.warning('Article created without image due to upload error');
         }
       }
-      // Set default image if none provided
       if (!imageUrl) {
         imageUrl = '/default-article-cover.png';
       }
@@ -74,7 +73,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   };
 
   const handleFileSelect = (file: File) => {
-    // Validate the file
     const validation = validateImageFile(file);
     if (!validation.isValid) {
       message.error(validation.error);
@@ -83,12 +81,11 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
     setImageFile(file);
 
-    // Create preview URL
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
 
     message.success(`${file.name} selected successfully`);
-    return false; // Prevent auto upload
+    return false;
   };
 
   const handleRemoveImage = () => {
@@ -99,7 +96,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const customRequest = ({ onSuccess }: any) => {
-    // For Ant Design Upload component - just call onSuccess immediately
     setTimeout(() => {
       onSuccess?.();
     }, 0);
@@ -152,7 +148,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
             </div>
 
             <Form.Item>
-              {/* Image Preview */}
               {imagePreview && (
                 <div style={{ marginBottom: '16px' }}>
                   <img
