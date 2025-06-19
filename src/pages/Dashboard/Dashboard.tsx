@@ -93,18 +93,17 @@ const Dashboard: React.FC = () => {
   });
 
   useEffect(() => {
-    // Handle errors with Redux UI (just clear them for now)
     if (error) {
       clearError();
     }
   }, [error, clearError]);
 
   const handleCategoryChange = (category: string) => {
-    setCategory(category); // This will trigger the useEffect above
+    setCategory(category);
   };
 
   const handleSortChange = (sort: 'Ascending' | 'Descending') => {
-    setSortOrder(sort); // This will trigger the useEffect above
+    setSortOrder(sort);
   };
 
   const handleEdit = (articleId: string) => {
@@ -126,7 +125,6 @@ const Dashboard: React.FC = () => {
     try {
       setGlobalLoading(true);
       await addSampleArticles();
-      // Reset and refetch articles after adding samples
       fetchArticles(selectedCategory, sortOrder, true);
     } catch (error) {
       console.error('Failed to add sample articles:', error);
@@ -160,7 +158,6 @@ const Dashboard: React.FC = () => {
       );
     }
 
-    // For main articles view (infinite scroll)
     const totalLoaded = articles.length;
     if (totalLoaded > 0) {
       return (
@@ -176,21 +173,18 @@ const Dashboard: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setPage(page);
-    // Scroll to top of articles section when page changes (search results only)
     document.querySelector(`.${styles.articlesSection}`)?.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     });
   };
 
-  // Determine which articles to show
   const articlesToDisplay = searchTerm.trim() ? currentPageSearchArticles : articles;
   useEffect(() => {
-    console.log('[Dashboard] Articles to display:', articlesToDisplay);
   }, [articlesToDisplay]);
   const isSearchMode = searchTerm.trim();
   const showPagination = isSearchMode && searchPaginationInfo.hasMultiplePages;
-  const showScrollToTop = !isSearchMode && articles.length > 6 && !isAtTop; // Show when more than one chunk loaded AND not at top
+  const showScrollToTop = !isSearchMode && articles.length > 6 && !isAtTop; 
 
   useEffect(() => {
     (async () => {
@@ -205,7 +199,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* Sticky Scroll to top button */}
       {showScrollToTop && (
         <Button
           type='primary'
@@ -229,7 +222,6 @@ const Dashboard: React.FC = () => {
         />
       )}
 
-      {/* Articles Section */}
       <div className={styles.articlesSection} data-testid='articles-section'>
         <div
           style={{
@@ -337,7 +329,6 @@ const Dashboard: React.FC = () => {
               })}
             </div>
 
-            {/* Loading more indicator for infinite scroll */}
             {!isSearchMode && loadingMore && (
               <div
                 data-testid='loading-more'
@@ -354,7 +345,6 @@ const Dashboard: React.FC = () => {
               </div>
             )}
 
-            {/* End of articles indicator */}
             {!isSearchMode && !hasMore && articles.length > 0 && (
               <div
                 style={{
@@ -371,7 +361,6 @@ const Dashboard: React.FC = () => {
           </>
         )}
 
-        {/* Pagination - Only for search results */}
         {showPagination && (
           <div
             style={{
@@ -398,7 +387,6 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Widget Section */}
       <div className={styles.widgetSection}>
         <div className={styles.rightSidebar}>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

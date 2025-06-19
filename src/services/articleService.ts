@@ -1,18 +1,18 @@
 import {
-  collection,
   addDoc,
-  Timestamp,
-  getDocs,
-  doc,
-  updateDoc,
+  collection,
   deleteDoc,
-  query,
-  orderBy,
-  where,
+  doc,
   getDoc,
+  getDocs,
   limit,
-  startAfter,
+  orderBy,
+  query,
   QueryDocumentSnapshot,
+  startAfter,
+  Timestamp,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Article } from '../types/article';
@@ -31,17 +31,10 @@ export async function getArticles(
   lastDocId?: string
 ) {
   try {
-    console.log('[getArticles] 📥 Request:', {
-      category,
-      sortOrder,
-      pageSize,
-      hasLastDocId: !!lastDocId,
-    });
 
     let q;
     const orderDirection = sortOrder === 'Ascending' ? 'asc' : 'desc';
 
-    // If we have a lastDocId, we need to find that document first
     let lastDoc: QueryDocumentSnapshot | undefined;
     if (lastDocId) {
       try {
@@ -98,13 +91,6 @@ export async function getArticles(
       hasMore: querySnapshot.docs.length === pageSize,
     };
 
-    console.log('[getArticles] 📤 Response:', {
-      articlesCount: articles.length,
-      hasMore: result.hasMore,
-      hasLastDocId: !!result.lastDocId,
-      requestedPageSize: pageSize,
-    });
-
     return result;
   } catch (error) {
     console.error('[getArticles] Error fetching articles:', error);
@@ -148,13 +134,11 @@ export async function searchArticles(
     console.log('[searchArticles] searchTerm:', searchTerm, 'category:', category, 'sortOrder:', sortOrder);
 
     if (!searchTerm.trim()) {
-      // If no search term, return regular articles
       return getAllArticles(category, sortOrder);
     }
 
     const orderDirection = sortOrder === 'Ascending' ? 'asc' : 'desc';
 
-    // Get all articles first (Firestore doesn't support full-text search natively)
     let q;
     if (category && category !== 'All Categories') {
       q = query(collection(db, 'articles'), where('category', '==', category), orderBy('createdAt', orderDirection));
@@ -168,7 +152,6 @@ export async function searchArticles(
       ...doc.data(),
     }));
 
-    // Filter articles client-side for better search functionality
     const searchTermLower = searchTerm.toLowerCase();
     const filteredArticles = articles.filter((article: any) => {
       const titleMatch = article.title?.toLowerCase().includes(searchTermLower);
