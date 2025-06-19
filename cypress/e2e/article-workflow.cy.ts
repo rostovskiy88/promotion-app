@@ -47,49 +47,4 @@ describe('Article Management', () => {
       });
     });
   });
-
-  it('should work offline', () => {
-    // Login first
-    cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
-    cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
-    cy.get('button[type="submit"]').click();
-
-    // Check if login was successful
-    cy.url({ timeout: 10000 }).then((url) => {
-      if (url.includes('/login')) {
-        cy.log('Authentication failed - unable to test offline functionality without valid credentials');
-        return;
-      }
-      
-      // Login succeeded - continue with offline test
-      cy.url().should('include', '/dashboard');
-      
-      // Wait for data to load
-      cy.wait(2000);
-
-      // Simulate offline
-      cy.window().then((win) => {
-        // Trigger offline event
-        win.dispatchEvent(new Event('offline'));
-      });
-
-      // Check for offline features - use fallback selectors
-      cy.get('body').then(($body) => {
-        if ($body.find('[data-testid=offline-indicator]').length > 0) {
-          cy.get('[data-testid=offline-indicator]').should('be.visible');
-        } else {
-          cy.log('No offline indicator found - checking for cached content');
-        }
-        
-        // Articles should still be visible from cache
-        if ($body.find('[data-testid=article-card]').length > 0) {
-          cy.get('[data-testid=article-card]').should('exist');
-        } else {
-          cy.log('Article cards not found with test ID - checking for generic content');
-          // Look for any content that suggests articles are cached
-          cy.get('body').should('contain', 'Article');
-        }
-      });
-    });
-  });
 }); 

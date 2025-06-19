@@ -1,4 +1,57 @@
-import httpClient from './httpClient';
+import axios, { AxiosResponse } from 'axios';
+import { store } from '../store';
+import { incrementApiCalls, updateResponseTime } from '../store/slices/cacheSlice';
+
+const client = axios.create({
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
+  },
+});
+
+client.interceptors.request.use(
+  config => {
+    const startTime = Date.now();
+    config.metadata = { startTime };
+    store.dispatch(incrementApiCalls());
+
+    return config;
+  },
+  error => {
+    console.error('❌ Request failed:', error);
+    return Promise.reject(error);
+  }
+);
+
+client.interceptors.response.use(
+  (response: AxiosResponse) => {
+    const endTime = Date.now();
+    const startTime = response.config.metadata?.startTime || endTime;
+    const responseTime = endTime - startTime;
+
+    store.dispatch(updateResponseTime(responseTime));
+
+    console.log(`✅ [${response.status}] ${response.config.url} (${responseTime}ms)`);
+
+    return response;
+  },
+  error => {
+    const endTime = Date.now();
+    const startTime = error.config?.metadata?.startTime || endTime;
+    const responseTime = endTime - startTime;
+
+    store.dispatch(updateResponseTime(responseTime));
+
+    console.error(
+      `❌ [${error.response?.status || 'NETWORK'}] ${error.config?.url} (${responseTime}ms)`,
+      error.message
+    );
+
+    return Promise.reject(error);
+  }
+);
 
 // Real API service for the React Promotion app
 export const apiService = {
@@ -8,7 +61,7 @@ export const apiService = {
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
 
     try {
-      const response = await httpClient.get(url);
+      const response = await client.get(url);
       return response.data;
     } catch (error) {
       console.error('Failed to fetch weather data:', error);
@@ -22,7 +75,7 @@ export const apiService = {
     const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`;
 
     try {
-      const response = await httpClient.get(url);
+      const response = await client.get(url);
       return response.data;
     } catch (error) {
       console.error('Failed to search cities:', error);
@@ -30,3 +83,11 @@ export const apiService = {
     }
   },
 };
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    metadata?: {
+      startTime: number;
+    };
+  }
+}
