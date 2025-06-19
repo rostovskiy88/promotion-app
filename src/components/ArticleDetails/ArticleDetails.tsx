@@ -45,7 +45,6 @@ const ArticleDetails: React.FC = () => {
     fetchArticle();
   }, [id, navigate]);
 
-  // Prevent render without data
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
@@ -55,15 +54,13 @@ const ArticleDetails: React.FC = () => {
   }
 
   if (!article) {
-    return null; // Will be redirected
+    return null;
   }
 
-  // Check if current user is the author
   const isAuthor = currentUser?.uid === article.authorId;
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      {/* Header with back button and edit button */}
       <div
         style={{
           display: 'flex',
@@ -95,7 +92,6 @@ const ArticleDetails: React.FC = () => {
           border: '1px solid var(--border-color)',
         }}
       >
-        {/* Article Image */}
         {article.imageUrl && typeof article.imageUrl === 'string' && (
           <div style={{ marginBottom: '24px' }}>
             <img
@@ -111,7 +107,6 @@ const ArticleDetails: React.FC = () => {
           </div>
         )}
 
-        {/* Article Header */}
         <div style={{ marginBottom: '24px' }}>
           {article.category && (
             <Tag
@@ -137,7 +132,6 @@ const ArticleDetails: React.FC = () => {
             {article.title}
           </Title>
 
-          {/* Author and Date Info */}
           <div
             style={{
               display: 'flex',
@@ -167,7 +161,6 @@ const ArticleDetails: React.FC = () => {
           </div>
         </div>
 
-        {/* Article Content */}
         <div
           style={{
             fontSize: '16px',

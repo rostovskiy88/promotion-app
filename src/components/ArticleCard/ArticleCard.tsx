@@ -36,7 +36,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Add confirmation before delete
   const handleDelete = () => {
     Modal.confirm({
       title: 'Are you sure you want to delete this article?',

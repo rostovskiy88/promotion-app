@@ -27,7 +27,6 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const [inputValue, setInputValue] = useState('');
   const location = useLocation();
 
-  // Use the new hook that prioritizes Firestore data over Firebase Auth data
   const userDisplayInfo = useUserDisplayInfo();
 
   // Redux hooks

@@ -26,15 +26,12 @@ const Register: React.FC = () => {
   const handleFinish = async (values: RegisterFormData) => {
     setLoading(true);
     try {
-      // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
 
-      // Update the user's display name
       await updateProfile(userCredential.user, {
         displayName: values.name,
       });
 
-      // Create user document in Firestore
       await createOrGetUser({
         uid: userCredential.user.uid,
         email: userCredential.user.email || values.email,

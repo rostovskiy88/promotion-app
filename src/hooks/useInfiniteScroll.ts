@@ -32,7 +32,6 @@ export const useInfiniteScroll = ({
   }, [hasMore, loading, onLoadMore, root]);
 
   const handleScroll = useCallback(() => {
-    // Prevent multiple simultaneous loads
     if (loadingRef.current || loading || !hasMore) {
       return;
     }
@@ -42,7 +41,6 @@ export const useInfiniteScroll = ({
     const scrollHeight = scrollElement.scrollHeight;
     const clientHeight = scrollElement.clientHeight;
 
-    // Check if user has scrolled near the bottom
     if (scrollTop + clientHeight >= scrollHeight - threshold) {
       loadingRef.current = true;
       onLoadMore();
@@ -58,7 +56,6 @@ export const useInfiniteScroll = ({
   // Check if we need more content whenever loading state changes
   useEffect(() => {
     if (!loading) {
-      // Small delay to ensure DOM has updated
       const timeoutId = setTimeout(checkIfNeedsMoreContent, 100);
       return () => clearTimeout(timeoutId);
     }

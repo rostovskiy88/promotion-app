@@ -23,9 +23,8 @@ const Dashboard: React.FC = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [authorsMap, setAuthorsMap] = useState<Record<string, any>>({});
 
-  // 🔥 NOW USING REDUX WITH LAZY LOADING!
   const {
-    articles, // Main articles for infinite scroll
+    articles,
     loading,
     loadingMore,
     hasMore,
@@ -35,12 +34,10 @@ const Dashboard: React.FC = () => {
     searchTerm,
     isSearching: reduxIsSearching,
 
-    // Search pagination (for search results only)
     currentPage,
     currentPageSearchArticles,
     searchPaginationInfo,
 
-    // Actions
     fetchArticles,
     loadMoreArticles,
     searchArticles,
@@ -53,7 +50,6 @@ const Dashboard: React.FC = () => {
 
   const { setGlobalLoading } = useUI();
 
-  // Track scroll position to show/hide scroll-to-top button
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -64,30 +60,22 @@ const Dashboard: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Initialize articles on component mount
   useEffect(() => {
     fetchArticles(selectedCategory, sortOrder, true);
   }, []);
 
-  // Handle searchTerm changes - THIS WAS MISSING!
   useEffect(() => {
     if (searchTerm.trim()) {
-      // If there's a search term, perform search
       searchArticles(searchTerm, selectedCategory, sortOrder);
     } else {
-      // If search term is cleared, go back to main articles
       fetchArticles(selectedCategory, sortOrder, true);
     }
   }, [searchTerm]);
 
-  // Handle category or sort changes
   useEffect(() => {
-    // When category or sort changes, we need to reset and refetch
     if (searchTerm.trim()) {
-      // If searching, update search results
       searchArticles(searchTerm, selectedCategory, sortOrder);
     } else {
-      // Otherwise, reset and fetch new articles
       fetchArticles(selectedCategory, sortOrder, true);
     }
   }, [selectedCategory, sortOrder]);

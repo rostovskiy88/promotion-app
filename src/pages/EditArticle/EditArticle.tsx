@@ -81,11 +81,9 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
         category: values.category as string,
       };
 
-      // Upload new image if one was selected
       if (imageFile) {
         setIsUploading(true);
         try {
-          console.log('Starting image upload process...');
           const imagePath = generateImagePath(userDisplayInfo.firestoreUser.uid, imageFile.name);
           const imageUrl = await uploadImage(imageFile, imagePath);
           updateData.imageUrl = imageUrl;
@@ -99,7 +97,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
         }
       }
 
-      console.log('Updating article with data:', updateData);
       await updateArticle(article.id, updateData);
       message.success('Article updated successfully!');
       navigate('/dashboard');
@@ -113,7 +110,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   };
 
   const handleFileSelect = (file: File) => {
-    // Validate the file
     const validation = validateImageFile(file);
     if (!validation.isValid) {
       message.error(validation.error);
@@ -122,7 +118,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
     setImageFile(file);
 
-    // Create preview URL
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
 
@@ -137,7 +132,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
   };
 
   const customRequest = ({ file, onSuccess }: any) => {
-    // Handle the file selection
     const isValid = handleFileSelect(file);
     if (isValid === false) {
       onSuccess();
@@ -199,7 +193,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
             </div>
 
             <Form.Item>
-              {/* Image Preview */}
               {imagePreview && (
                 <div style={{ marginBottom: '16px' }}>
                   <img
@@ -225,7 +218,6 @@ const EditArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
                 </div>
               )}
 
-              {/* Upload Progress */}
               {isUploading && (
                 <div style={{ marginBottom: '16px' }}>
                   <Progress percent={100} status='active' />

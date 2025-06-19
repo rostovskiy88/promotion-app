@@ -19,16 +19,12 @@ class HttpClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor with Redux integration
     this.client.interceptors.request.use(
       config => {
         const startTime = Date.now();
-        config.metadata = { startTime }; // Store start time for performance metrics
-
-        // Increment API calls counter in Redux
+        config.metadata = { startTime };
         store.dispatch(incrementApiCalls());
 
-        console.log(`🔄 [${config.method?.toUpperCase()}] ${config.url}`);
         return config;
       },
       error => {
@@ -37,14 +33,12 @@ class HttpClient {
       }
     );
 
-    // Response interceptor with caching and metrics
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
         const endTime = Date.now();
         const startTime = response.config.metadata?.startTime || endTime;
         const responseTime = endTime - startTime;
 
-        // Update performance metrics in Redux
         store.dispatch(updateResponseTime(responseTime));
 
         console.log(`✅ [${response.status}] ${response.config.url} (${responseTime}ms)`);
@@ -112,7 +106,6 @@ class HttpClient {
     return null;
   }
 
-  // Enhanced request method with caching
   async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const requestConfig = { ...config, url, method: 'get' as const };
 
@@ -151,11 +144,9 @@ class HttpClient {
   }
 }
 
-// Create singleton instance
 export const httpClient = new HttpClient();
 export default httpClient;
 
-// Extend AxiosRequestConfig to include metadata
 declare module 'axios' {
   interface AxiosRequestConfig {
     metadata?: {

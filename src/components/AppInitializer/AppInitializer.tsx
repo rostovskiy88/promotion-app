@@ -10,7 +10,6 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) =
     resetSession();
   }, []);
 
-  // Initialize network status monitoring
   useNetworkStatus();
 
   return (

@@ -17,7 +17,6 @@ const Login = () => {
   const location = useLocation();
   const { loading } = useSelector((state: RootState) => state.auth);
 
-  // Get the redirect path from location state, or default to dashboard
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
 
   const onFinish = async (values: LoginFormData) => {

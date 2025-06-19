@@ -20,7 +20,6 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ visible, onCancel, onSucces
   const [uploading, setUploading] = useState(false);
   const editorRef = useRef<AvatarEditor>(null);
 
-  // Reset state when modal opens or set initial file
   useEffect(() => {
     if (visible) {
       if (initialFile) {
@@ -55,9 +54,6 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ visible, onCancel, onSucces
       // Get the cropped image as canvas
       const canvas = editorRef.current.getImageScaledToCanvas();
 
-      console.log('Canvas created successfully, size:', canvas.width, 'x', canvas.height);
-
-      // Upload the avatar
       const avatarUrl = await uploadAvatar(canvas, userId);
 
       onSuccess(avatarUrl);
@@ -156,8 +152,8 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ visible, onCancel, onSucces
                 width={300}
                 height={300}
                 border={20}
-                borderRadius={150} // Circular crop
-                color={[255, 255, 255, 0.6]} // RGBA
+                borderRadius={150}
+                color={[255, 255, 255, 0.6]}
                 scale={scale}
                 rotate={rotate}
                 style={{

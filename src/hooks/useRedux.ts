@@ -1,4 +1,3 @@
-// Custom hooks for easier Redux usage across the app
 
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -34,7 +33,6 @@ import {
 } from '../store/slices/cacheSlice';
 import { refreshFirestoreUser } from '../store/slices/authSlice';
 
-// Safe Redux hook wrapper
 const useSafeSelector = (selector: (state: any) => any, fallback: any = {}) => {
   try {
     return useAppSelector(selector);
@@ -53,7 +51,6 @@ const useSafeDispatch = () => {
   }
 };
 
-// Articles hooks
 export const useArticles = () => {
   const dispatch = useSafeDispatch();
   const articlesState = useSafeSelector(state => state.articles, {
@@ -71,7 +68,6 @@ export const useArticles = () => {
     isSearching: false,
   });
 
-  // For search results, we still use pagination
   const searchArticlesToShow = articlesState.filteredArticles;
   const searchTotalCount = searchArticlesToShow.length;
   const searchStartIndex = (articlesState.currentPage - 1) * articlesState.articlesPerPage;
@@ -125,7 +121,6 @@ export const useArticles = () => {
   };
 };
 
-// UI hooks
 export const useUI = () => {
   const dispatch = useSafeDispatch();
   const uiState = useSafeSelector(state => state.ui, {
@@ -193,7 +188,6 @@ export const useCache = () => {
   };
 };
 
-// Auth hooks (enhanced)
 export const useAuth = () => {
   const dispatch = useSafeDispatch();
   const authState = useSafeSelector(state => state.auth, {
@@ -217,7 +211,6 @@ export const useAuth = () => {
   };
 };
 
-// Combined hook for common app state
 export const useAppState = () => {
   const articles = useArticles();
   const ui = useUI();
@@ -230,7 +223,6 @@ export const useAppState = () => {
     cache,
     auth,
 
-    // Global computed state
     isLoading: articles.loading || ui.globalLoading || cache.isSyncing,
     hasErrors: !!articles.error || cache.syncErrors.length > 0,
     isOffline: !cache.isOnline,

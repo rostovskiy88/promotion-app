@@ -26,11 +26,7 @@ class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ error, errorInfo });
 
-    // Log error to console for debugging
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-
-    // You could also log this to an error reporting service here
-    // Example: logErrorToService(error, errorInfo);
   }
 
   handleReload = () => {

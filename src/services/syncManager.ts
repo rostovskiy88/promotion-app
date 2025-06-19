@@ -11,7 +11,6 @@ import { updateUser } from '../services/userService';
 import { OfflineQueueItem } from '../types/firebase';
 import { Article } from '../types/article';
 
-// Define interfaces for sync data
 interface CreateArticleData {
   title: string;
   content: string;
@@ -74,10 +73,8 @@ export class SyncManager {
 
         if (item.retries < MAX_RETRIES) {
           store.dispatch(incrementRetries(item.id));
-          // Retry with exponential backoff
           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * Math.pow(2, item.retries)));
         } else {
-          // Max retries reached, add to error list
           store.dispatch(addSyncError(`Failed to sync ${item.action}`));
           store.dispatch(removeFromOfflineQueue(item.id));
         }
@@ -127,7 +124,6 @@ export class SyncManager {
   }
 
   private async syncDeleteArticle(data: DeleteArticleData): Promise<void> {
-    // Implement article deletion sync
     console.log('Syncing article deletion:', data);
     // await deleteArticle(data.id);
   }

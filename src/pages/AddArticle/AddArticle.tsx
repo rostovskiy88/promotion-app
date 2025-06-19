@@ -39,14 +39,10 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
 
       let imageUrl = '';
 
-      // Handle image upload if image is provided
       if (imageFile) {
         try {
-          console.log('Uploading image:', imageFile.name);
-          // Generate a proper path for the image
           const imagePath = generateImagePath(user.uid, imageFile.name, 'articles');
           imageUrl = await uploadImage(imageFile, imagePath);
-          console.log('Image uploaded successfully:', imageUrl);
         } catch (uploadError) {
           console.error('Image upload failed:', uploadError);
           message.warning('Article created without image due to upload error');
@@ -57,7 +53,6 @@ const AddArticle: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
         imageUrl = '/default-article-cover.png';
       }
 
-      // Add article to Firestore
       await addArticle({
         title: values.title,
         content: values.content,

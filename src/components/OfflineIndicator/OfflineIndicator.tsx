@@ -10,7 +10,6 @@ const OfflineIndicator: React.FC = () => {
     const [showReconnectedMessage, setShowReconnectedMessage] = useState(false);
 
     useEffect(() => {
-      // Only show reconnection message if we were previously offline during this session
       if (isOnline && hasBeenOfflineSession && !isSyncing) {
         setShowReconnectedMessage(true);
         const timer = setTimeout(() => {
@@ -22,14 +21,12 @@ const OfflineIndicator: React.FC = () => {
       }
     }, [isOnline, isSyncing, hasBeenOfflineSession]);
 
-    // Don't render anything if online and no messages to show
     if (isOnline && !showReconnectedMessage && !isSyncing) {
       return null;
     }
 
     return (
       <div className={styles.container}>
-        {/* Offline Notification */}
         {!isOnline && (
           <Alert
             message={
@@ -48,7 +45,6 @@ const OfflineIndicator: React.FC = () => {
           />
         )}
 
-        {/* Syncing Notification */}
         {isSyncing && (
           <Alert
             message={
@@ -64,7 +60,6 @@ const OfflineIndicator: React.FC = () => {
           />
         )}
 
-        {/* Reconnected Notification */}
         {showReconnectedMessage && isOnline && (
           <Alert
             message={
@@ -80,7 +75,6 @@ const OfflineIndicator: React.FC = () => {
           />
         )}
 
-        {/* Sync Errors */}
         {syncErrors.length > 0 && (
           <Alert
             message={
@@ -104,7 +98,6 @@ const OfflineIndicator: React.FC = () => {
     );
   } catch (error) {
     console.warn('OfflineIndicator failed to render:', error);
-    // Return minimal offline indicator using browser API
     return navigator.onLine ? null : (
       <Alert
         message='You are currently offline'

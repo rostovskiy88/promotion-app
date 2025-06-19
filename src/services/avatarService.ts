@@ -1,10 +1,6 @@
 import { uploadImage, generateImagePath } from './imageService';
 
-/**
- * Converts a canvas to a File object
- */
 export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avatar.png'): Promise<File> => {
-  // Create a blob from the canvas
   return new Promise<File>(resolve => {
     canvas.toBlob(
       blob => {
@@ -22,9 +18,6 @@ export const canvasToFile = (canvas: HTMLCanvasElement, fileName: string = 'avat
   });
 };
 
-/**
- * Converts canvas to blob for direct processing
- */
 export const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
   return new Promise(resolve => {
     canvas.toBlob(
@@ -39,16 +32,12 @@ export const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
   });
 };
 
-/**
- * Uploads an avatar image after cropping
- */
 export const uploadAvatar = async (
   canvas: HTMLCanvasElement,
   userId: string,
   fileName: string = 'avatar.png'
 ): Promise<string> => {
   try {
-    // Convert canvas to blob
     const blob = await canvasToBlob(canvas);
 
     // Create a File object from the blob

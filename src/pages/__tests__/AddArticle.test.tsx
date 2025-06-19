@@ -8,7 +8,6 @@ import AddArticle from '../AddArticle/AddArticle';
 import { addArticle } from '../../services/articleService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
 
-// Mock dependencies
 jest.mock('../../services/articleService');
 jest.mock('../../hooks/useUserDisplayInfo');
 jest.mock('antd', () => ({
@@ -19,14 +18,12 @@ jest.mock('antd', () => ({
   },
 }));
 
-// Mock React Router
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
-// Create mock store
 const createMockStore = () =>
   configureStore({
     reducer: {
@@ -34,7 +31,6 @@ const createMockStore = () =>
     },
   });
 
-// Mock user data
 const mockUser = {
   displayName: 'John Doe',
   firstName: 'John',
@@ -56,7 +52,6 @@ const mockUser = {
   refresh: jest.fn(),
 };
 
-// Test wrapper component
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Provider store={createMockStore()}>
     <BrowserRouter>{children}</BrowserRouter>
@@ -100,7 +95,6 @@ describe('AddArticle Component', () => {
       const categorySelect = screen.getByLabelText('Category');
       await user.click(categorySelect);
 
-      // Use getAllByText since AntD creates multiple elements for each option
       const productivityOptions = screen.getAllByText('Productivity');
       expect(productivityOptions.length).toBeGreaterThan(0);
 
@@ -133,16 +127,13 @@ describe('AddArticle Component', () => {
       const user = userEvent.setup();
       renderAddArticle();
 
-      // Select category
       const categorySelect = screen.getByLabelText('Category');
       await user.click(categorySelect);
       await user.click(screen.getByRole('option', { name: 'Productivity' }));
 
-      // Fill title
       const titleInput = screen.getByLabelText('Title');
       await user.type(titleInput, 'Test Article Title');
 
-      // Fill content
       const contentInput = screen.getByLabelText('Text');
       await user.type(contentInput, 'This is test article content');
 

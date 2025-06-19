@@ -65,10 +65,8 @@ const EditProfile: React.FC = () => {
       });
       console.log('Updated user profile in Firestore:', values);
 
-      // Refresh user data to update the header immediately
       await userDisplayInfo.refresh();
 
-      // Refresh the user data from Redux
       dispatch(refreshFirestoreUser(user.uid));
 
       message.success('Profile updated!');
