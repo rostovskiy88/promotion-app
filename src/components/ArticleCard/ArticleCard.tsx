@@ -129,7 +129,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               cursor: 'pointer',
               color: '#1557ff',
               fontWeight: 500,
-              fontSize: '15px',
+              fontSize: '16px',
               textDecoration: 'none',
               marginLeft: 'auto',
             }}
