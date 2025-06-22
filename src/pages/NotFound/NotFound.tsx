@@ -1,6 +1,6 @@
-import React from 'react';
+import { ArrowLeftOutlined, HomeOutlined } from '@ant-design/icons';
 import { Button, Result } from 'antd';
-import { HomeOutlined, ArrowLeftOutlined, SearchOutlined } from '@ant-design/icons';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './NotFound.css';
 
@@ -20,13 +20,9 @@ const NotFound: React.FC = () => {
       <div className='not-found-content'>
         <div className='not-found-illustration'>
           <div className='error-code'>404</div>
-          <div className='error-icon'>
-            <SearchOutlined />
-          </div>
         </div>
 
         <Result
-          status='404'
           title={<span className='error-title'>Oops! Page Not Found</span>}
           subTitle={
             <span className='error-subtitle'>

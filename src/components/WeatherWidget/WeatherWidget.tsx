@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Typography, Spin, Dropdown, Modal, AutoComplete, message } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
+import { AutoComplete, Card, Dropdown, message, Modal, Spin, Typography } from 'antd';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import './WeatherWidget.css';
 
 const { Title, Text } = Typography;
 
 interface CityOption {
-  value: string; // display string
+  value: string;
   label: string;
   lat: number;
   lon: number;
@@ -40,12 +40,10 @@ const WeatherWidget: React.FC = () => {
 
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
 
-      // Use direct axios call to avoid HTTP client interceptors
       const response = await axios.get(url);
       setWeather(response.data);
     } catch (e: any) {
       console.warn('Weather API error:', e.message);
-      // Handle different error types gracefully
       if (e.message?.includes('CORS') || e.message?.includes('Network Error')) {
         setError('Weather temporarily unavailable');
       } else {
@@ -57,7 +55,6 @@ const WeatherWidget: React.FC = () => {
     }
   };
 
-  // For manual city, use lat/lon for accuracy
   const fetchWeatherByCityOption = async (city: CityOption) => {
     setLoading(true);
     setError(null);
@@ -71,7 +68,6 @@ const WeatherWidget: React.FC = () => {
     }
   };
 
-  // Initial and mode-based effect
   useEffect(() => {
     if (mode === 'auto') {
       if (navigator.geolocation) {
@@ -94,7 +90,6 @@ const WeatherWidget: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, manualCity]);
 
-  // City search autocomplete
   const handleCitySearch = async (value: string) => {
     setInputCity(value);
     if (!value.trim()) {
@@ -107,7 +102,6 @@ const WeatherWidget: React.FC = () => {
 
       const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(value)}&limit=5&appid=${apiKey}`;
 
-      // Use direct axios call to avoid HTTP client interceptors
       const response = await axios.get(url);
       const options: CityOption[] = response.data.map((item: any) => ({
         value: `${item.name}${item.state ? ', ' + item.state : ''}, ${item.country}`,

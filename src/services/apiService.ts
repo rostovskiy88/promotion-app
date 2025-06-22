@@ -20,7 +20,7 @@ client.interceptors.request.use(
     return config;
   },
   error => {
-    console.error('❌ Request failed:', error);
+    console.error('Request failed:', error);
     return Promise.reject(error);
   }
 );

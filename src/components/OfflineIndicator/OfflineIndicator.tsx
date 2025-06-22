@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { CloudOutlined, ExclamationCircleOutlined, SyncOutlined, WifiOutlined } from '@ant-design/icons';
 import { Alert, Button, Space, Tag } from 'antd';
-import { WifiOutlined, SyncOutlined, CloudOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import { useCache } from '../../hooks/useRedux';
 import styles from './OfflineIndicator.module.css';
 
@@ -42,6 +42,7 @@ const OfflineIndicator: React.FC = () => {
             showIcon={false}
             role='alert'
             aria-live='polite'
+            closable={true}
           />
         )}
 
@@ -72,6 +73,7 @@ const OfflineIndicator: React.FC = () => {
             type='success'
             className={styles.alert}
             showIcon={false}
+            closable={true}
           />
         )}
 
