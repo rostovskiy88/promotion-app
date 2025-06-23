@@ -1,11 +1,11 @@
 import {
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  UserCredential,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    UserCredential,
 } from 'firebase/auth';
-import { auth, googleProvider, facebookProvider } from '../config/firebase';
+import { auth, facebookProvider, googleProvider } from '../config/firebase';
 
 export interface LoginCredentials {
   email: string;
@@ -13,12 +13,9 @@ export interface LoginCredentials {
 }
 
 export class AuthService {
-  constructor() {
-    // Initialize any necessary configurations
-  }
+  constructor() {}
 
   async loginWithGoogle(): Promise<UserCredential> {
-    // Force Google to show account selection
     googleProvider.setCustomParameters({
       prompt: 'select_account',
     });
@@ -39,28 +36,22 @@ export class AuthService {
 
   async logout(): Promise<void> {
     try {
-      // Sign out from Firebase
       await signOut(auth);
 
-      // Clear any Google-specific session data
       const googleFrames = document.querySelectorAll('iframe[src*="accounts.google.com"]');
       googleFrames.forEach(frame => frame.remove());
 
-      // Clear any cached credentials
       if (window.google?.accounts?.id) {
         window.google.accounts.id.disableAutoSelect();
       }
 
-      // Clear all storage
       localStorage.clear();
       sessionStorage.clear();
 
-      // Clear cookies related to authentication
       document.cookie.split(';').forEach(function (c) {
         document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
       });
 
-      // Reload the page to ensure clean state
       window.location.reload();
     } catch (error) {
       console.error('Logout error:', error);

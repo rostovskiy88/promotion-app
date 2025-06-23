@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useCache } from './useRedux';
-import { message } from 'antd';
 
 export const useNetworkStatus = () => {
   try {
@@ -15,7 +14,6 @@ export const useNetworkStatus = () => {
 
       const handleOffline = () => {
         setOnline(false);
-        message.warning('You are now offline. Changes will be queued for sync.');
       };
 
       window.addEventListener('online', handleOnline);

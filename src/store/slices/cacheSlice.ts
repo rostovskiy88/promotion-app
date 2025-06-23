@@ -4,7 +4,7 @@ import { OfflineQueueItem } from '../../types/firebase';
 interface CacheEntry<T = unknown> {
   data: T;
   timestamp: number;
-  expiresIn: number; // milliseconds
+  expiresIn: number;
 }
 
 interface CacheState {
@@ -56,7 +56,7 @@ const cacheSlice = createSlice({
   reducers: {
     // API Cache
     setCacheEntry: (state, action: PayloadAction<{ key: string; data: unknown; expiresIn?: number }>) => {
-      const { key, data, expiresIn = 5 * 60 * 1000 } = action.payload; // Default 5 minutes
+      const { key, data, expiresIn = 5 * 60 * 1000 } = action.payload;
       state.apiCache[key] = {
         data,
         timestamp: Date.now(),
@@ -73,7 +73,6 @@ const cacheSlice = createSlice({
         if (now - entry.timestamp < entry.expiresIn) {
           state.metrics.cacheHits++;
         } else {
-          // Expired, remove it
           delete state.apiCache[key];
           state.metrics.cacheMisses++;
         }
@@ -131,7 +130,6 @@ const cacheSlice = createSlice({
       state.isOnline = action.payload;
 
       if (!action.payload) {
-        // Going offline
         state.hasBeenOfflineSession = true;
       } else if (action.payload && wasOffline && state.hasBeenOfflineSession && !isInitialLoad) {
         // Coming back online after being offline (but not on initial app load)

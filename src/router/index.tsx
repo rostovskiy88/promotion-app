@@ -1,16 +1,16 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import Login from '../pages/Login/Login';
-import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
-import Dashboard from '../pages/Dashboard/Dashboard';
+import ArticleDetails from '../components/ArticleDetails/ArticleDetails';
+import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
+import AddArticle from '../pages/AddArticle/AddArticle';
+import Dashboard from '../pages/Dashboard/Dashboard';
+import EditArticle from '../pages/EditArticle/EditArticle';
+import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
+import Login from '../pages/Login/Login';
+import NotFound from '../pages/NotFound/NotFound';
+import EditProfile from '../pages/Profile/Profile';
 import Register from '../pages/Register/Register';
 import Terms from '../pages/Terms/Terms';
-import AuthenticatedLayout from '../components/Layout/AuthenticatedLayout';
-import EditProfile from '../pages/Profile/Profile';
-import AddArticle from '../pages/AddArticle/AddArticle';
-import EditArticle from '../pages/EditArticle/EditArticle';
-import ArticleDetails from '../components/ArticleDetails/ArticleDetails';
-import NotFound from '../pages/NotFound/NotFound';
 
 export const router = createBrowserRouter([
   {
@@ -98,5 +98,4 @@ export const router = createBrowserRouter([
     path: '*',
     element: <NotFound />,
   },
-  // Add more routes here
 ]);

@@ -2,36 +2,36 @@
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import {
+  clearError as clearArticleError,
+  clearSearch,
+  deleteArticleThunk,
   fetchArticles,
   loadMoreArticles,
-  searchArticlesThunk,
-  deleteArticleThunk,
-  setCategory,
-  setSortOrder,
-  setSearchTerm,
-  clearSearch,
-  setPage,
-  clearError as clearArticleError,
   resetArticles,
+  searchArticlesThunk,
+  setCategory,
+  setPage,
+  setSearchTerm,
+  setSortOrder,
 } from '../store/slices/articlesSlice';
+import { refreshFirestoreUser } from '../store/slices/authSlice';
 import {
-  setTheme,
-  toggleTheme,
-  setGlobalLoading,
-  openModal,
-  closeModal,
-  setBreadcrumbs,
-  updatePreferences,
-  setSidebarCollapsed,
-} from '../store/slices/uiSlice';
-import {
-  setCacheEntry,
   addToOfflineQueue,
-  setOnlineStatus,
   resetSessionState,
+  setCacheEntry,
+  setOnlineStatus,
   setSyncing,
 } from '../store/slices/cacheSlice';
-import { refreshFirestoreUser } from '../store/slices/authSlice';
+import {
+  closeModal,
+  openModal,
+  setBreadcrumbs,
+  setGlobalLoading,
+  setSidebarCollapsed,
+  setTheme,
+  toggleTheme,
+  updatePreferences,
+} from '../store/slices/uiSlice';
 
 const useSafeSelector = (selector: (state: any) => any, fallback: any = {}) => {
   try {
@@ -82,15 +82,12 @@ export const useArticles = () => {
   };
 
   return {
-    // State
     ...articlesState,
 
-    // For search results (paginated)
     searchArticlesToShow,
     currentPageSearchArticles,
     searchPaginationInfo,
 
-    // Actions
     fetchArticles: useCallback(
       (category?: string, sortOrder?: 'Ascending' | 'Descending', reset?: boolean) =>
         dispatch(fetchArticles({ category, sortOrder, reset })),
@@ -133,10 +130,8 @@ export const useUI = () => {
   });
 
   return {
-    // State
     ...uiState,
 
-    // Actions
     setTheme: (theme: 'light' | 'dark') => dispatch(setTheme(theme)),
     toggleTheme: () => dispatch(toggleTheme()),
     setGlobalLoading: (loading: boolean) => dispatch(setGlobalLoading(loading)),
@@ -153,7 +148,6 @@ export const useUI = () => {
   };
 };
 
-// Cache hooks
 export const useCache = () => {
   const dispatch = useSafeDispatch();
   const cacheState = useSafeSelector(state => state.cache, {
@@ -174,10 +168,8 @@ export const useCache = () => {
   });
 
   return {
-    // State
     ...cacheState,
 
-    // Actions
     cacheData: (key: string, data: any, expiresIn?: number) => dispatch(setCacheEntry({ key, data, expiresIn })),
 
     addToQueue: (action: string, data: any) => dispatch(addToOfflineQueue({ action, data })),
@@ -198,15 +190,12 @@ export const useAuth = () => {
   });
 
   return {
-    // State
     ...authState,
 
-    // Computed values
     isAuthenticated: !!authState.user,
     userDisplayName: authState.user?.displayName || authState.user?.email || 'User',
     hasVerifiedEmail: authState.user?.emailVerified || false,
 
-    // Actions
     refreshFirestoreUser: useCallback((uid: string) => dispatch(refreshFirestoreUser(uid)), [dispatch]),
   };
 };

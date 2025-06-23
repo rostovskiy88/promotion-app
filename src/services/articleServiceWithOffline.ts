@@ -1,16 +1,16 @@
+import { message } from 'antd';
 import { store } from '../store';
 import { addToOfflineQueue } from '../store/slices/cacheSlice';
+import { Article } from '../types/article';
 import {
   addArticle as addArticleFirebase,
-  updateArticle as updateArticleFirebase,
   deleteArticle as deleteArticleFirebase,
-  getArticles,
   getAllArticles,
-  searchArticles,
   getArticleById,
+  getArticles,
+  searchArticles,
+  updateArticle as updateArticleFirebase,
 } from './articleService';
-import { Article } from '../types/article';
-import { message } from 'antd';
 
 export class OfflineArticleService {
   private static isOnline(): boolean {
@@ -20,7 +20,6 @@ export class OfflineArticleService {
 
   static async addArticle(article: Omit<Article, 'createdAt'>) {
     if (!this.isOnline()) {
-      // Queue for offline sync
       store.dispatch(
         addToOfflineQueue({
           action: 'CREATE_ARTICLE',
@@ -30,7 +29,6 @@ export class OfflineArticleService {
 
       message.info('Article queued for sync when online');
 
-      // Return a temporary ID for optimistic update
       return {
         id: `offline_${Date.now()}`,
         queued: true,

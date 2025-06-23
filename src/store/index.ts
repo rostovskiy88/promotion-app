@@ -1,23 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistCombineReducers } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { persistCombineReducers, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-// Import all reducers
-import authReducer from './slices/authSlice';
 import articlesReducer from './slices/articlesSlice';
-import uiReducer from './slices/uiSlice';
+import authReducer from './slices/authSlice';
 import cacheReducer from './slices/cacheSlice';
+import uiReducer from './slices/uiSlice';
 
-// Persist config for different slices
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'ui', 'cache'], // persist auth, ui preferences, and cache
-  blacklist: ['articles'], // don't persist articles (real-time data)
+  whitelist: ['auth', 'ui', 'cache'],
+  blacklist: ['articles'],
 };
 
-// Combine all reducers
 const appReducer = persistCombineReducers(persistConfig, {
   auth: authReducer,
   articles: articlesReducer,
@@ -25,13 +22,9 @@ const appReducer = persistCombineReducers(persistConfig, {
   cache: cacheReducer,
 });
 
-// Root reducer that handles store reset
 const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: { type: string }) => {
-  // When RESET_STORE is dispatched, clear all state
   if (action.type === 'RESET_STORE') {
-    // Clear persisted data
     storage.removeItem('persist:root');
-    // Return initial state
     state = undefined;
   }
 

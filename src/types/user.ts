@@ -7,5 +7,5 @@ export interface FirestoreUser {
   lastName: string;
   avatarUrl?: string;
   age?: number;
-  createdAt?: FirebaseTimestamp; // Properly typed Firebase Timestamp
+  createdAt?: FirebaseTimestamp;
 }

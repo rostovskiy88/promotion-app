@@ -1,7 +1,6 @@
 import { AppError } from '../types/firebase';
 
 export const getAuthErrorMessage = (error: AppError): string => {
-  // Check if it's a Firebase error with a code
   if (error && typeof error === 'object' && 'code' in error) {
     switch (error.code) {
       case 'auth/invalid-credential':
@@ -37,17 +36,13 @@ export const getAuthErrorMessage = (error: AppError): string => {
         return 'Popup was blocked by your browser. Please allow popups and try again.';
 
       default:
-        // For any other Firebase error, return a generic message
         return 'An error occurred during sign-in. Please try again.';
     }
   }
 
-  // If it's not a Firebase error or doesn't have a code, check the message
   if (error && typeof error === 'object' && 'message' in error) {
     const message = error.message;
-    // Check if the message is actually a string before using string methods
     if (typeof message === 'string') {
-      // Check if the message contains Firebase error patterns
       if (
         message.includes('auth/invalid-credential') ||
         message.includes('auth/wrong-password') ||
@@ -60,13 +55,10 @@ export const getAuthErrorMessage = (error: AppError): string => {
         return 'Please enter a valid email address.';
       }
 
-      // Return the original message if it doesn't match any Firebase patterns
       return message;
     }
-    // If message is not a string, return fallback
     return 'An unexpected error occurred. Please try again.';
   }
 
-  // Fallback for any other error format
   return 'An unexpected error occurred. Please try again.';
 };

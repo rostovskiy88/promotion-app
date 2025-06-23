@@ -1,15 +1,15 @@
-import { store } from '../store';
-import {
-  removeFromOfflineQueue,
-  incrementRetries,
-  addSyncError,
-  clearSyncErrors,
-  setSyncing,
-} from '../store/slices/cacheSlice';
 import { addArticle } from '../services/articleService';
 import { updateUser } from '../services/userService';
-import { OfflineQueueItem } from '../types/firebase';
+import { store } from '../store';
+import {
+  addSyncError,
+  clearSyncErrors,
+  incrementRetries,
+  removeFromOfflineQueue,
+  setSyncing,
+} from '../store/slices/cacheSlice';
 import { Article } from '../types/article';
+import { OfflineQueueItem } from '../types/firebase';
 
 interface CreateArticleData {
   title: string;
@@ -118,14 +118,11 @@ export class SyncManager {
   }
 
   private async syncUpdateArticle(data: UpdateArticleData): Promise<void> {
-    // Implement article update sync
     console.log('Syncing article update:', data);
-    // await updateArticle(data.id, data.updates);
   }
 
   private async syncDeleteArticle(data: DeleteArticleData): Promise<void> {
     console.log('Syncing article deletion:', data);
-    // await deleteArticle(data.id);
   }
 
   private async syncUpdateProfile(data: UpdateProfileData): Promise<void> {

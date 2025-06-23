@@ -47,10 +47,8 @@ const serializeFirestoreUser = (firestoreUser: any): FirestoreUser | null => {
 
   return {
     ...firestoreUser,
-    // Convert Firebase Timestamps to ISO strings
     createdAt: firestoreUser.createdAt?.toDate?.()?.toISOString() || firestoreUser.createdAt,
     updatedAt: firestoreUser.updatedAt?.toDate?.()?.toISOString() || firestoreUser.updatedAt,
-    // Remove any other non-serializable properties if they exist
   };
 };
 
@@ -105,7 +103,6 @@ export const loginWithEmail = createAsyncThunk(
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
     await authService.logout();
-    // Clear any persisted auth state
     localStorage.removeItem('auth');
     sessionStorage.removeItem('auth');
     return null;
