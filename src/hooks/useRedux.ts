@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import {
@@ -34,21 +33,12 @@ import {
 } from '../store/slices/uiSlice';
 
 const useSafeSelector = (selector: (state: any) => any, fallback: any = {}) => {
-  try {
-    return useAppSelector(selector);
-  } catch (error) {
-    console.warn('Redux selector failed, using fallback:', error);
-    return fallback;
-  }
+  const result = useAppSelector(selector);
+  return result !== undefined ? result : fallback;
 };
 
 const useSafeDispatch = () => {
-  try {
-    return useAppDispatch();
-  } catch (error) {
-    console.warn('Redux dispatch failed:', error);
-    return () => {};
-  }
+  return useAppDispatch();
 };
 
 export const useArticles = () => {
