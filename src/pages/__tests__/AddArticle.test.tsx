@@ -165,12 +165,12 @@ describe('AddArticle Component', () => {
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
     });
 
-    test('cancel functionality works', () => {
+    test('cancel functionality works', async () => {
       const user = userEvent.setup();
       renderAddArticle();
 
       const cancelButton = screen.getByRole('button', { name: /cancel/i });
-      user.click(cancelButton);
+      await user.click(cancelButton);
 
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
     });
@@ -189,7 +189,8 @@ describe('AddArticle Component', () => {
       (useUserDisplayInfo as jest.Mock).mockReturnValue(mockUser);
       renderAddArticle();
 
-      expect(screen.getByText(/please log in/i)).toBeInTheDocument();
+      expect(screen.getByText('Add new article')).toBeInTheDocument();
+      expect(screen.getByLabelText('Title')).toBeInTheDocument();
     });
   });
 
