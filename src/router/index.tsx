@@ -83,16 +83,6 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: '/article/:id',
-    element: (
-      <ProtectedRoute>
-        <AuthenticatedLayout>
-          <ArticleDetails />
-        </AuthenticatedLayout>
-      </ProtectedRoute>
-    ),
-  },
   // Catch-all route for 404 errors
   {
     path: '*',
