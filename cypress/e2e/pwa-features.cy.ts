@@ -498,7 +498,5 @@ describe('PWA Features', () => {
         }
       });
     });
-
-
   });
 }); 

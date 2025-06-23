@@ -20,7 +20,6 @@
     "test:auth-errors:open": "cypress open --spec 'cypress/e2e/*auth*.cy.ts'",
     "test:e2e:articles": "cypress run --spec 'cypress/e2e/article-*.cy.ts'",
     "test:e2e:profile": "cypress run --spec 'cypress/e2e/profile-*.cy.ts'",
-    "test:e2e:weather": "cypress run --spec 'cypress/e2e/weather-*.cy.ts'",
     "test:e2e:theme": "cypress run --spec 'cypress/e2e/theme-*.cy.ts'",
     "test:e2e:search": "cypress run --spec 'cypress/e2e/search-*.cy.ts'",
     "test:e2e:pwa": "cypress run --spec 'cypress/e2e/pwa-*.cy.ts'",
