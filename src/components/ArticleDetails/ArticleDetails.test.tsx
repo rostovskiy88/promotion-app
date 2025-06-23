@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 import { App } from 'antd';
-import ArticleDetails from './ArticleDetails';
-import * as articleService from '../../services/articleService';
+import { BrowserRouter } from 'react-router-dom';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import * as articleService from '../../services/articleService';
+import ArticleDetails from './ArticleDetails';
 
 // Mock dependencies
 const mockNavigate = jest.fn();
@@ -210,8 +210,6 @@ describe('ArticleDetails Component', () => {
 
   describe('Error Handling', () => {
     it('handles missing article ID', async () => {
-      // We'll test this by checking that the component handles the case properly
-      // Since mocking useParams per test is complex, we'll test the fetch behavior instead
       (articleService.getArticleById as jest.Mock).mockResolvedValue(null);
 
       renderComponent();
@@ -285,8 +283,6 @@ describe('ArticleDetails Component', () => {
     });
 
     it('refetches article when ID parameter changes', async () => {
-      // This would require more complex mocking of useParams
-      // For now, we'll test that getArticleById is called with correct ID
       renderComponent();
 
       await waitFor(() => {

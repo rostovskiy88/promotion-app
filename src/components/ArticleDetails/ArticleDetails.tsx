@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Typography, Spin, message, Tag, Avatar } from 'antd';
 import { ArrowLeftOutlined, EditOutlined } from '@ant-design/icons';
-import { Article } from '../../types/article';
-import { getArticleById } from '../../services/articleService';
+import { Avatar, Button, message, Spin, Tag, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFirestoreUser } from '../../hooks/useFirestoreUser';
+import { getArticleById } from '../../services/articleService';
+import { Article } from '../../types/article';
 
 const { Title, Paragraph, Text } = Typography;
 
 const ArticleDetails: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Using route params as required
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);

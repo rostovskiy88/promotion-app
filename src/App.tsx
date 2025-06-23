@@ -1,14 +1,13 @@
-import { RouterProvider } from 'react-router-dom';
+import { App as AntApp, ConfigProvider } from 'antd';
 import { Provider } from 'react-redux';
+import { RouterProvider } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
-import { ConfigProvider, App as AntApp } from 'antd';
-import { store, persistor } from './store';
-import { router } from './router';
+import AppInitializer from './components/AppInitializer/AppInitializer';
 import AuthStateListener from './components/AuthStateListener/AuthStateListener';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { router } from './router';
+import { persistor, store } from './store';
 import { theme } from './theme';
-import { SearchProvider } from './contexts/SearchContext';
-import AppInitializer from './components/AppInitializer/AppInitializer';
 
 function App() {
   return (
@@ -18,10 +17,8 @@ function App() {
           <ConfigProvider theme={theme}>
             <AntApp>
               <AppInitializer>
-                <SearchProvider>
-                  <AuthStateListener />
-                  <RouterProvider router={router} />
-                </SearchProvider>
+                <AuthStateListener />
+                <RouterProvider router={router} />
               </AppInitializer>
             </AntApp>
           </ConfigProvider>
