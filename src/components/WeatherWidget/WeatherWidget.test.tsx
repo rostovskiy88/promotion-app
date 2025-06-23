@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { App } from 'antd';
 
-// Simple mock to avoid import.meta.env issues
 jest.mock('./WeatherWidget', () => {
   return {
     default: function WeatherWidget() {

@@ -1,10 +1,10 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface UseInfiniteScrollOptions {
   hasMore: boolean;
   loading: boolean;
   onLoadMore: () => void;
-  threshold?: number; // Distance from bottom in pixels
+  threshold?: number;
   root?: Element | null;
 }
 

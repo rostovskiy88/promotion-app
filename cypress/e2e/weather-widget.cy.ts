@@ -223,7 +223,7 @@ describe('Weather Widget', () => {
       // Mock slow/timeout API response
       cy.intercept('GET', '**/weather**', (req) => {
         req.reply((res) => {
-          res.delay(10000); // 10 second delay
+          res.delay(10000);
           res.send({ statusCode: 408, body: { error: 'Request timeout' } });
         });
       }).as('weatherTimeout');
@@ -300,9 +300,8 @@ describe('Weather Widget', () => {
             const width = $widget.width();
             cy.log(`Weather widget width on mobile: ${width}px`);
             
-            // Widget should exist and have reasonable dimensions
             expect(width).to.be.greaterThan(0);
-            if (width < 400) {
+            if (width && width < 400) {
               cy.log('Weather widget adapts to mobile screen size');
             } else {
               cy.log('Weather widget may need better mobile responsiveness');

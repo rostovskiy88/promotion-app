@@ -1,11 +1,11 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { configureStore } from '@reduxjs/toolkit';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { App } from 'antd';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { configureStore } from '@reduxjs/toolkit';
-import { App } from 'antd';
-import EditProfile from './Profile';
-import { updateUser } from '../../services/userService';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import { updateUser } from '../../services/userService';
+import EditProfile from './Profile';
 
 // Mock the userService
 jest.mock('../../services/userService', () => ({
@@ -79,7 +79,6 @@ describe('EditProfile Component', () => {
   it('renders the component with initial user data', async () => {
     renderComponent();
 
-    // Wait for the component to render with user data
     await waitFor(() => {
       expect(screen.getByDisplayValue('John')).toBeInTheDocument();
       expect(screen.getByDisplayValue('Doe')).toBeInTheDocument();
@@ -90,12 +89,10 @@ describe('EditProfile Component', () => {
   it('handles form submission correctly', async () => {
     renderComponent();
 
-    // Wait for the component to render
     await waitFor(() => {
       expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
-    // Update form fields
     fireEvent.change(screen.getByPlaceholderText('Enter your first name'), {
       target: { value: 'Jane' },
     });
@@ -106,10 +103,8 @@ describe('EditProfile Component', () => {
       target: { value: '30' },
     });
 
-    // Submit the form
     fireEvent.click(screen.getByText('Save'));
 
-    // Check if updateUser was called with correct data
     await waitFor(() => {
       expect(updateUser).toHaveBeenCalledWith('test-uid', {
         firstName: 'Jane',
@@ -122,34 +117,27 @@ describe('EditProfile Component', () => {
   it('handles cancel button click', async () => {
     renderComponent();
 
-    // Wait for the component to render
     await waitFor(() => {
       expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
-    // Click cancel button
     fireEvent.click(screen.getByText('Cancel'));
 
-    // Check if navigate was called with correct path
     expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
   });
 
   it('validates age input', async () => {
     renderComponent();
 
-    // Wait for the component to render
     await waitFor(() => {
       expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
-    // Try to enter invalid age
     const ageInput = screen.getByPlaceholderText('Enter your age');
     fireEvent.change(ageInput, { target: { value: '-1' } });
 
-    // Submit the form
     fireEvent.click(screen.getByText('Save'));
 
-    // Check if error message is displayed
     await waitFor(() => {
       expect(screen.getByText('Age must be a natural number')).toBeInTheDocument();
     });

@@ -1,12 +1,12 @@
-import React from 'react';
+import { configureStore } from '@reduxjs/toolkit';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
+import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import AddArticle from '../AddArticle/AddArticle';
-import { addArticle } from '../../services/articleService';
+import { BrowserRouter } from 'react-router-dom';
 import { useUserDisplayInfo } from '../../hooks/useUserDisplayInfo';
+import { addArticle } from '../../services/articleService';
+import AddArticle from '../AddArticle/AddArticle';
 
 jest.mock('../../services/articleService');
 jest.mock('../../hooks/useUserDisplayInfo');
@@ -150,6 +150,47 @@ describe('AddArticle Component', () => {
 
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
     });
+
+    test('form renders and basic interactions work', async () => {
+      const user = userEvent.setup();
+      renderAddArticle();
+
+      const publishButton = screen.getByRole('button', { name: /publish/i });
+      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+
+      expect(publishButton).toBeInTheDocument();
+      expect(cancelButton).toBeInTheDocument();
+
+      await user.click(cancelButton);
+      expect(mockOnCancel).toHaveBeenCalledTimes(1);
+    });
+
+    test('cancel functionality works', () => {
+      const user = userEvent.setup();
+      renderAddArticle();
+
+      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+      user.click(cancelButton);
+
+      expect(mockOnCancel).toHaveBeenCalledTimes(1);
+    });
+
+    test('handles null user state gracefully', () => {
+      const mockUser = null;
+      (useUserDisplayInfo as jest.Mock).mockReturnValue(mockUser);
+      renderAddArticle();
+
+      const titleInput = screen.getByLabelText('Title');
+      expect(titleInput).toBeInTheDocument();
+    });
+
+    test('component renders without user', () => {
+      const mockUser = null;
+      (useUserDisplayInfo as jest.Mock).mockReturnValue(mockUser);
+      renderAddArticle();
+
+      expect(screen.getByText(/please log in/i)).toBeInTheDocument();
+    });
   });
 
   describe('File Upload', () => {
@@ -167,20 +208,17 @@ describe('AddArticle Component', () => {
       const user = userEvent.setup();
       renderAddArticle();
 
-      // Test that form renders and basic interactions work
       const publishButton = screen.getByRole('button', { name: /publish/i });
       const cancelButton = screen.getByRole('button', { name: /cancel/i });
 
       expect(publishButton).toBeInTheDocument();
       expect(cancelButton).toBeInTheDocument();
 
-      // Test cancel functionality
       await user.click(cancelButton);
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
     });
 
     test('shows user information is needed message when user is null', async () => {
-      // Mock a null user state
       (useUserDisplayInfo as jest.Mock).mockReturnValue({
         displayName: '',
         firstName: '',
@@ -195,13 +233,11 @@ describe('AddArticle Component', () => {
 
       renderAddArticle();
 
-      // Just verify the component renders without user - use a different selector
       const titleInput = screen.getByLabelText('Title');
       expect(titleInput).toBeInTheDocument();
     });
 
     test('addArticle service is mocked correctly', () => {
-      // Test that our mocks are set up correctly
       expect(addArticle).toBeDefined();
       expect(typeof addArticle).toBe('function');
     });

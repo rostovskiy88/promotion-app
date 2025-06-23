@@ -2,28 +2,22 @@
 
 describe('Advanced Article Management', () => {
   beforeEach(() => {
-    // Login first to access article management features
     cy.visit('http://localhost:5173/login');
     cy.url().should('include', '/login');
     
-    // Use test credentials to login
     cy.get('input[placeholder="Enter your email"]').type('rostovskiy88@ukr.net');
     cy.get('input[placeholder="Enter your password"]').type('7250563Asd/');
     cy.get('button[type="submit"]').click();
     
-    // Wait for authentication to complete (but don't fail if it doesn't work)
     cy.get('button[type="submit"]', { timeout: 15000 }).should('not.have.class', 'ant-btn-loading');
     
-    // Give it a moment for any navigation to occur
     cy.wait(2000);
     
-    // Check current URL and proceed accordingly
     cy.url().then((url) => {
       if (url.includes('/dashboard')) {
         cy.log('✅ Login successful - navigated to dashboard');
       } else {
         cy.log('⚠️ Login may have failed or credentials invalid - proceeding with test anyway');
-        // Try to access dashboard directly - it might work without authentication
         cy.visit('http://localhost:5173/dashboard');
         cy.wait(1000);
       }
@@ -31,7 +25,6 @@ describe('Advanced Article Management', () => {
   });
 
   it('should create a new article with all fields', () => {
-    // Try to find article navigation - use fallback selectors
     cy.get('body').then(($body) => {
       if ($body.find('[data-testid=add-article-button]').length > 0) {
         cy.get('[data-testid=add-article-button]').click();
@@ -46,11 +39,9 @@ describe('Advanced Article Management', () => {
         return;
       }
       
-      // Verify we're on add article page
       cy.url({ timeout: 5000 }).should('include', '/add');
       cy.log('Successfully navigated to add article page');
       
-      // Try to fill form if elements exist
       cy.get('body').then(($formBody) => {
         if ($formBody.find('.ant-select').length > 0) {
           cy.get('.ant-select').click();
@@ -92,11 +83,9 @@ describe('Advanced Article Management', () => {
   it('should delete an article with confirmation', () => {
     cy.get('body').then(($body) => {
       if ($body.find('[data-testid="article-card"]').length > 0) {
-        // Count initial articles
         cy.get('[data-testid="article-card"]').then(($cards) => {
           const initialCount = $cards.length;
           
-          // Get the title of the first article card
           cy.get('[data-testid="article-card"]').first().find('.article-card-title').invoke('text').then((title) => {
             cy.log(`Attempting to delete article: ${title}`);
             
@@ -108,23 +97,18 @@ describe('Advanced Article Management', () => {
             cy.get('.ant-modal', { timeout: 5000 }).should('exist');
             cy.get('.ant-modal', { timeout: 5000 }).should('be.visible');
             
-            // Use a global selector for the Yes button
             cy.get('body').then(() => {
               cy.contains('button', 'Yes', { timeout: 5000 }).should('be.visible').click();
             });
             
-            // Wait for modal to disappear
             cy.get('.ant-modal', { timeout: 5000 }).should('not.exist');
             
-            // Wait for the page to update and check if article count decreased or specific article is gone
             cy.wait(2000);
             
-            // Try multiple approaches to verify deletion
             cy.get('body').then(($body) => {
               if ($body.find(`[data-testid="article-card"]:contains("${title}")`).length === 0) {
                 cy.log('Article successfully deleted - title not found');
               } else {
-                // Alternative check: verify article count decreased
                 cy.get('[data-testid="article-card"]').should('have.length.lessThan', initialCount);
                 cy.log('Article deletion verified by count decrease');
               }

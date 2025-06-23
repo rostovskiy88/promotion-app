@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-// E2E Test for Article Management Workflow
-
 describe('Article Management', () => {
   beforeEach(() => {
     // Visit the app

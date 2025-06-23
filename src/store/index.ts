@@ -39,19 +39,17 @@ export const store = configureStore({
         ignoredActions: [
           'persist/PERSIST',
           'persist/REHYDRATE',
-          'ui/openModal', // Modal functions are not serializable
+          'ui/openModal',
         ],
-        // Ignore these paths in the state
         ignoredPaths: [
           'auth.user.metadata',
           'auth.firestoreUser.createdAt',
           'auth.firestoreUser.updatedAt',
           'ui.modals',
           'cache.apiCache',
-          'articles.articles', // Ignore articles array to prevent timestamp warnings
-          'articles.filteredArticles', // Ignore filtered articles
+          'articles.articles',
+          'articles.filteredArticles',
         ],
-        // Ignore actions that might contain Firebase Timestamps
         ignoredActionPaths: [
           'payload.articles',
           'payload.0.createdAt',
