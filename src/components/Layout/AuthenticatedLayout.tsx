@@ -91,7 +91,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
       {
         key: 'theme',
         label: (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} onClick={e => e.stopPropagation()}>
+          <div className={styles.themeMenuItem} onClick={e => e.stopPropagation()}>
             <BulbOutlined />
             <span>Dark Mode</span>
             <Switch size='small' checked={theme === 'dark'} onChange={toggleTheme} />
@@ -131,7 +131,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   const selectedKeys = [location.pathname];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className={styles.mainLayout}>
       <Sider collapsible collapsed={collapsed} onCollapse={handleSidebarToggle} className={styles.sider}>
         <div className={styles.logo}>
           <Logo collapsed={collapsed} />
@@ -149,15 +149,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
                   value={inputValue}
                   onChange={handleInputChange}
                   data-testid='search-input'
-                  style={{
-                    width: 340,
-                    marginRight: 24,
-                    borderRadius: '20px',
-                    background: '#f7f8fa',
-                    border: 'none',
-                    fontSize: '16px',
-                    height: '40px',
-                  }}
+                  className={styles.searchInput}
                   prefix={<SearchOutlined />}
                   suffix={
                     inputValue ? (
@@ -167,17 +159,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
                         icon={<CloseOutlined />}
                         onClick={handleClearSearch}
                         data-testid='search-clear'
-                        style={{
-                          border: 'none',
-                          background: 'transparent',
-                          height: '32px',
-                          width: '32px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 0,
-                          margin: 0,
-                        }}
+                        className={styles.searchClearButton}
                       />
                     ) : null
                   }
@@ -187,7 +169,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           </div>
 
           <div className={styles.headerRight}>
-            {globalLoading && <div style={{ marginRight: '16px', color: '#1890ff' }}>Loading...</div>}
+            {globalLoading && <div className={styles.loadingIndicator}>Loading...</div>}
 
             <Dropdown menu={userMenu} placement='bottomRight' trigger={['click']}>
               <div className={styles.userSection}>
